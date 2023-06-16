@@ -68,7 +68,7 @@ Developers interact directly with a high level BridgeSdk that abstracts away the
 
 Ideally, developers should not even care about what adapter they are using. They should just get the best bridge rate for the asset they are trying to bridge.
 
-### End User usage details
+### End User vanilla JS SDK usage details
 
 ```typescript
 const sdk = new BridgeSdk({
@@ -108,6 +108,28 @@ await sdk.bridge({
     // message should be a list of enum // object dynamic based on the Bridge adapter if possible
     onProgressUpdate: (progress: number, detail: BridgeDetails) => void //optional
 })
+```
+
+### End User React SDK Usage
+
+This will render a button that will open a modal to provide all the bridging functionality that users would need to bridge funds natively within the developers dApp.
+
+```typescript
+export function HomePage() {
+    return <BridgeModal 
+        // all params are optional
+        sourceChain={}
+        targetChain={}
+        sourceAccount={}
+        targetAccount={}
+        token={}
+        amountInBaseUnits={}
+        
+        onBridgeSuccess={}
+        onBridgeError={}
+        onBridgeModalClose={}
+    />
+}
 ```
 
 ### Bridge Adapter
