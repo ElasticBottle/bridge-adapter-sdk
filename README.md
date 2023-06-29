@@ -1,80 +1,267 @@
-# Turborepo Design System Starter
+# Bridge Adapter Design Document
 
-This guide explains how to use a React design system starter powered by:
+This document covers the existing bridges available and how this package attempts to unify the various bridges out there into a unified interface that is easily extensible while still providing a great developer experience.
 
-- 🏎 [Turborepo](https://turbo.build/repo) — High-performance build system for Monorepos
-- 🚀 [React](https://reactjs.org/) — JavaScript library for user interfaces
-- 🛠 [Tsup](https://github.com/egoist/tsup) — TypeScript bundler powered by esbuild
-- 📖 [Storybook](https://storybook.js.org/) — UI component environment powered by Vite
+## Bridges
 
-As well as a few others tools preconfigured:
+### Wormhole
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Changesets](https://github.com/changesets/changesets) for managing versioning and changelogs
-- [GitHub Actions](https://github.com/changesets/action) for fully automated package publishing
+#### Publish
 
-## Using this example
-
-Run the following command:
-
-```sh
-npx create-turbo@latest -e design-system
+```solidity
+publishMessage(
+    int nonce,
+    byte[] payload,
+    int consistencyLevel
+) returns int sequenceNumber
 ```
 
-### Useful Commands
+When `publishMessage` is called against the core contract, some logs are generally emitted.
 
-- `pnpm build` - Build all packages, including the Storybook site
-- `pnpm dev` - Run all packages locally and preview with Storybook
-- `pnpm lint` - Lint all packages
-- `pnpm changeset` - Generate a changeset
-- `pnpm clean` - Clean up all `node_modules` and `dist` folders (runs each package's clean script)
+Once the target [consistency level](#consistency-levels) has been reached, and the Guardian's optional checks pass, a [VAA](#verified-actions-approvals-vaa) is produced.
 
-## Turborepo
+There might be a fee _in the future_ for publishing a message.
 
-[Turborepo](https://turbo.build/repo) is a high-performance build system for JavaScript and TypeScript codebases. It was designed after the workflows used by massive software engineering organizations to ship code at scale. Turborepo abstracts the complex configuration needed for monorepos and provides fast, incremental builds with zero-configuration remote caching.
+#### Receive
 
-Using Turborepo simplifies managing your design system monorepo, as you can have a single lint, build, test, and release process for all packages. [Learn more](https://vercel.com/blog/monorepos-are-changing-how-teams-build-software) about how monorepos improve your development workflow.
-
-## Apps & Packages
-
-This Turborepo includes the following packages and applications:
-
-- `apps/docs`: Component documentation site with Storybook
-- `packages/@acme/core`: Core React components
-- `packages/@acme/utils`: Shared React utilities
-- `packages/@acme/tsconfig`: Shared `tsconfig.json`s used throughout the Turborepo
-- `packages/eslint-config-acme`: ESLint preset
-
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/). Workspaces enables us to "hoist" dependencies that are shared between packages to the root `package.json`. This means smaller `node_modules` folders and a better local dev experience. To install a dependency for the entire monorepo, use the `-w` workspaces flag with `pnpm add`.
-
-This example sets up your `.gitignore` to exclude all generated files, other folders like `node_modules` used to store your dependencies.
-
-### Compilation
-
-To make the core library code work across all browsers, we need to compile the raw TypeScript and React code to plain JavaScript. We can accomplish this with `tsup`, which uses `esbuild` to greatly improve performance.
-
-Running `pnpm build` from the root of the Turborepo will run the `build` command defined in each package's `package.json` file. Turborepo runs each `build` in parallel and caches & hashes the output to speed up future builds.
-
-For `acme-core`, the `build` command is the following:
-
-```bash
-tsup src/index.tsx --format esm,cjs --dts --external react
+```solidity
+parseAndVerifyVAA( byte[] VAA )
 ```
 
-`tsup` compiles `src/index.tsx`, which exports all of the components in the design system, into both ES Modules and CommonJS formats as well as their TypeScript types. The `package.json` for `acme-core` then instructs the consumer to select the correct format:
+When called, the payload and associated metadata for the valid VAA is returned. Otherwise, an exception is thrown.
 
-```json:acme-core/package.json
-{
-  "name": "@acme/core",
-  "version": "0.0.0",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "sideEffects": false,
+#### Consistency Levels
+
+By default, only finalized messages are observed and attested. [See the other available consistency levels](https://book.wormhole.com/wormhole/3_coreLayerContracts.html#consistency-levels) if the integration require messages before finality.
+
+#### Multi-cast
+
+VAAs simply attest that "this contract on this chain said this thing." Therefore, VAAs are multicast by default and will be verified as authentic on any chain they are brought to.
+
+Use cases where the message has an intended recipient or is only meant to be consumed a single time must be handled in logic outside the Core Contract.
+
+#### Verified Actions Approvals (VAA)
+
+### All Bridge
+
+#### Send Transaction
+
+Called by the sender wallet with the target address and amount of token to be sent.
+
+[Fees are paid here](https://docs.allbridge.io/allbridge-overview/bridge-fee).
+
+#### Receive Transaction
+
+Can be called by the receiving wallet address or by the all bridge sender on some chains.
+
+If using the all bridge sender, user will receive some gas token if the receiving wallet does not have any on [some chains](https://docs.allbridge.io/allbridge-overview/under-the-hood-of-allbridge#bonuses-value-for-chains)
+
+### Circle Cross-Chain Transfer Protocol (CCTP)
+
+#### depositForBurn
+
+```typescript
+const burnTx = await ethTokenMessengerContract.methods
+  .depositForBurn(
+    amount,
+    AVAX_DESTINATION_DOMAIN,
+    destinationAddressInBytes32,
+    USDC_ETH_CONTRACT_ADDRESS
+  )
+  .send();
+```
+
+#### Poll for attestation
+
+```typescript
+const transactionReceipt = await web3.eth.getTransactionReceipt(
+  burnTx.transactionHash
+);
+const eventTopic = web3.utils.keccak256("MessageSent(bytes)");
+const log = transactionReceipt.logs.find((l) => l.topics[0] === eventTopic);
+const messageBytes = web3.eth.abi.decodeParameters(["bytes"], log.data)[0];
+const messageHash = web3.utils.keccak256(messageBytes);
+
+let attestationResponse = { status: "pending" };
+while (attestationResponse.status != "complete") {
+  const response = await fetch(
+    `https://iris-api-sandbox.circle.com/attestations/${messageHash}`
+  );
+  attestationResponse = await response.json();
+  await new Promise((r) => setTimeout(r, 2000));
 }
 ```
+
+#### receiveMessage
+
+```typescript
+const receiveTx = await avaxMessageTransmitterContract.receiveMessage(
+  receivingMessageBytes,
+  signature
+);
+```
+
+#### Limitations
+
+- Currently only on Avax and Eth.
+- Unclear what Solana integration would look like
+
+## API overview
+
+Developers interact directly with a high level BridgeSdk that abstracts away the underlying implementation for the various bridge implementation.
+
+Ideally, developers should not even care about what adapter they are using. They should just get the best bridge rate for the asset they are trying to bridge.
+
+### Goals
+
+- Developer can allow users to easily bridge assets from one chain to another within their app
+- Developers can easily get users to pay them from tokens on other chain while still receiving the expected assets on the target chain
+- Great DX for developers. Interruptions should be handled. Errors should be graceful and human readable.
+
+### End User vanilla JS SDK usage details
+
+```typescript
+const sdk = new BridgeSdk({
+        // this should be optional
+        adapter: new WormholeBridge({
+            sourceChain: '',
+            targetChain: ''
+        })
+    });
+// strongly typed, dynamic based on Bridge adapter, sourceChain, and targetChain
+// some strongly typed object as return type
+const supportedTokens = sdk.getSupportedTokens()
+
+/**
+ * {
+ *  amountInBaseUnits: BigInt,
+ *  decimals: '',
+ *  symbol: '',
+ *  name: '',
+ *  tokenContractAddress: '',
+ * }
+*/
+const bridgeFeeDetails = await sdk.getBridgeFeeDetails({
+    token: supportedTokens.SOME_TOKEN,
+    amountInBaseUnits: 102n,
+})
+
+// what should the return be?
+await sdk.bridge({
+    token: supportedTokens.SOME_TOKEN,
+    amountInBaseUnits: '',
+
+    // Is this enough for Solana.
+    // You might need the owner and the token account.
+
+    // type should be dynamic based on sourceChain
+    sourceAccount: PublicKey() | ethers.Signer | viem Account | string
+    // This is called whenever the sourceAccount is a string and the bridge process is about to be initiated
+    // TODO: figure out return type
+    onInitiateBridge?: async (sourceAccount: string, sourceChain: Chains) => Promise<void>,
+
+    // type should be dynamic based on targetChain
+    targetAccount: PublicKey() | ethers.Signer | viem Account | string,
+    // This will trigger whenever target account is a string and the funds are ready for the developer to be received
+    // TODO: figure out return type
+    onReadyToReceiveBridgedTokens?: async (targetAccount: string, targetChain: Chains) => Promise<void>,
+
+    // number between 0 and 100, detail contains message on what just happened
+    // message should be a list of enum // object dynamic based on the Bridge adapter if possible
+    onProgressUpdate: (progress: number, detail: BridgeDetails) => void //optional
+
+    onError: () => void
+})
+```
+
+### End User React SDK Usage
+
+This will render a button that will open a modal to provide all the bridging functionality that users would need to bridge funds natively within the developers dApp.
+
+```typescript
+export function HomePage() {
+  return (
+    <BridgeModal
+      // all params are optional
+      sourceChain={}
+      targetChain={}
+      sourceAccount={}
+      onInitiateBridge={}
+      targetAccount={}
+      onReadyToReceiveBridgedTokens={}
+      token={}
+      amountInBaseUnits={}
+      onBridgeSuccess={}
+      onBridgeError={}
+      onBridgeModalClose={}
+    />
+  );
+}
+```
+
+### Bridge Adapter
+
+The bridge adapter provides information on:
+
+- Supported tokens
+- Fees for the bridging operation
+- A way to lock assets on the source chain
+- A way to receive assets on the target chain
+
+```typescript
+class AbstractBridgeAdapter {
+  progressMessages: Record<string, string>;
+  sourceChain: Chains;
+  targetChain: Chains;
+
+  // if we don't make this async, the bridge might support new tokens not hardcoded and we have to update the sdk
+  // if we make this async, we are very likely not going to be able to return the proper list of enums of the supported token
+  abstract getSupportedTokens(): Tokens;
+
+  abstract getFeeDetails(args: {
+    token: Token;
+    amountInBaseUnits: BigInt;
+  }): Promise<{
+    amountInBaseUnits: BigInt;
+    decimals: number;
+    symbol: string;
+    name: string;
+    tokenContractAddress: string;
+  }>;
+
+  abstract lock(args: {
+    token: Token;
+    amountInBaseUnits: BigInt;
+    // type should be dynamic based on sourceChain
+    sourceAccount: PublicKey | ethers.Signer | viem.Account;
+    // type should be dynamic based on targetChain
+    targetAccount: PublicKey | ethers.Signer | viem.Account;
+    // number between 0 and 100, detail contains message on what just happened
+    // message should be a list of enum // object dynamic based on the Bridge adapter if possible
+    onProgressUpdate: (progress: number, detail: BridgeDetails) => void; //optional
+  }): Promise<void>;
+  // TODO: figure out return type
+
+  abstract receive(
+    targetAccount: PublicKey | ethers.Signer | viem.Account
+  ): Promise<void>;
+  // TODO: figure out return type
+}
+```
+
+TODO:
+
+- Wormhole
+- allbridge
+- cctp
+
+Don't worry about no solana on cctp
+
+## Local development
+
+To start developing, simply run `pnpm dev`. This will build all the packages in watch mode as well as spin up a local development server with the react sdk which uses the js sdk under the hood.
+
+### Building
 
 Run `pnpm build` to confirm compilation is working correctly. You should see a folder `acme-core/dist` which contains the compiled output.
 
@@ -86,79 +273,13 @@ acme-core
     └── index.mjs   <-- ES Modules version
 ```
 
-## Components
+### Versioning & Publishing Packages
 
-Each file inside of `acme-core/src` is a component inside our design system. For example:
+This repo uses [Changesets](https://github.com/changesets/changesets) to manage versions, create changelogs, and publish to npm.
 
-```tsx:acme-core/src/Button.tsx
-import * as React from 'react';
+<!-- TODO: install the [Changesets bot](https://github.com/apps/changeset-bot) on the repository. -->
 
-export interface ButtonProps {
-  children: React.ReactNode;
-}
-
-export function Button(props: ButtonProps) {
-  return <button>{props.children}</button>;
-}
-
-Button.displayName = 'Button';
-```
-
-When adding a new file, ensure the component is also exported from the entry `index.tsx` file:
-
-```tsx:acme-core/src/index.tsx
-import * as React from "react";
-export { Button, type ButtonProps } from "./Button";
-// Add new component exports here
-```
-
-## Storybook
-
-Storybook provides us with an interactive UI playground for our components. This allows us to preview our components in the browser and instantly see changes when developing locally. This example preconfigures Storybook to:
-
-- Use Vite to bundle stories instantly (in milliseconds)
-- Automatically find any stories inside the `stories/` folder
-- Support using module path aliases like `@acme-core` for imports
-- Write MDX for component documentation pages
-
-For example, here's the included Story for our `Button` component:
-
-```js:apps/docs/stories/button.stories.mdx
-import { Button } from '@acme-core/src';
-import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
-
-<Meta title="Components/Button" component={Button} />
-
-# Button
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget consectetur tempor, nisl nunc egestas nisi, euismod aliquam nisl nunc euismod.
-
-## Props
-
-<Props of={Box} />
-
-## Examples
-
-<Preview>
-  <Story name="Default">
-    <Button>Hello</Button>
-  </Story>
-</Preview>
-```
-
-This example includes a few helpful Storybook scripts:
-
-- `pnpm dev`: Starts Storybook in dev mode with hot reloading at `localhost:6006`
-- `pnpm build`: Builds the Storybook UI and generates the static HTML files
-- `pnpm preview-storybook`: Starts a local server to view the generated Storybook UI
-
-## Versioning & Publishing Packages
-
-This example uses [Changesets](https://github.com/changesets/changesets) to manage versions, create changelogs, and publish to npm. It's preconfigured so you can start publishing packages immediately.
-
-You'll need to create an `NPM_TOKEN` and `GITHUB_TOKEN` and add it to your GitHub repository settings to enable access to npm. It's also worth installing the [Changesets bot](https://github.com/apps/changeset-bot) on your repository.
-
-### Generating the Changelog
+#### Generating the Changelog
 
 To generate your changelog, run `pnpm changeset` locally:
 
@@ -169,24 +290,12 @@ To generate your changelog, run `pnpm changeset` locally:
 1. Confirm the changeset looks as expected.
 1. A new Markdown file will be created in the `changeset` folder with the summary and a list of the packages included.
 
-### Releasing
+#### Releasing
 
 When you push your code to GitHub, the [GitHub Action](https://github.com/changesets/action) will run the `release` script defined in the root `package.json`:
 
 ```bash
-turbo run build --filter=docs^... && changeset publish
+turbo run build && changeset publish
 ```
 
-Turborepo runs the `build` script for all publishable packages (excluding docs) and publishes the packages to npm. By default, this example includes `acme` as the npm organization. To change this, do the following:
-
-- Rename folders in `packages/*` to replace `acme` with your desired scope
-- Search and replace `acme` with your desired scope
-- Re-run `pnpm install`
-
-To publish packages to a private npm organization scope, **remove** the following from each of the `package.json`'s
-
-```diff
-- "publishConfig": {
--  "access": "public"
-- },
-```
+Turborepo runs the `build` script for all publishable packages (excluding docs) and publishes the packages to npm.
