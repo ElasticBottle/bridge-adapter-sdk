@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-bridge-sdk",
+  "name": "eslint-config-bridge-adapter-sdk",
   "version": "0.0.0",
   "main": "index.js",
   "license": "MIT",
