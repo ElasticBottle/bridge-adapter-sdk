@@ -5,12 +5,10 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  useDisclosure,
 } from "@chakra-ui/react";
 import WormholeBridge from "@wormhole-foundation/wormhole-connect";
 
 export function WormholeConnect() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Accordion>
       <AccordionItem>
