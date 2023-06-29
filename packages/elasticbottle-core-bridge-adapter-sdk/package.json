@@ -1,5 +1,5 @@
 {
-  "name": "@elasticbottle/core-bridge-sdk",
+  "name": "@elasticbottle/core-bridge-adapter-sdk",
   "version": "0.0.0",
   "sideEffects": false,
   "license": "MIT",
@@ -23,7 +23,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@elasticbottle/bridge-sdk-tsconfig": "^0.0.0",
+    "@elasticbottle/bridge-adapter-sdk-tsconfig": "^0.0.0",
     "eslint": "^8.29.0",
     "eslint-config-bridge-sdk": "^0.0.0",
     "tsup": "^7.0.0",

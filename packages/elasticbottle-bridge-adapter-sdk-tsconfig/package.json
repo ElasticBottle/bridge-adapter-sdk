@@ -1,5 +1,5 @@
 {
-  "name": "@elasticbottle/bridge-sdk-tsconfig",
+  "name": "@elasticbottle/bridge-adapter-sdk-tsconfig",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",

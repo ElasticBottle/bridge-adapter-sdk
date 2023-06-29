@@ -1,5 +1,5 @@
 {
-  "name": "bridge-sdk",
+  "name": "bridge-adapter-sdk",
   "private": true,
   "scripts": {
     "build": "turbo run build",
