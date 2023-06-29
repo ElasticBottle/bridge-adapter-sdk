@@ -1,5 +1,5 @@
 {
-  "extends": "@acme/tsconfig/react-library.json",
+  "extends": "@elasticbottle/bridge-sdk-tsconfig",
   "include": ["."],
   "exclude": ["dist", "build", "node_modules"]
 }

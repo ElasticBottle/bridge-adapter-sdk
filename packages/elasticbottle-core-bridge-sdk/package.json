@@ -1,0 +1,38 @@
+{
+  "name": "@elasticbottle/core-bridge-sdk",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --env.ESM_ONLY true",
+    "build-packages": "pnpm build",
+    "dev": "tsup src/index.ts --env.ESM_ONLY true --watch",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "devDependencies": {
+    "@elasticbottle/bridge-sdk-tsconfig": "^0.0.0",
+    "eslint": "^8.29.0",
+    "eslint-config-bridge-sdk": "^0.0.0",
+    "tsup": "^7.0.0",
+    "typescript": "^5.1.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "zod": "^3.21.4"
+  }
+}
