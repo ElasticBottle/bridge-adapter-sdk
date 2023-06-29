@@ -1,4 +1,8 @@
 module.exports = {
   root: true,
-  extends: ["acme"],
+  extends: ["bridge-adapter-sdk"],
+  parserOptions: {
+    project: true,
+    tsconfigRootDir: __dirname,
+  },
 };
