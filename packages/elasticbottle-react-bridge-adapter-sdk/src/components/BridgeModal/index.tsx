@@ -31,7 +31,7 @@ function BridgeModalInternal({ children, customization }: BridgeModalProps) {
     }
   }, [customization?.theme]);
 
-  let body = <ChainSelection />;
+  let body: JSX.Element;
   switch (currentBridgeStep) {
     case "CHAIN_SELECTION": {
       body = <ChainSelection />;
