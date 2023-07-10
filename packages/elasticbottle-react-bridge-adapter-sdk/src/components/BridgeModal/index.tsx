@@ -1,8 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  BridgeModalProvider,
-  useBridgeModalContext,
-} from "../../providers/BridgeModalContext";
+import { useBridgeModalStore } from "../../providers/BridgeModalContext";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { AccountSettings } from "./AccountSettings";
 import { MultiChainSelection } from "./MultiChainSelection";
@@ -15,14 +12,16 @@ import { WalletSelection } from "./WalletSelection";
 
 import "../../style/global.css";
 import { BridgeHeader } from "./BridgeHeader";
+import { SingleChainSelection } from "./SingleChainSelection";
 
 type BridgeModalProps = {
   children: React.ReactNode;
   customization?: Partial<{ modalTitle: string; theme: "dark" | "light" }>;
 };
 
-function BridgeModalInternal({ children, customization }: BridgeModalProps) {
-  const { currentBridgeStep } = useBridgeModalContext();
+export function BridgeModal({ children, customization }: BridgeModalProps) {
+  const currentBridgeStep = useBridgeModalStore.use.currentBridgeStep();
+
   useEffect(() => {
     if (customization?.theme === "dark") {
       document.body.classList.add("bsa-dark");
@@ -35,6 +34,10 @@ function BridgeModalInternal({ children, customization }: BridgeModalProps) {
   switch (currentBridgeStep) {
     case "MULTI_CHAIN_SELECTION": {
       body = <MultiChainSelection />;
+      break;
+    }
+    case "SINGLE_CHAIN_SELECTION": {
+      body = <SingleChainSelection />;
       break;
     }
     case "ACCOUNT_SETTINGS": {
@@ -66,7 +69,6 @@ function BridgeModalInternal({ children, customization }: BridgeModalProps) {
       break;
     }
     default:
-      console.error(`Current bridge step ${currentBridgeStep}`);
       throw new Error(`BAD STATE: Unknown bridge step`);
   }
 
@@ -83,15 +85,5 @@ function BridgeModalInternal({ children, customization }: BridgeModalProps) {
         {body}
       </DialogContent>
     </Dialog>
-  );
-}
-
-export function BridgeModal({ children, customization }: BridgeModalProps) {
-  return (
-    <BridgeModalProvider>
-      <BridgeModalInternal customization={customization}>
-        {children}
-      </BridgeModalInternal>
-    </BridgeModalProvider>
   );
 }

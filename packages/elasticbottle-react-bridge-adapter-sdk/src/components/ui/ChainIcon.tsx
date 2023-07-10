@@ -1,10 +1,11 @@
-import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
 import { Ethereum, Polygon, Solana } from "@thirdweb-dev/chain-icons";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
+import { Ban } from "lucide-react";
 import type { SVGProps } from "react";
 import React from "react";
 import { cn } from "../../lib/utils";
+import type { ChainSelectionType } from "../../types/BridgeModal";
 
 const chainIconVariants = cva("", {
   variants: {
@@ -22,7 +23,7 @@ const chainIconVariants = cva("", {
 export interface ChainIconProps
   extends SVGProps<SVGSVGElement>,
     VariantProps<typeof chainIconVariants> {
-  chainName: ChainName;
+  chainName: ChainSelectionType;
 }
 
 const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
@@ -52,6 +53,13 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
             className={cn(chainIconVariants({ size, className }))}
             ref={ref}
             {...props}
+          />
+        );
+      case "No chain selected":
+        return (
+          <Ban
+            className={cn(chainIconVariants({ size, className }))}
+            ref={ref}
           />
         );
     }
