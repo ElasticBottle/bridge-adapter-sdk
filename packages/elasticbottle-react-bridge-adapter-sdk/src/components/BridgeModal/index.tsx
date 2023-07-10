@@ -5,7 +5,7 @@ import {
 } from "../../providers/BridgeModalContext";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { AccountSettings } from "./AccountSettings";
-import { ChainSelection } from "./ChainSelection";
+import { MultiChainSelection } from "./MultiChainSelection";
 import { PendingTransaction } from "./PendingTransaction";
 import { SwapDetails } from "./SwapDetails";
 import { SwapReview } from "./SwapReview";
@@ -33,8 +33,8 @@ function BridgeModalInternal({ children, customization }: BridgeModalProps) {
 
   let body: JSX.Element;
   switch (currentBridgeStep) {
-    case "CHAIN_SELECTION": {
-      body = <ChainSelection />;
+    case "MULTI_CHAIN_SELECTION": {
+      body = <MultiChainSelection />;
       break;
     }
     case "ACCOUNT_SETTINGS": {
@@ -66,13 +66,19 @@ function BridgeModalInternal({ children, customization }: BridgeModalProps) {
       break;
     }
     default:
+      console.error(`Current bridge step ${currentBridgeStep}`);
       throw new Error(`BAD STATE: Unknown bridge step`);
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        className="bsa-border-border bsa-bg-background bsa-text-foreground"
+        style={{
+          fontFeatureSettings: '"rlig" 1, "calt" 1',
+        }}
+      >
         <BridgeHeader title={customization?.modalTitle} />
         {body}
       </DialogContent>

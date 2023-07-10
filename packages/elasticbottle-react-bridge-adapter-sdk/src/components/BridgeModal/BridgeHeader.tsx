@@ -14,7 +14,7 @@ export function BridgeHeader({ title }: { title?: string }) {
         })}
       >
         {title}
-        <Button variant={"secondary"} className="aspect-square p-2">
+        <Button size={"icon"} variant={"secondary"} className="p-2">
           <Settings />
         </Button>
       </DialogTitle>

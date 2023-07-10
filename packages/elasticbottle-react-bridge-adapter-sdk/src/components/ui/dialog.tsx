@@ -23,7 +23,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "bsa-fixed bsa-inset-0 bsa-z-50 bsa-bg-background/80 bsa-backdrop-blur-sm data-[state=open]:bsa-animate-in data-[state=closed]:bsa-animate-out data-[state=closed]:bsa-fade-out-0 data-[state=open]:bsa-fade-in-0",
       className
     )}
     {...props}
@@ -41,7 +41,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full",
+          "md:w-full bsa-fixed bsa-left-[50%] bsa-top-[50%] bsa-z-50 bsa-grid bsa-w-full bsa-max-w-lg bsa-translate-x-[-50%] bsa-translate-y-[-50%] bsa-gap-4 bsa-border bsa-bg-background bsa-p-6 bsa-shadow-lg bsa-duration-200 data-[state=open]:bsa-animate-in data-[state=closed]:bsa-animate-out data-[state=closed]:bsa-fade-out-0 data-[state=open]:bsa-fade-in-0 data-[state=closed]:bsa-zoom-out-95 data-[state=open]:bsa-zoom-in-95 data-[state=closed]:bsa-slide-out-to-left-1/2 data-[state=closed]:bsa-slide-out-to-top-[48%] data-[state=open]:bsa-slide-in-from-left-1/2 data-[state=open]:bsa-slide-in-from-top-[48%] sm:bsa-rounded-lg",
           className
         )}
         {...props}
@@ -63,7 +63,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
+      "bsa-flex bsa-flex-col bsa-space-y-1.5 bsa-text-center sm:bsa-text-left",
       className
     )}
     {...props}
@@ -77,7 +77,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      "bsa-flex bsa-flex-col-reverse sm:bsa-flex-row sm:bsa-justify-end sm:bsa-space-x-2",
       className
     )}
     {...props}
@@ -92,7 +92,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "bsa-text-lg bsa-font-semibold bsa-leading-none bsa-tracking-tight",
       className
     )}
     {...props}
@@ -106,7 +106,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("bsa-text-sm bsa-text-muted-foreground", className)}
     {...props}
   />
 ));
