@@ -1,5 +1,7 @@
 "use client";
 
+import { BridgeModal } from "@elasticbottle/react-bridge-adapter-sdk";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -66,14 +68,20 @@ export default function Pricing() {
                         /month
                       </span>
                     </p>
-
-                    <Button
-                      size="sm"
-                      type="button"
-                      className="mt-8 w-full hover:bg-zinc-400"
+                    <BridgeModal
+                      customization={{
+                        theme: "dark",
+                        modalTitle: "Defi Dapp",
+                      }}
                     >
-                      Subscribe
-                    </Button>
+                      <Button
+                        size="sm"
+                        type="button"
+                        className="mt-8 w-full hover:bg-zinc-400"
+                      >
+                        Subscribe
+                      </Button>
+                    </BridgeModal>
                   </div>
                 </div>
               </div>
