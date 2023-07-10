@@ -29,10 +29,10 @@
     "tsup": "^7.0.0",
     "typescript": "^5.1.3"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "zod": "^3.21.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
