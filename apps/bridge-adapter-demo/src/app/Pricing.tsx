@@ -1,6 +1,9 @@
 "use client";
 
-import { BridgeModal } from "@elasticbottle/react-bridge-adapter-sdk";
+import {
+  BridgeModal,
+  EvmWalletProvider,
+} from "@elasticbottle/react-bridge-adapter-sdk";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -68,20 +71,22 @@ export default function Pricing() {
                         /month
                       </span>
                     </p>
-                    <BridgeModal
-                      customization={{
-                        theme: "dark",
-                        modalTitle: "Defi Dapp",
-                      }}
-                    >
-                      <Button
-                        size="sm"
-                        type="button"
-                        className="mt-8 w-full hover:bg-zinc-400"
+                    <EvmWalletProvider>
+                      <BridgeModal
+                        customization={{
+                          theme: "dark",
+                          modalTitle: "Defi Dapp",
+                        }}
                       >
-                        Subscribe
-                      </Button>
-                    </BridgeModal>
+                        <Button
+                          size="sm"
+                          type="button"
+                          className="mt-8 w-full hover:bg-zinc-400"
+                        >
+                          Subscribe
+                        </Button>
+                      </BridgeModal>
+                    </EvmWalletProvider>
                   </div>
                 </div>
               </div>

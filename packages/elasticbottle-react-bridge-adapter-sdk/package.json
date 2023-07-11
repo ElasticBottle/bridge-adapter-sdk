@@ -55,6 +55,7 @@
     "clsx": "^1.2.1",
     "immer": "^10.0.2",
     "lucide-react": "^0.252.0",
+    "react-error-boundary": "^4.0.10",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
     "zustand": "^4.3.9"

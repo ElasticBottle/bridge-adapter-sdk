@@ -2,6 +2,8 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import type { SpinnerProps } from "./spinner";
+import { Spinner } from "./spinner";
 
 const buttonVariants = cva(
   "bsa-inline-flex bsa-items-center bsa-justify-center bsa-rounded-md bsa-text-sm bsa-font-medium bsa-ring-offset-background bsa-transition-colors focus-visible:bsa-outline-none focus-visible:bsa-ring-2 focus-visible:bsa-ring-ring focus-visible:bsa-ring-offset-2 disabled:bsa-pointer-events-none disabled:bsa-opacity-50",
@@ -20,7 +22,7 @@ const buttonVariants = cva(
         link: "bsa-text-primary bsa-underline-offset-4 hover:bsa-underline",
       },
       size: {
-        default: "bsa-h-10 bsa-px-4 bsa-py-2",
+        md: "bsa-h-10 bsa-px-4 bsa-py-2",
         sm: "bsa-h-9 bsa-rounded-md bsa-px-3",
         lg: "bsa-h-11 bsa-rounded-md bsa-px-8",
         icon: "bsa-h-10 bsa-w-10",
@@ -28,7 +30,7 @@ const buttonVariants = cva(
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
+      size: "md",
     },
   }
 );
@@ -37,17 +39,35 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, isLoading = false, ...props },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
+    let spinnerVariant: SpinnerProps["variant"];
+    if (variant === "outline" || variant === "link" || variant === "ghost") {
+      spinnerVariant = "default";
+    } else {
+      spinnerVariant = variant;
+    }
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
+      >
+        {isLoading && (
+          <Spinner
+            size={size === "icon" ? "md" : size}
+            variant={spinnerVariant}
+          />
+        )}
+        {props.children}
+      </Comp>
     );
   }
 );

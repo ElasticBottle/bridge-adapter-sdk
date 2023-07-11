@@ -21,7 +21,7 @@ export function SingleChainSelection() {
             key={chainName}
             variant={"secondary"}
             size={"lg"}
-            className="bsa-flex bsa-w-full  bsa-items-center bsa-justify-center bsa-space-x-3 bsa-px-20"
+            className="bsa-flex bsa-w-full bsa-items-center bsa-justify-center bsa-space-x-3 bsa-px-20"
             onClick={() => {
               setCurrentBridgeStep({
                 step: "WALLET_SELECTION",

@@ -16,15 +16,19 @@ import { publicProvider } from "wagmi/providers/public";
 
 export function EvmWalletProvider({
   children,
-  settings: { walletConnectProjectId, alchemyApiKey, infuraApiKey },
+  settings,
 }: {
-  settings: {
+  settings?: {
     walletConnectProjectId?: string;
     alchemyApiKey?: string;
     infuraApiKey?: string;
   };
   children: React.ReactNode;
 }) {
+  const infuraApiKey = settings?.infuraApiKey;
+  const alchemyApiKey = settings?.alchemyApiKey;
+  const walletConnectProjectId = settings?.walletConnectProjectId;
+
   const config = useMemo(() => {
     const { chains, publicClient, webSocketPublicClient } =
       configureChains<Chain>(
