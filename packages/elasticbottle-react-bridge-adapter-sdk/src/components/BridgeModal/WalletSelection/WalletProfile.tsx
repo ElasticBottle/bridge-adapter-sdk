@@ -74,7 +74,6 @@ export function EvmWalletProfile() {
     <div className="bsa-flex bsa-items-center bsa-justify-between bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3 ">
       <div className="bsa-flex bsa-items-center">
         {avatar ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             className="bsa-mr-3 bsa-h-8 bsa-w-8 bsa-rounded-full"
             src={avatar}

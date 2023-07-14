@@ -1,9 +1,11 @@
+import type { TokenWithAmount } from "@elasticbottle/core-bridge-adapter-sdk";
 import type { useWallet } from "@solana/wallet-adapter-react";
 import type { useConnect } from "wagmi";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { DEFAULT_TOKEN_WITH_AMOUNT } from "../constants/Token";
 import { chainNameToChainId, getEvmAvailableWallets } from "../lib/utils";
 import type {
   BridgeStep,
@@ -19,9 +21,10 @@ type BridgeModalState = {
   currentBridgeStep: BridgeStep;
   currentBridgeStepParams: BridgeStepParams<BridgeStep>;
   chain: { sourceChain: ChainSelectionType; targetChain: ChainSelectionType };
+  token: { sourceToken: TokenWithAmount; targetToken: TokenWithAmount };
 };
 
-type setChainType = {
+type SetChain = {
   newChain: ChainSelectionType;
   chainDestination: ChainDestType;
   isEvmWalletConnected: boolean;
@@ -35,7 +38,8 @@ type BridgeModalActions = {
   setCurrentBridgeStep: <T extends BridgeStep>(
     args: SetCurrentBridgeStepType<T>
   ) => void;
-  setChain: (args: setChainType) => Promise<void>;
+  setChain: (args: SetChain) => Promise<void>;
+  setToken: (args: TokenWithAmount) => Promise<void>;
   goBackOneStep: () => void;
 };
 
@@ -67,6 +71,10 @@ const useBridgeModalStoreBase = create<BridgeModalState>()(
         chain: {
           sourceChain: "No chain selected",
           targetChain: "No chain selected",
+        },
+        token: {
+          sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
+          targetToken: DEFAULT_TOKEN_WITH_AMOUNT,
         },
       };
     })

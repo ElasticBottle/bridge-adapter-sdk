@@ -24,7 +24,6 @@ export function TokenAndChainWidget({
       <div className="bsa-flex bsa-justify-between">
         <TokenSelectButton
           chainDest={chainDest}
-          chainName={chainName}
           className="bsa-w-min bsa-px-2"
         />
         <ChainSelectButton
@@ -51,7 +50,7 @@ export function TokenAndChainWidget({
 export function MultiChainSelection() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
   return (
-    <div className="bsa-flex bsa-flex-col bsa-space-y-2">
+    <div className="bsa-flex bsa-flex-col bsa-space-y-4">
       <div className="bsa-text-muted-foreground">Bridge From</div>
       <TokenAndChainWidget chainName={sourceChain} chainDest="source" />
       <div className="bsa-flex bsa-w-full bsa-items-center bsa-justify-around bsa-text-muted-foreground">
