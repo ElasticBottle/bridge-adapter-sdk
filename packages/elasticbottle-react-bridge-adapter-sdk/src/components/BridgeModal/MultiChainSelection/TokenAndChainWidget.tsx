@@ -31,7 +31,7 @@ export function TokenAndChainWidget({
           className="bsa-w-min bsa-px-2"
         />
       </div>
-      <div className="bsa-flex bsa-items-center bsa-justify-between bsa-space-x-3">
+      <div className="bsa-flex bsa-items-center bsa-justify-between bsa-space-x-3 bsa-px-2">
         <Input
           placeholder="0.00"
           className="bsa-border-none bsa-text-xl focus-visible:bsa-ring-0"

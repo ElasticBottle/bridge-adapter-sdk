@@ -40,7 +40,7 @@ export function TokenSelectionButton({
 
   return (
     <Button
-      variant={tokenOfInterest.address ? "outline" : "secondary"}
+      variant={tokenOfInterest.address ? "ghost" : "secondary"}
       size={"lg"}
       className={cn("space-x-2 bsa-min-w-fit", className)}
       onClick={() => {
