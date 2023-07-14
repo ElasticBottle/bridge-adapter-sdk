@@ -7,8 +7,11 @@ export type Token = {
   name: string;
   address: string;
   chainName: ChainName;
+  userAmountInBaseUnits: string;
+  userAmountFormatted: string;
 };
 
 export type TokenWithAmount = Token & {
-  amountInBaseUnits: string;
+  selectedAmountInBaseUnits: string;
+  selectedAmountFormatted: string;
 };
