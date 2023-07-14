@@ -18,7 +18,7 @@ export function SwapReviewButton() {
       size={"lg"}
       disabled={!canReviewSwap}
       className="bsa-mt-10 bsa-w-full"
-      variant={"secondary"}
+      variant={"outline"}
       onClick={() => {
         setCurrentBridgeStep({
           step: "SWAP_REVIEW",
