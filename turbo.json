@@ -13,7 +13,10 @@
       "outputs": ["coverage/**"],
       "dependsOn": []
     },
-    "lint": {},
+    "lint": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["build-packages"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
