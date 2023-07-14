@@ -1,17 +1,16 @@
 import React, { useEffect } from "react";
 import { useBridgeModalStore } from "../../providers/BridgeModalContext";
+import "../../style/global.css";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { BridgeHeader } from "./BridgeHeader";
 import { MultiChainSelection } from "./MultiChainSelection";
 import { PendingTransaction } from "./PendingTransaction";
+import { SingleChainSelection } from "./SingleChainSelection";
 import { SwapDetails } from "./SwapDetails";
 import { SwapReview } from "./SwapReview";
 import { SwapSettings } from "./SwapSettings";
 import { TokenSelection } from "./TokenSelection";
 import { WalletSelection } from "./WalletSelection";
-
-import "../../style/global.css";
-import { BridgeHeader } from "./BridgeHeader";
-import { SingleChainSelection } from "./SingleChainSelection";
 
 type BridgeModalProps = {
   children: React.ReactNode;

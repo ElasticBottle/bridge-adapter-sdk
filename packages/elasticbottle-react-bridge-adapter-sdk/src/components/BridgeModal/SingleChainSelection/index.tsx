@@ -3,19 +3,19 @@ import { SupportedChainNames } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useState } from "react";
 import { useAccount, useConnect } from "wagmi";
-import { parseForErrorString } from "../../lib/utils";
+import { parseForErrorString } from "../../../lib/utils";
 import {
   setChain,
   useBridgeModalStore,
-} from "../../providers/BridgeModalContext";
+} from "../../../providers/BridgeModalContext";
 import type {
   BridgeStep,
   BridgeStepParams,
   ChainDestType,
   ChainSelectionType,
-} from "../../types/BridgeModal";
-import { Button } from "../ui/button";
-import { ChainIcon } from "../ui/icons/ChainIcon";
+} from "../../../types/BridgeModal";
+import { Button } from "../../ui/button";
+import { ChainIcon } from "../../ui/icons/ChainIcon";
 
 function hasChainDest(
   params: BridgeStepParams<BridgeStep>

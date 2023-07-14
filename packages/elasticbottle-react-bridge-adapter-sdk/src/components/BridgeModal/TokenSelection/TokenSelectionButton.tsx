@@ -7,7 +7,7 @@ import {
 import type { ChainDestType } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 
-export function TokenSelectButton({
+export function TokenSelectionButton({
   chainDest,
   className,
 }: {

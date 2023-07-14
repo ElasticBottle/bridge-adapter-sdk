@@ -1,10 +1,10 @@
 // import { useQuery } from "@tanstack/react-query";
 import type { Token } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useEffect, useMemo, useState } from "react";
-import { DEFAULT_TOKEN_WITH_AMOUNT } from "../../constants/Token";
-import { useBridgeModalStore } from "../../providers/BridgeModalContext";
-import { AddressLine } from "../ui/AddressLine";
-import { Input } from "../ui/input";
+import { DEFAULT_TOKEN_WITH_AMOUNT } from "../../../constants/Token";
+import { useBridgeModalStore } from "../../../providers/BridgeModalContext";
+import { AddressLine } from "../../ui/AddressLine";
+import { Input } from "../../ui/input";
 
 export function TokenSelection() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
