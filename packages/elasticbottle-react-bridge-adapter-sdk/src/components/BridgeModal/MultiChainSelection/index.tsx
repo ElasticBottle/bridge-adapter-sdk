@@ -1,9 +1,13 @@
 import { Separator } from "@radix-ui/react-separator";
-import { useBridgeModalStore } from "../../../providers/BridgeModalContext";
+import {
+  setCurrentBridgeStep,
+  useBridgeModalStore,
+} from "../../../providers/BridgeModalContext";
 import type {
   ChainDestType,
   ChainSelectionType,
 } from "../../../types/BridgeModal";
+import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { ChainSelectButton } from "./ChainSelectButton";
 import { TokenSelectButton } from "./TokenSelectButton";
@@ -65,6 +69,16 @@ export function MultiChainSelection() {
         />
       </div>
       <TokenAndChainWidget chainName={targetChain} chainDest="target" />
+      <Button
+        size={"lg"}
+        onClick={() => {
+          setCurrentBridgeStep({
+            step: "SWAP_REVIEW",
+          });
+        }}
+      >
+        Review Swap
+      </Button>
     </div>
   );
 }

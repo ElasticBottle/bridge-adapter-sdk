@@ -1,7 +1,7 @@
 import type { TokenWithAmount } from "@elasticbottle/core-bridge-adapter-sdk";
 
 export const DEFAULT_TOKEN_WITH_AMOUNT: TokenWithAmount = {
-  address: "",
+  address: "0x0000000000000000000000000000000000000",
   selectedAmountFormatted: "",
   selectedAmountInBaseUnits: "",
   userAmountFormatted: "",
@@ -9,6 +9,6 @@ export const DEFAULT_TOKEN_WITH_AMOUNT: TokenWithAmount = {
   chainName: "Ethereum",
   decimals: 18,
   logoUri: "",
-  name: "",
-  symbol: "",
+  name: "USDC",
+  symbol: "USDC",
 };
