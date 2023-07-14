@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   WagmiConfig,
   configureChains,
@@ -80,7 +80,12 @@ export function EvmWalletProvider({
       },
     });
     return config;
-  }, [alchemyApiKey, infuraApiKey, walletConnectProjectId]);
+  }, [
+    alchemyApiKey,
+    coinbaseWalletSettings,
+    infuraApiKey,
+    walletConnectProjectId,
+  ]);
 
   return <WagmiConfig config={config}>{children}</WagmiConfig>;
 }
