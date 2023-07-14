@@ -6,7 +6,7 @@ import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
 import { EvmWalletProfile } from "./WalletProfile";
 
-function EvmWalletConnectionListBase({
+export function EvmWalletConnectionList({
   chain,
   onSuccess,
 }: {
@@ -59,22 +59,3 @@ function EvmWalletConnectionListBase({
     </div>
   );
 }
-
-export const EvmWalletConnectionList = withErrorBoundary(
-  EvmWalletConnectionListBase,
-  {
-    fallback: (
-      <>
-        <div>Error initializing wallet connection list.</div>
-        <div>
-          Did you wrap the{" "}
-          <pre className="bsa-inline-block">{"<BridgeModal/>"}</pre> component
-          in a <pre className="bsa-inline-block">{"<EvmWalletProvider/>"}</pre>?
-        </div>
-      </>
-    ),
-    onError(errors) {
-      console.error("Original Error", errors);
-    },
-  }
-);

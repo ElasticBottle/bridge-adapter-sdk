@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
+import type { FallbackProps } from "react-error-boundary";
+import { ErrorBoundary } from "react-error-boundary";
 import { useBridgeModalStore } from "../../providers/BridgeModalContext";
 import "../../style/global.css";
+import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { BridgeHeader } from "./BridgeHeader";
 import { MultiChainSelection } from "./MultiChainSelection";
@@ -77,8 +80,61 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
         }}
       >
         <BridgeHeader title={customization?.modalTitle} />
-        <div className="bsa-my-4">{body}</div>
+        <ErrorBoundary
+          fallbackRender={fallbackRender}
+          onReset={(details) => {
+            console.log("details", details);
+            // Reset the state of your app so the error doesn't happen again
+          }}
+        >
+          <div className="bsa-my-4">{body}</div>
+        </ErrorBoundary>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  if (error instanceof Error) {
+    if (error.message.includes("No QueryClient set")) {
+      return (
+        <>
+          <div>Something went wrong while querying.</div>
+          <div>
+            Did you wrap the{" "}
+            <pre className="bsa-inline-block">{"<BridgeModal/>"}</pre> component
+            in a{" "}
+            <pre className="bsa-inline-block">{"<BridgeAdapterProvider/>"}</pre>
+            ?
+          </div>
+          <Button onClick={resetErrorBoundary}>Retry</Button>
+        </>
+      );
+    }
+    if (
+      error.message.includes("`useConfig` must be used within `WagmiConfig`.")
+    ) {
+      return (
+        <>
+          <div>Error initializing wallet connection list.</div>
+          <div>
+            Did you wrap the{" "}
+            <pre className="bsa-inline-block">{"<BridgeModal/>"}</pre> component
+            in a{" "}
+            <pre className="bsa-inline-block">{"<EvmWalletProvider/>"}</pre>?
+          </div>
+          <Button onClick={resetErrorBoundary}>Retry</Button>
+        </>
+      );
+    }
+  }
+  console.error(error);
+  return (
+    <div>
+      Something unknown went wrong, check the developer console for more
+      information
+    </div>
   );
 }

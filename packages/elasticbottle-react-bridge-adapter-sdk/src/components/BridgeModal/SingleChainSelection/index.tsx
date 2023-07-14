@@ -1,7 +1,7 @@
 import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
 import { SupportedChainNames } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { parseForErrorString } from "../../../lib/utils";
 import {
@@ -72,9 +72,8 @@ export function SingleChainSelection() {
     <div className="bsa-flex bsa-flex-col bsa-space-y-3">
       {SupportedChainNames.map((chainName) => {
         return (
-          <>
+          <React.Fragment key={chainName}>
             <Button
-              key={chainName}
               variant={"ghost"}
               disabled={!!connectingToChain}
               isLoading={connectingToChain === chainName}
@@ -87,7 +86,7 @@ export function SingleChainSelection() {
               <div className="text-lg">{chainName}</div>
             </Button>
             <Separator className="bsa-w-full bsa-bg-muted" decorative={true} />
-          </>
+          </React.Fragment>
         );
       })}
       {error && <div className="bsa-bg-muted bsa-text-sm">{error}</div>}
