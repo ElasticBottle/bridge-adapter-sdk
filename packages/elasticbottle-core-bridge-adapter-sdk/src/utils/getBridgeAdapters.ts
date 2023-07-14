@@ -1,13 +1,16 @@
 import type { AbstractBridgeAdapter } from "../lib/BridgeAdapter/AbstractBridgeAdapter";
 import { WormholeBridgeAdapter } from "../lib/BridgeAdapter/WormholeBridgeAdapter";
 import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
-import type { ChainName } from "../types/Chain";
+import type { ChainSourceAndTarget } from "../types/Chain";
 
-export function getBridgeAdapters(
-  sourceChain: ChainName,
-  targetChain: ChainName,
-  bridgeAdapterSetting?: BridgeAdapterSetting
-) {
+export function getBridgeAdapters({
+  sourceChain,
+  targetChain,
+  bridgeAdapterSetting,
+}: {
+  bridgeAdapterSetting?: BridgeAdapterSetting;
+} & Partial<ChainSourceAndTarget>) {
+  // TODO: swap type from string to Bridges
   const allowedBridgeAdapters: { [bridge: string]: AbstractBridgeAdapter } = {
     wormhole: new WormholeBridgeAdapter({ sourceChain, targetChain }),
   };

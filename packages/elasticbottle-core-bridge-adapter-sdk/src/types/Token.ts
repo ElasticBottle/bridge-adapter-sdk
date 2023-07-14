@@ -12,6 +12,8 @@ export type Token = {
 };
 
 export type TokenWithAmount = Token & {
+  userAmountInBaseUnits: string;
+  userAmountFormatted: string;
   selectedAmountInBaseUnits: string;
   selectedAmountFormatted: string;
 };

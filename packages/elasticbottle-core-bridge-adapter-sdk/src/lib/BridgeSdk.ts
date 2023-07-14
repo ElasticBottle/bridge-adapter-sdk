@@ -2,6 +2,7 @@ import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
 import type { ChainName, ChainSourceAndTarget } from "../types/Chain";
 import type { Token } from "../types/Token";
 import { getBridgeAdapters } from "../utils/getBridgeAdapters";
+import { getSourceAndTargetChain } from "../utils/getSourceAndTargetChain";
 import type { AbstractBridgeAdapter } from "./BridgeAdapter/AbstractBridgeAdapter";
 
 export class BridgeAdapterSdk {
@@ -19,13 +20,11 @@ export class BridgeAdapterSdk {
     this.sourceChain = sourceChain;
     this.targetChain = targetChain;
     this.bridgeAdapterSetting = bridgeAdapterSetting;
-    if (this.sourceChain && this.targetChain) {
-      this.bridgeAdapters = getBridgeAdapters(
-        this.sourceChain,
-        this.targetChain,
-        this.bridgeAdapterSetting
-      );
-    }
+    this.bridgeAdapters = getBridgeAdapters({
+      sourceChain: this.sourceChain,
+      targetChain: this.targetChain,
+      bridgeAdapterSetting: this.bridgeAdapterSetting,
+    });
   }
 
   setSourceChain(sourceChain: ChainName) {
@@ -35,14 +34,83 @@ export class BridgeAdapterSdk {
     this.targetChain = targetChain;
   }
 
-  static async getSupportedChains(): Promise<ChainName[]> {
-    return Promise.resolve([]);
+  async getSupportedChains(): Promise<ChainName[]> {
+    const chainResponses = await Promise.allSettled(
+      this.bridgeAdapters.map(async (bridgeAdapter) => {
+        return bridgeAdapter.getSupportedChains();
+      })
+    );
+
+    const chains = chainResponses
+      .map((chainResponse) => {
+        if (chainResponse.status === "fulfilled") {
+          return chainResponse.value;
+        } else {
+          console.error(
+            "Failed to get tokens from bridge",
+            chainResponse.reason
+          );
+        }
+      })
+      .filter((tokenResponse) => !!tokenResponse)
+      .flat() as ChainName[];
+
+    return this.deduplicateChains(chains);
+  }
+  private deduplicateChains(chains: ChainName[]): ChainName[] {
+    const chainSet = new Set<ChainName>();
+    chains.map((chain) => {
+      chainSet.add(chain);
+    });
+    return Array.from(chainSet);
   }
 
   async getSupportedTokens(
-    args: typeof this.sourceChain extends ChainName ? number : string
+    chains?: Partial<ChainSourceAndTarget>
   ): Promise<Token[]> {
-    return Promise.resolve([]);
+    const { source, target } = getSourceAndTargetChain({
+      overrideSourceChain: chains?.sourceChain,
+      overrideTargetChain: chains?.targetChain,
+      sdkSourceChain: this.sourceChain,
+      sdkTargetChain: this.targetChain,
+    });
+
+    const tokenResponses = await Promise.allSettled(
+      this.bridgeAdapters.map(async (bridgeAdapter) => {
+        return bridgeAdapter.getSupportedTokens({
+          sourceChain: source,
+          targetChain: target,
+        });
+      })
+    );
+
+    const tokens = tokenResponses
+      .map((tokenResponse) => {
+        if (tokenResponse.status === "fulfilled") {
+          return tokenResponse.value;
+        } else {
+          console.error(
+            "Failed to get tokens from bridge",
+            tokenResponse.reason
+          );
+        }
+      })
+      .filter((tokenResponse) => !!tokenResponse)
+      .flat() as Token[];
+
+    return this.deduplicateTokens(tokens);
+  }
+
+  private deduplicateTokens(tokens: Token[]): Token[] {
+    const deduplicatedTokens = tokens.reduce((prev, curr) => {
+      prev.set(curr.address, curr);
+      return prev;
+    }, new Map<string, Token>());
+    console.log(
+      "Array.from(deduplicatedTokens.values());",
+      Array.from(deduplicatedTokens.values())
+    );
+    return Array.from(deduplicatedTokens.values());
   }
 
   async bridge(args: {
