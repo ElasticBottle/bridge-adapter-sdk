@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useBridgeModalStore } from "../../providers/BridgeModalContext";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import { AccountSettings } from "./AccountSettings";
 import { MultiChainSelection } from "./MultiChainSelection";
 import { PendingTransaction } from "./PendingTransaction";
 import { SwapDetails } from "./SwapDetails";
@@ -40,10 +39,7 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
       body = <SingleChainSelection />;
       break;
     }
-    case "ACCOUNT_SETTINGS": {
-      body = <AccountSettings />;
-      break;
-    }
+
     case "PENDING_TRANSACTION": {
       body = <PendingTransaction />;
       break;
@@ -76,7 +72,7 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        className="bsa-border-border bsa-bg-background bsa-text-foreground"
+        className="bsa-h-[600px] bsa-max-w-md bsa-border-border bsa-bg-background bsa-text-foreground"
         style={{
           fontFeatureSettings: '"rlig" 1, "calt" 1',
         }}

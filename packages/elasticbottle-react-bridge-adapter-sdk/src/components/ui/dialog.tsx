@@ -41,7 +41,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "md:w-full bsa-fixed bsa-left-[50%] bsa-top-[50%] bsa-z-50 bsa-grid bsa-w-full bsa-max-w-lg bsa-translate-x-[-50%] bsa-translate-y-[-50%] bsa-gap-4 bsa-border bsa-bg-background bsa-p-6 bsa-shadow-lg bsa-duration-200 data-[state=open]:bsa-animate-in data-[state=closed]:bsa-animate-out data-[state=closed]:bsa-fade-out-0 data-[state=open]:bsa-fade-in-0 data-[state=closed]:bsa-zoom-out-95 data-[state=open]:bsa-zoom-in-95 data-[state=closed]:bsa-slide-out-to-left-1/2 data-[state=closed]:bsa-slide-out-to-top-[48%] data-[state=open]:bsa-slide-in-from-left-1/2 data-[state=open]:bsa-slide-in-from-top-[48%] sm:bsa-rounded-lg",
+          "bsa-fixed bsa-left-[50%] bsa-top-[50%] bsa-z-50 bsa-grid bsa-w-full bsa-max-w-lg bsa-translate-x-[-50%] bsa-translate-y-[-50%] bsa-auto-rows-min bsa-gap-4 bsa-border bsa-bg-background bsa-p-6 bsa-shadow-lg bsa-duration-200 data-[state=open]:bsa-animate-in data-[state=closed]:bsa-animate-out data-[state=closed]:bsa-fade-out-0 data-[state=open]:bsa-fade-in-0 data-[state=closed]:bsa-zoom-out-95 data-[state=open]:bsa-zoom-in-95 data-[state=closed]:bsa-slide-out-to-left-1/2 data-[state=closed]:bsa-slide-out-to-top-[48%] data-[state=open]:bsa-slide-in-from-left-1/2 data-[state=open]:bsa-slide-in-from-top-[48%] sm:bsa-rounded-lg md:bsa-w-full",
           className
         )}
         {...props}

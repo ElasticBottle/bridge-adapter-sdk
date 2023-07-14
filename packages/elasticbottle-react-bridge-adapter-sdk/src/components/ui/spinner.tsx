@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-const spinnerVariants = cva("", {
+const spinnerVariants = cva("p-1 bsa-animate-spin", {
   variants: {
     variant: {
       default: "bsa-text-primary-foreground ",
@@ -12,9 +12,9 @@ const spinnerVariants = cva("", {
         "bsa-bg-secondary bsa-text-secondary-foreground hover:bsa-bg-secondary/80",
     },
     size: {
-      md: "bsa-h-10 bsa-w-10",
-      sm: "bsa-h-9 bsa-w-9",
-      lg: "bsa-h-11 bsa-w-11",
+      md: "bsa-h-7 bsa-w-7",
+      sm: "bsa-h-6 bsa-w-6",
+      lg: "bsa-h-8 bsa-w-8",
     },
   },
   defaultVariants: {
@@ -24,19 +24,17 @@ const spinnerVariants = cva("", {
 });
 
 export interface SpinnerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<SVGSVGElement>,
     VariantProps<typeof spinnerVariants> {}
 
-const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
+const Spinner = React.forwardRef<SVGSVGElement, SpinnerProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <div
-        className={cn(spinnerVariants({ variant, size, className }))}
+      <Loader2
         ref={ref}
         {...props}
-      >
-        <Loader2 />
-      </div>
+        className={cn(spinnerVariants({ variant, size, className }))}
+      />
     );
   }
 );

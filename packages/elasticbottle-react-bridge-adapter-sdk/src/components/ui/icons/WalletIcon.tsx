@@ -1,3 +1,25 @@
+export function WalletIcon({
+  walletName,
+  ...props
+}: {
+  walletName: string;
+  [key: string]: unknown;
+}) {
+  switch (walletName.toLowerCase()) {
+    case "MetaMask".toLowerCase(): {
+      return <MetaMask {...props} />;
+    }
+    case "Coinbase Wallet".toLowerCase(): {
+      return <Coinbase {...props} />;
+    }
+    case "walletConnect".toLowerCase(): {
+      return <WalletConnect {...props} />;
+    }
+    default:
+      return null;
+  }
+}
+
 // creds to connectKit
 export const MetaMask = ({ background = false, ...props }) => (
   <svg

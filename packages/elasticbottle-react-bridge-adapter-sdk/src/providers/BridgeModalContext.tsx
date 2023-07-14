@@ -1,10 +1,14 @@
+import type { useWallet } from "@solana/wallet-adapter-react";
+import type { useConnect } from "wagmi";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { chainNameToChainId, getEvmAvailableWallets } from "../lib/utils";
 import type {
   BridgeStep,
   BridgeStepParams,
+  ChainDestType,
   ChainSelectionType,
   SetCurrentBridgeStepType,
 } from "../types/BridgeModal";
@@ -17,12 +21,21 @@ type BridgeModalState = {
   chain: { sourceChain: ChainSelectionType; targetChain: ChainSelectionType };
 };
 
+type setChainType = {
+  newChain: ChainSelectionType;
+  chainDestination: ChainDestType;
+  isEvmWalletConnected: boolean;
+  connectEvmWallet: ReturnType<typeof useConnect>["connectAsync"];
+  availableEvmWallets: ReturnType<typeof useConnect>["connectors"];
+  isSolanaWalletConnected: boolean;
+  availableSolanaWallets: ReturnType<typeof useWallet>["wallets"];
+};
+
 type BridgeModalActions = {
   setCurrentBridgeStep: <T extends BridgeStep>(
     args: SetCurrentBridgeStepType<T>
   ) => void;
-  setSourceChain: (newChain: ChainSelectionType) => void;
-  setTargetChain: (newChain: ChainSelectionType) => void;
+  setChain: (args: setChainType) => Promise<void>;
   goBackOneStep: () => void;
 };
 
@@ -87,18 +100,67 @@ export const goBackOneStep: BridgeModalActions["goBackOneStep"] = () => {
   });
 };
 
-export const setSourceChain: BridgeModalActions["setSourceChain"] = (
-  sourceChain
-) => {
-  useBridgeModalStore.setState((state: BridgeModalState) => {
-    state.chain.sourceChain = sourceChain;
-  });
-};
+export const setChain: BridgeModalActions["setChain"] = async ({
+  newChain,
+  chainDestination,
+  isEvmWalletConnected,
+  availableEvmWallets,
+  connectEvmWallet,
+  isSolanaWalletConnected,
+  availableSolanaWallets,
+}) => {
+  const chainParam =
+    chainDestination === "source" ? "sourceChain" : "targetChain";
+  const updateChain = () =>
+    useBridgeModalStore.setState((state: BridgeModalState) => {
+      state.chain[chainParam] = newChain;
+    });
 
-export const setTargetChain: BridgeModalActions["setTargetChain"] = (
-  targetChain
-) => {
-  useBridgeModalStore.setState((state: BridgeModalState) => {
-    state.chain.targetChain = targetChain;
+  if (newChain === "Solana") {
+    if (isSolanaWalletConnected) {
+      updateChain();
+      return goBackOneStep();
+    } else if (
+      !isSolanaWalletConnected &&
+      availableSolanaWallets.length === 1
+    ) {
+      await availableSolanaWallets[0].adapter.connect();
+      updateChain();
+      return goBackOneStep();
+    }
+  } else if (newChain !== "No chain selected") {
+    // evm chains
+    if (isEvmWalletConnected) {
+      updateChain();
+      return goBackOneStep();
+    } else if (
+      !isEvmWalletConnected &&
+      getEvmAvailableWallets(availableEvmWallets) === 1
+    ) {
+      await connectEvmWallet({
+        chainId: chainNameToChainId(newChain),
+        connector: availableEvmWallets[0],
+      });
+      updateChain();
+      return goBackOneStep();
+    }
+  } else if (newChain === "No chain selected") {
+    updateChain();
+    return goBackOneStep();
+  }
+
+  setCurrentBridgeStep({
+    step: "WALLET_SELECTION",
+    params: {
+      chain: newChain,
+      onSuccess() {
+        useBridgeModalStore.setState((state: BridgeModalState) => {
+          state.chain[chainParam] = newChain;
+        });
+        setCurrentBridgeStep({
+          step: "MULTI_CHAIN_SELECTION",
+        });
+      },
+    },
   });
 };

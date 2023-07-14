@@ -6,7 +6,6 @@ export type BridgeStep =
   | "WALLET_SELECTION"
   | "TOKEN_SELECTION"
   | "SWAP_SETTINGS"
-  | "ACCOUNT_SETTINGS"
   | "SWAP_DETAILS"
   | "SWAP_REVIEW"
   | "PENDING_TRANSACTION";
@@ -17,7 +16,6 @@ export const BridgeStepToTitle: Record<BridgeStep, string> = {
   WALLET_SELECTION: "Select a wallet",
   TOKEN_SELECTION: "Select a token",
   SWAP_SETTINGS: "Swap settings",
-  ACCOUNT_SETTINGS: "Account settings",
   SWAP_DETAILS: "Swap details",
   SWAP_REVIEW: "Review swap",
   PENDING_TRANSACTION: "Pending transaction",
@@ -40,7 +38,7 @@ export type BridgeStepParams<T extends BridgeStep> =
   T extends "SINGLE_CHAIN_SELECTION"
     ? { chainDest: ChainDestType }
     : T extends "WALLET_SELECTION"
-    ? { chain: ChainName }
+    ? { chain: ChainName; onSuccess?: () => void }
     : undefined;
 
 export type ChainSelectionType = ChainName | "No chain selected";

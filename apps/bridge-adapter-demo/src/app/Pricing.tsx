@@ -3,6 +3,7 @@
 import {
   BridgeModal,
   EvmWalletProvider,
+  SolanaWalletProvider,
 } from "@elasticbottle/react-bridge-adapter-sdk";
 
 import { Button } from "@/components/ui/button";
@@ -71,22 +72,24 @@ export default function Pricing() {
                         /month
                       </span>
                     </p>
-                    <EvmWalletProvider>
-                      <BridgeModal
-                        customization={{
-                          theme: "dark",
-                          modalTitle: "Defi Dapp",
-                        }}
-                      >
-                        <Button
-                          size="sm"
-                          type="button"
-                          className="mt-8 w-full hover:bg-zinc-400"
+                    <SolanaWalletProvider>
+                      <EvmWalletProvider settings={{}}>
+                        <BridgeModal
+                          customization={{
+                            theme: "dark",
+                            modalTitle: "Defi Dapp",
+                          }}
                         >
-                          Subscribe
-                        </Button>
-                      </BridgeModal>
-                    </EvmWalletProvider>
+                          <Button
+                            size="sm"
+                            type="button"
+                            className="mt-8 w-full hover:bg-zinc-400"
+                          >
+                            Subscribe
+                          </Button>
+                        </BridgeModal>
+                      </EvmWalletProvider>
+                    </SolanaWalletProvider>
                   </div>
                 </div>
               </div>
