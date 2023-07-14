@@ -6,7 +6,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { DEFAULT_TOKEN_WITH_AMOUNT } from "../constants/Token";
-import { chainNameToChainId, getEvmAvailableWallets } from "../lib/utils";
+import { getEvmAvailableWallets } from "../lib/utils";
 import type {
   BridgeStep,
   BridgeStepParams,
@@ -69,8 +69,8 @@ const useBridgeModalStoreBase = create<BridgeModalState>()(
         previousBridgeStepParams: [],
         currentBridgeStepParams: undefined,
         chain: {
-          sourceChain: "No chain selected",
-          targetChain: "No chain selected",
+          sourceChain: "Select a chain",
+          targetChain: "Select a chain",
         },
         token: {
           sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
@@ -136,7 +136,7 @@ export const setChain: BridgeModalActions["setChain"] = async ({
       updateChain();
       return goBackOneStep();
     }
-  } else if (newChain !== "No chain selected") {
+  } else if (newChain !== "Select a chain") {
     // evm chains
     if (isEvmWalletConnected) {
       updateChain();
@@ -146,13 +146,12 @@ export const setChain: BridgeModalActions["setChain"] = async ({
       getEvmAvailableWallets(availableEvmWallets) === 1
     ) {
       await connectEvmWallet({
-        chainId: chainNameToChainId(newChain),
         connector: availableEvmWallets[0],
       });
       updateChain();
       return goBackOneStep();
     }
-  } else if (newChain === "No chain selected") {
+  } else if (newChain === "Select a chain") {
     updateChain();
     return goBackOneStep();
   }

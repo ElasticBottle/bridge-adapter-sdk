@@ -9,8 +9,8 @@ export function SwapReviewButton() {
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
 
   const canReviewSwap =
-    sourceChain !== "No chain selected" &&
-    targetChain !== "No chain selected" &&
+    sourceChain !== "Select a chain" &&
+    targetChain !== "Select a chain" &&
     !!sourceToken.address &&
     !!targetToken.address;
   return (
@@ -18,7 +18,7 @@ export function SwapReviewButton() {
       size={"lg"}
       disabled={!canReviewSwap}
       className="bsa-mt-10 bsa-w-full"
-      variant={"outline"}
+      variant={canReviewSwap ? "default" : "outline"}
       onClick={() => {
         setCurrentBridgeStep({
           step: "SWAP_REVIEW",

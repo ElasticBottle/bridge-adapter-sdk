@@ -14,7 +14,7 @@ export function TokenAndChainWidget({
   chainDest: ChainDestType;
   chainName: ChainSelectionType;
 }) {
-  if (chainName === "No chain selected") {
+  if (chainName === "Select a chain") {
     return <ChainSelectButton chainDest={chainDest} chainName={chainName} />;
   }
 

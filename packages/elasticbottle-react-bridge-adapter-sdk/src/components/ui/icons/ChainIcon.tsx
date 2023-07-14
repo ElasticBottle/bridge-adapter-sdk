@@ -1,6 +1,6 @@
 import { Ethereum, Polygon, Solana } from "@thirdweb-dev/chain-icons";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Ban } from "lucide-react";
+import { Link2Off } from "lucide-react";
 import type { SVGProps } from "react";
 import React from "react";
 import { cn } from "../../../lib/utils";
@@ -55,9 +55,9 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
             {...props}
           />
         );
-      case "No chain selected":
+      case "Select a chain":
         return (
-          <Ban
+          <Link2Off
             className={cn(iconVariants({ size, className }))}
             ref={ref}
             {...props}

@@ -16,6 +16,7 @@ import type {
 } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 import { ChainIcon } from "../../ui/icons/ChainIcon";
+import { Separator } from "../../ui/separator";
 
 function hasChainDest(
   params: BridgeStepParams<BridgeStep>
@@ -68,27 +69,28 @@ export function SingleChainSelection() {
   };
 
   return (
-    <div className="bsa-flex bsa-flex-col bsa-space-y-4">
+    <div className="bsa-flex bsa-flex-col bsa-space-y-3">
       {SupportedChainNames.map((chainName) => {
         return (
-          <Button
-            key={chainName}
-            variant={"secondary"}
-            disabled={!!connectingToChain}
-            isLoading={connectingToChain === chainName}
-            loadingText={`Connecting to ${chainName}`}
-            size={"lg"}
-            className="bsa-flex bsa-w-full bsa-items-center bsa-justify-start bsa-space-x-3 bsa-py-5"
-            onClick={onChooseChain(chainName)}
-          >
-            <ChainIcon chainName={chainName} size={"md"} />
-            <div className="text-lg">{chainName}</div>
-          </Button>
+          <>
+            <Button
+              key={chainName}
+              variant={"ghost"}
+              disabled={!!connectingToChain}
+              isLoading={connectingToChain === chainName}
+              loadingText={`Connecting to ${chainName}`}
+              size={"lg"}
+              className="bsa-flex bsa-w-full bsa-items-center bsa-justify-start bsa-space-x-3 bsa-py-5"
+              onClick={onChooseChain(chainName)}
+            >
+              <ChainIcon chainName={chainName} size={"md"} />
+              <div className="text-lg">{chainName}</div>
+            </Button>
+            <Separator className="bsa-w-full bsa-bg-muted" decorative={true} />
+          </>
         );
       })}
-      {error && (
-        <div className="bsa-text-sm bsa-text-muted-foreground">{error}</div>
-      )}
+      {error && <div className="bsa-bg-muted bsa-text-sm">{error}</div>}
     </div>
   );
 }

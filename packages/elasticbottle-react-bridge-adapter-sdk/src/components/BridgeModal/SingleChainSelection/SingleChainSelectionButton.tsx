@@ -19,7 +19,7 @@ export function ChainSelectButton({
 }) {
   return (
     <Button
-      variant={chainName !== "No chain selected" ? "outline" : "secondary"}
+      variant={chainName !== "Select a chain" ? "ghost" : "outline"}
       size={"lg"}
       className={cn("space-x-2 bsa-w-full", className)}
       onClick={() => {
@@ -31,7 +31,7 @@ export function ChainSelectButton({
         });
       }}
     >
-      <div className="bse-items-center bsa-flex bsa-flex-grow bsa-space-x-2  bsa-text-muted-foreground">
+      <div className="bse-items-center bsa-flex bsa-flex-grow bsa-space-x-2">
         <ChainIcon chainName={chainName} size={"sm"} />
         <div>{chainName}</div>
       </div>

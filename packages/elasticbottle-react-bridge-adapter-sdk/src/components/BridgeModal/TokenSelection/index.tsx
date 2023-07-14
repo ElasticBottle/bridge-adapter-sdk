@@ -14,8 +14,8 @@ export function TokenSelection() {
   // const { data: tokens, isInitialLoading } = useQuery({
   //   queryFn: async () => {
   //     if (
-  //       sourceChain === "No chain selected" ||
-  //       targetChain === "No chain selected"
+  //       sourceChain === "Select a chain" ||
+  //       targetChain === "Select a chain"
   //     ) {
   //       throw new Error("Invalid Source or Target chain");
   //     }

@@ -12,12 +12,12 @@ export function MultiChainSelection() {
         <TokenAndChainWidget chainName={sourceChain} chainDest="source" />
         <div className="bsa-flex bsa-w-full bsa-items-center bsa-justify-around bsa-text-muted-foreground">
           <Separator
-            className="bsa-h-[1px] bsa-w-1/3 bsa-bg-muted-foreground"
+            className="bsa-h-[2px] bsa-w-1/3 bsa-bg-muted"
             decorative={true}
           />
           To
           <Separator
-            className="bsa-h-[1px] bsa-w-1/3 bsa-bg-muted-foreground"
+            className="bsa-h-[2px] bsa-w-1/3 bsa-bg-muted"
             decorative={true}
           />
         </div>

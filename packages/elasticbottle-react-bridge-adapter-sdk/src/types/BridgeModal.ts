@@ -41,4 +41,4 @@ export type BridgeStepParams<T extends BridgeStep> =
     ? { chain: ChainName; onSuccess?: () => void }
     : undefined;
 
-export type ChainSelectionType = ChainName | "No chain selected";
+export type ChainSelectionType = ChainName | "Select a chain";
