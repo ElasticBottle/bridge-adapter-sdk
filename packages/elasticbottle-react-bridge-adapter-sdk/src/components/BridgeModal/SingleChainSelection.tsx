@@ -81,7 +81,7 @@ export function SingleChainSelection() {
             className="bsa-flex bsa-w-full bsa-items-center bsa-justify-start bsa-space-x-3 bsa-py-5"
             onClick={onChooseChain(chainName)}
           >
-            <ChainIcon chainName={chainName} size={"default"} />
+            <ChainIcon chainName={chainName} size={"md"} />
             <div className="text-lg">{chainName}</div>
           </Button>
         );

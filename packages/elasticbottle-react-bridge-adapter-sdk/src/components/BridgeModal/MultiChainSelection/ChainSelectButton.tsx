@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import { cn } from "../../../lib/utils";
 import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
 import type {
   ChainDestType,
@@ -6,7 +7,6 @@ import type {
 } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 import { ChainIcon } from "../../ui/icons/ChainIcon";
-import { cn } from "../../../lib/utils";
 
 export function ChainSelectButton({
   chainName,
@@ -19,7 +19,7 @@ export function ChainSelectButton({
 }) {
   return (
     <Button
-      variant={"secondary"}
+      variant={chainName !== "No chain selected" ? "outline" : "secondary"}
       size={"lg"}
       className={cn("space-x-2 bsa-w-full", className)}
       onClick={() => {
@@ -31,7 +31,7 @@ export function ChainSelectButton({
         });
       }}
     >
-      <div className="bse-items-center bsa-flex bsa-flex-grow  bsa-space-x-2">
+      <div className="bse-items-center bsa-flex bsa-flex-grow bsa-space-x-2  bsa-text-muted-foreground">
         <ChainIcon chainName={chainName} size={"sm"} />
         <div>{chainName}</div>
       </div>

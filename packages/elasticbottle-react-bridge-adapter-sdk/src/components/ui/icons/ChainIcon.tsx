@@ -1,28 +1,15 @@
 import { Ethereum, Polygon, Solana } from "@thirdweb-dev/chain-icons";
 import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
 import { Ban } from "lucide-react";
 import type { SVGProps } from "react";
 import React from "react";
 import { cn } from "../../../lib/utils";
 import type { ChainSelectionType } from "../../../types/BridgeModal";
+import { iconVariants } from "./icon";
 
-const chainIconVariants = cva("", {
-  variants: {
-    size: {
-      default: "bsa-h-6 bsa-w-6",
-      sm: "bsa-h-5 bsa-w-5",
-      lg: "bsa-h-7 bsa-w-7",
-      xl: "bsa-h-8 bsa-w-8",
-    },
-  },
-  defaultVariants: {
-    size: "default",
-  },
-});
 export interface ChainIconProps
   extends SVGProps<SVGSVGElement>,
-    VariantProps<typeof chainIconVariants> {
+    VariantProps<typeof iconVariants> {
   chainName: ChainSelectionType;
 }
 
@@ -33,7 +20,7 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
       case "Ethereum":
         return (
           <Ethereum
-            className={cn(chainIconVariants({ size, className }))}
+            className={cn(iconVariants({ size, className }))}
             ref={ref}
             {...props}
           />
@@ -41,7 +28,7 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
       case "Solana":
         return (
           <Solana
-            className={cn(chainIconVariants({ size, className }))}
+            className={cn(iconVariants({ size, className }))}
             ref={ref}
             {...props}
           />
@@ -50,7 +37,7 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
       case "Polygon":
         return (
           <Polygon
-            className={cn(chainIconVariants({ size, className }))}
+            className={cn(iconVariants({ size, className }))}
             ref={ref}
             {...props}
           />
@@ -58,8 +45,9 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
       case "No chain selected":
         return (
           <Ban
-            className={cn(chainIconVariants({ size, className }))}
+            className={cn(iconVariants({ size, className }))}
             ref={ref}
+            {...props}
           />
         );
     }
@@ -67,4 +55,4 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
 );
 
 ChainIcon.displayName = "ChainIcon";
-export { ChainIcon, chainIconVariants };
+export { ChainIcon };
