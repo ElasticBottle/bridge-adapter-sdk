@@ -78,7 +78,7 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
         }}
       >
         <BridgeHeader title={customization?.modalTitle} />
-        {body}
+        <div className="bsa-my-4">{body}</div>
       </DialogContent>
     </Dialog>
   );

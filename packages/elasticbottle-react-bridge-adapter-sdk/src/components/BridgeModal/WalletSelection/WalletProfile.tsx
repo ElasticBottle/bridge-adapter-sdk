@@ -1,5 +1,4 @@
-import { Copy, CopyCheck, LogOut, UserCircle2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LogOut, UserCircle2 } from "lucide-react";
 import {
   useAccount,
   useDisconnect,
@@ -7,53 +6,9 @@ import {
   useEnsName,
   useNetwork,
 } from "wagmi";
+import { AddressLine } from "../../ui/AddressLine";
 import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
-
-function AddressLine({
-  address,
-  isName,
-}: {
-  address: string;
-  isName: boolean;
-}) {
-  const [isCopied, setIsCopied] = useState(false);
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined;
-    if (isCopied) {
-      timeout = setTimeout(() => {
-        setIsCopied(false);
-      }, 1_000);
-    }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [isCopied]);
-
-  const copyAddress = () => {
-    setIsCopied(true);
-    navigator.clipboard.writeText(address).catch((e) => {
-      console.error("ERROR copying value to clipboard", e);
-    });
-  };
-
-  const formattedAddress = isName ? address : address.slice(0, 6);
-  return (
-    <div className="bsa-flex bsa-items-center">
-      <div className="bsa-mr-1">{formattedAddress} </div>
-      <Button
-        variant={"ghost"}
-        size={"icon"}
-        className="bsa-h-6 bsa-w-6 bsa-p-1"
-        onClick={copyAddress}
-      >
-        {isCopied ? <CopyCheck /> : <Copy />}
-      </Button>
-    </div>
-  );
-}
 
 export function EvmWalletProfile() {
   const { address, connector, isConnected } = useAccount();
