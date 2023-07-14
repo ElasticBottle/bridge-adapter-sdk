@@ -1,11 +1,24 @@
 import { Ethereum, Polygon, Solana } from "@thirdweb-dev/chain-icons";
-import type { VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import { Ban } from "lucide-react";
 import type { SVGProps } from "react";
 import React from "react";
 import { cn } from "../../../lib/utils";
 import type { ChainSelectionType } from "../../../types/BridgeModal";
-import { iconVariants } from "./icon";
+
+const iconVariants = cva("", {
+  variants: {
+    size: {
+      sm: "bsa-h-5 bsa-w-5",
+      md: "bsa-h-6 bsa-w-6",
+      lg: "bsa-h-7 bsa-w-7",
+      xl: "bsa-h-8 bsa-w-8",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
 
 export interface ChainIconProps
   extends SVGProps<SVGSVGElement>,
