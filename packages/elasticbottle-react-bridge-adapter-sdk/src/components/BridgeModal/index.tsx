@@ -1,3 +1,6 @@
+"use client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import type { FallbackProps } from "react-error-boundary";
 import { ErrorBoundary } from "react-error-boundary";
@@ -14,6 +17,8 @@ import { SwapReview } from "./SwapReview";
 import { SwapSettings } from "./SwapSettings";
 import { TokenSelection } from "./TokenSelection";
 import { WalletSelection } from "./WalletSelection";
+
+const queryClient = new QueryClient();
 
 type BridgeModalProps = {
   children: React.ReactNode;
@@ -71,26 +76,28 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className="bsa-h-[600px] bsa-max-w-md bsa-border-border bsa-bg-background bsa-text-foreground"
-        style={{
-          fontFeatureSettings: '"rlig" 1, "calt" 1',
-        }}
-      >
-        <BridgeHeader title={customization?.modalTitle} />
-        <ErrorBoundary
-          fallbackRender={fallbackRender}
-          onReset={(details) => {
-            console.log("details", details);
-            // Reset the state of your app so the error doesn't happen again
+    <QueryClientProvider client={queryClient}>
+      <Dialog>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className="bsa-h-[600px] bsa-max-w-md bsa-border-border bsa-bg-background bsa-text-foreground"
+          style={{
+            fontFeatureSettings: '"rlig" 1, "calt" 1',
           }}
         >
-          <div className="bsa-my-4">{body}</div>
-        </ErrorBoundary>
-      </DialogContent>
-    </Dialog>
+          <BridgeHeader title={customization?.modalTitle} />
+          <ErrorBoundary
+            fallbackRender={fallbackRender}
+            onReset={(details) => {
+              console.log("details", details);
+              // Reset the state of your app so the error doesn't happen again
+            }}
+          >
+            <div className="bsa-my-4">{body}</div>
+          </ErrorBoundary>
+        </DialogContent>
+      </Dialog>
+    </QueryClientProvider>
   );
 }
 

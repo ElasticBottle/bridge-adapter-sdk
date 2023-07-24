@@ -1,19 +1,43 @@
 import type { ChainName } from "./Chain";
 
-export type Token = {
+export type Token =
+  | {
+      logoUri: string;
+      name: string;
+      symbol: string;
+      isBridgeToken: false;
+      address: string;
+      chain: ChainName;
+      decimals: number;
+    }
+  | ({
+      isBridgeToken: true;
+      address: string;
+      chain: ChainName;
+      decimals: number;
+    } & BridgeToken);
+
+export type BridgeToken = {
   logoUri: string;
-  decimals: number;
-  symbol: string;
   name: string;
-  address: string;
-  chainName: ChainName;
+  symbol: string;
+  sourceAddress: string;
+  sourceChain: ChainName;
+  sourceDecimals: number;
+  targetAddress: string;
+  targetChain: ChainName;
+  targetDecimals: number;
+};
+
+type TokenUserBalance = {
   userAmountInBaseUnits: string;
   userAmountFormatted: string;
 };
 
-export type TokenWithAmount = Token & {
-  userAmountInBaseUnits: string;
-  userAmountFormatted: string;
+type TokenUserAmount = {
   selectedAmountInBaseUnits: string;
   selectedAmountFormatted: string;
 };
+
+export type TokenWithAmount = Token & TokenUserAmount;
+export type TokenWithUserBalance = Token & TokenUserBalance;

@@ -1,4 +1,7 @@
-import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
+import type {
+  ChainDestType,
+  ChainName,
+} from "@elasticbottle/core-bridge-adapter-sdk";
 
 export type BridgeStep =
   | "MULTI_CHAIN_SELECTION"
@@ -21,11 +24,10 @@ export const BridgeStepToTitle: Record<BridgeStep, string> = {
   PENDING_TRANSACTION: "Pending transaction",
 };
 
-export type ChainDestType = "source" | "target";
-
 export type SetCurrentBridgeStepType<T extends BridgeStep> = T extends
   | "SINGLE_CHAIN_SELECTION"
   | "WALLET_SELECTION"
+  | "TOKEN_SELECTION"
   ? {
       step: T;
       params: BridgeStepParams<T>;
@@ -34,11 +36,12 @@ export type SetCurrentBridgeStepType<T extends BridgeStep> = T extends
       step: T;
     };
 
-export type BridgeStepParams<T extends BridgeStep> =
-  T extends "SINGLE_CHAIN_SELECTION"
-    ? { chainDest: ChainDestType }
-    : T extends "WALLET_SELECTION"
-    ? { chain: ChainName; onSuccess?: () => void }
-    : undefined;
+export type BridgeStepParams<T extends BridgeStep> = T extends "TOKEN_SELECTION"
+  ? { chainDest: ChainDestType }
+  : T extends "SINGLE_CHAIN_SELECTION"
+  ? { chainDest: ChainDestType; autoConnectToChain?: ChainName }
+  : T extends "WALLET_SELECTION"
+  ? { chain: ChainName; onSuccess?: () => void }
+  : undefined;
 
 export type ChainSelectionType = ChainName | "Select a chain";

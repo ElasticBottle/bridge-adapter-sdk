@@ -1,10 +1,10 @@
+import { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { Ban, ChevronRight } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import {
   setCurrentBridgeStep,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
-import type { ChainDestType } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 
 export function TokenSelectionButton({
@@ -16,6 +16,7 @@ export function TokenSelectionButton({
 }) {
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
   const tokenOfInterest = chainDest === "source" ? sourceToken : targetToken;
+  const isTokenChosen = !!tokenOfInterest.address;
 
   let TokenDisplay = (
     <>
@@ -24,10 +25,12 @@ export function TokenSelectionButton({
         src={tokenOfInterest.logoUri}
         alt={tokenOfInterest.name}
       />
-      <div>{tokenOfInterest.name}</div>
+      <div className="bsa-max-w-[100px] bsa-overflow-hidden bsa-text-ellipsis bsa-whitespace-nowrap">
+        {tokenOfInterest.name}
+      </div>
     </>
   );
-  if (!tokenOfInterest.address) {
+  if (!isTokenChosen) {
     TokenDisplay = (
       <>
         <Ban className="bsa-h-4 bsa-w-4 bsa-text-muted-foreground" />
@@ -40,12 +43,13 @@ export function TokenSelectionButton({
 
   return (
     <Button
-      variant={tokenOfInterest.address ? "ghost" : "secondary"}
+      variant={isTokenChosen ? "ghost" : "secondary"}
       size={"lg"}
       className={cn("space-x-2 bsa-min-w-fit", className)}
       onClick={() => {
         setCurrentBridgeStep({
           step: "TOKEN_SELECTION",
+          params: { chainDest },
         });
       }}
     >

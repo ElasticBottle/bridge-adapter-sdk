@@ -1,8 +1,12 @@
-import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
+import type {
+  ChainDestType,
+  ChainName,
+} from "@elasticbottle/core-bridge-adapter-sdk";
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 import type { useConnect } from "wagmi";
 import { goerli, mainnet, polygon, polygonMumbai } from "wagmi/chains";
+import type { BridgeStep, BridgeStepParams } from "../types/BridgeModal";
 
 const customTwMerge = extendTailwindMerge({
   prefix: "bsa-",
@@ -61,4 +65,13 @@ export function parseForErrorString(e: unknown) {
     }
   }
   return `Unknown error occurred. ${JSON.stringify(e)}`;
+}
+
+export function hasChainDest(
+  params: BridgeStepParams<BridgeStep>
+): params is { chainDest: ChainDestType } {
+  if (!params) {
+    return false;
+  }
+  return "chainDest" in params;
 }

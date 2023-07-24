@@ -1,31 +1,17 @@
 import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
 import { SupportedChainNames } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAccount, useConnect } from "wagmi";
-import { parseForErrorString } from "../../../lib/utils";
+import { hasChainDest, parseForErrorString } from "../../../lib/utils";
 import {
   setChain,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
-import type {
-  BridgeStep,
-  BridgeStepParams,
-  ChainDestType,
-  ChainSelectionType,
-} from "../../../types/BridgeModal";
+import type { ChainSelectionType } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 import { ChainIcon } from "../../ui/icons/ChainIcon";
 import { Separator } from "../../ui/separator";
-
-function hasChainDest(
-  params: BridgeStepParams<BridgeStep>
-): params is { chainDest: ChainDestType } {
-  if (!params) {
-    return false;
-  }
-  return "chainDest" in params;
-}
 
 export function SingleChainSelection() {
   const params = useBridgeModalStore.use.currentBridgeStepParams();
@@ -68,6 +54,13 @@ export function SingleChainSelection() {
     };
   };
 
+  useEffect(() => {
+    if ("autoConnectToChain" in params && params.autoConnectToChain) {
+      console.log("params.autoConnectToChain", params.autoConnectToChain);
+      onChooseChain(params.autoConnectToChain)();
+    }
+  }, []);
+
   return (
     <div className="bsa-flex bsa-flex-col bsa-space-y-3">
       {SupportedChainNames.map((chainName) => {
@@ -89,7 +82,9 @@ export function SingleChainSelection() {
           </React.Fragment>
         );
       })}
-      {error && <div className="bsa-bg-muted bsa-text-sm">{error}</div>}
+      {error && (
+        <div className="bsa-text-sm bsa-text-muted-foreground">{error}</div>
+      )}
     </div>
   );
 }

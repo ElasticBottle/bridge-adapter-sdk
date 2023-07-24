@@ -1,5 +1,6 @@
 import type { Bridges } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
+import type { ChainDestType } from "../../types/ChainDest";
 import type { Token, TokenWithAmount } from "../../types/Token";
 
 export abstract class AbstractBridgeAdapter {
@@ -14,6 +15,7 @@ export abstract class AbstractBridgeAdapter {
   abstract getSupportedChains(): Promise<ChainName[]>;
 
   abstract getSupportedTokens(
+    interestedTokenList: ChainDestType,
     chains?: Partial<ChainSourceAndTarget>
   ): Promise<Token[]>;
 

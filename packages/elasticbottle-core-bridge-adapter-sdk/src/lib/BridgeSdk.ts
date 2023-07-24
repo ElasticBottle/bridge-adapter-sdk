@@ -1,30 +1,32 @@
 import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
 import type { ChainName, ChainSourceAndTarget } from "../types/Chain";
+import type { ChainDestType } from "../types/ChainDest";
 import type { Token } from "../types/Token";
 import { getBridgeAdapters } from "../utils/getBridgeAdapters";
 import { getSourceAndTargetChain } from "../utils/getSourceAndTargetChain";
 import type { AbstractBridgeAdapter } from "./BridgeAdapter/AbstractBridgeAdapter";
+
+export type BridgeAdapterSdkArgs = Partial<ChainSourceAndTarget> & {
+  bridgeAdapterSetting?: BridgeAdapterSetting;
+};
 
 export class BridgeAdapterSdk {
   sourceChain: ChainName | undefined;
   targetChain: ChainName | undefined;
   bridgeAdapterSetting: BridgeAdapterSetting | undefined;
   bridgeAdapters: AbstractBridgeAdapter[] = [];
-  constructor({
-    sourceChain,
-    targetChain,
-    bridgeAdapterSetting,
-  }: Partial<ChainSourceAndTarget> & {
-    bridgeAdapterSetting?: BridgeAdapterSetting;
-  }) {
-    this.sourceChain = sourceChain;
-    this.targetChain = targetChain;
-    this.bridgeAdapterSetting = bridgeAdapterSetting;
-    this.bridgeAdapters = getBridgeAdapters({
-      sourceChain: this.sourceChain,
-      targetChain: this.targetChain,
-      bridgeAdapterSetting: this.bridgeAdapterSetting,
-    });
+  constructor(args?: BridgeAdapterSdkArgs) {
+    if (args) {
+      const { sourceChain, targetChain, bridgeAdapterSetting } = args;
+      this.sourceChain = sourceChain;
+      this.targetChain = targetChain;
+      this.bridgeAdapterSetting = bridgeAdapterSetting;
+      this.bridgeAdapters = getBridgeAdapters({
+        sourceChain: this.sourceChain,
+        targetChain: this.targetChain,
+        bridgeAdapterSetting: this.bridgeAdapterSetting,
+      });
+    }
   }
 
   setSourceChain(sourceChain: ChainName) {
@@ -66,6 +68,7 @@ export class BridgeAdapterSdk {
   }
 
   async getSupportedTokens(
+    interestedTokenList: ChainDestType,
     chains?: Partial<ChainSourceAndTarget>
   ): Promise<Token[]> {
     const { source, target } = getSourceAndTargetChain({
@@ -73,11 +76,14 @@ export class BridgeAdapterSdk {
       overrideTargetChain: chains?.targetChain,
       sdkSourceChain: this.sourceChain,
       sdkTargetChain: this.targetChain,
+      chainChecks: {
+        needEitherChain: true,
+      },
     });
 
     const tokenResponses = await Promise.allSettled(
       this.bridgeAdapters.map(async (bridgeAdapter) => {
-        return bridgeAdapter.getSupportedTokens({
+        return bridgeAdapter.getSupportedTokens(interestedTokenList, {
           sourceChain: source,
           targetChain: target,
         });
@@ -106,10 +112,7 @@ export class BridgeAdapterSdk {
       prev.set(curr.address, curr);
       return prev;
     }, new Map<string, Token>());
-    console.log(
-      "Array.from(deduplicatedTokens.values());",
-      Array.from(deduplicatedTokens.values())
-    );
+
     return Array.from(deduplicatedTokens.values());
   }
 

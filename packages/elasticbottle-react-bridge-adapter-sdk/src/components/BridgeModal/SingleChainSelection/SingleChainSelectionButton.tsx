@@ -1,10 +1,8 @@
+import { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { ChevronRight } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
-import type {
-  ChainDestType,
-  ChainSelectionType,
-} from "../../../types/BridgeModal";
+import type { ChainSelectionType } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 import { ChainIcon } from "../../ui/icons/ChainIcon";
 
