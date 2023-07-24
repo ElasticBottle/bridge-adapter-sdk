@@ -73,7 +73,9 @@ export function TokenSelection() {
           selectedAmountInBaseUnits: "0",
         },
         chainDest
-      );
+      ).catch((e) => {
+        console.error("ERROR: Something went wrong setting token", e);
+      });
     };
   };
 

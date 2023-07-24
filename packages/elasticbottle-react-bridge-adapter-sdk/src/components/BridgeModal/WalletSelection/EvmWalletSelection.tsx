@@ -1,5 +1,4 @@
 import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
-import { withErrorBoundary } from "react-error-boundary";
 import { useConnect, useDisconnect } from "wagmi";
 import { chainNameToChainId } from "../../../lib/utils";
 import { Button } from "../../ui/button";

@@ -4,9 +4,9 @@ import type {
   TokenWithAmount,
 } from "@elasticbottle/core-bridge-adapter-sdk";
 import { BridgeAdapterSdk } from "@elasticbottle/core-bridge-adapter-sdk";
-import { useWallet } from "@solana/wallet-adapter-react";
+import type { useWallet } from "@solana/wallet-adapter-react";
 import { parseUnits } from "viem";
-import { useConnect } from "wagmi";
+import type { useConnect } from "wagmi";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -254,6 +254,7 @@ export const setToken: BridgeModalActions["setToken"] = async (
       },
     });
   }
+  return Promise.resolve();
 };
 
 export const TOKEN_AMOUNT_ERROR_INDICATOR = "-1";
