@@ -23,8 +23,8 @@
     "react-dom": "^18.2.0",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
-    "viem": "^1.2.12",
-    "wagmi": "^1.3.8"
+    "viem": "^1.4.1",
+    "wagmi": "^1.3.9"
   },
   "devDependencies": {
     "@elasticbottle/bridge-adapter-sdk-tsconfig": "^0.0.0",

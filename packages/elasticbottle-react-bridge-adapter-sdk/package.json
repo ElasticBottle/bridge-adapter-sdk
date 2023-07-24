@@ -32,8 +32,11 @@
     "@types/react": "^18.2.13",
     "@types/react-dom": "^18.2.6",
     "autoprefixer": "^10.4.14",
+    "encoding": "^0.1.13",
     "eslint": "^8.29.0",
     "eslint-config-bridge-adapter-sdk": "^0.0.0",
+    "lokijs": "^1.5.12",
+    "pino-pretty": "^10.1.0",
     "postcss": "8.4.24",
     "prettier": "^2.8.0",
     "prettier-plugin-tailwindcss": "^0.3.0",
@@ -43,8 +46,8 @@
     "tailwindcss-animate": "^1.0.6",
     "tsup": "^7.0.0",
     "typescript": "^5.1.3",
-    "viem": "^1.2.12",
-    "wagmi": "^1.3.8"
+    "viem": "^1.4.1",
+    "wagmi": "^1.3.9"
   },
   "dependencies": {
     "@elasticbottle/core-bridge-adapter-sdk": "^0.0.0",
@@ -66,8 +69,8 @@
     "@tanstack/react-query": "^4.29.19",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "viem": "^1.2.12",
-    "wagmi": "^1.3.8"
+    "viem": "^1.4.1",
+    "wagmi": "^1.3.9"
   },
   "publishConfig": {
     "access": "public"
