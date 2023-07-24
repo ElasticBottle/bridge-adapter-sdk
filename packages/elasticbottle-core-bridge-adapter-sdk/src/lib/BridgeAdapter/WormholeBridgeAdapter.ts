@@ -1,4 +1,5 @@
 import { csv2json, parseValue } from "csv42";
+import { CHAIN_NAMES } from "../../constants/ChainNames";
 import type { Bridges } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
@@ -143,12 +144,16 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     let filteredToken = this.tokenList;
     if (source) {
       filteredToken = filteredToken.filter(
-        (token) => token.sourceChain.toLowerCase() === source.toLowerCase()
+        (token) =>
+          token.sourceChain.toLowerCase() === source.toLowerCase() &&
+          CHAIN_NAMES.includes(token.targetChain)
       );
     }
     if (target) {
       filteredToken = filteredToken.filter(
-        (token) => token.targetChain.toLowerCase() === target.toLowerCase()
+        (token) =>
+          token.targetChain.toLowerCase() === target.toLowerCase() &&
+          CHAIN_NAMES.includes(token.sourceChain)
       );
     }
 

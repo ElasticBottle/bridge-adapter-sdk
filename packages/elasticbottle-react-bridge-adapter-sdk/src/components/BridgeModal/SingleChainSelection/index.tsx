@@ -56,7 +56,6 @@ export function SingleChainSelection() {
 
   useEffect(() => {
     if ("autoConnectToChain" in params && params.autoConnectToChain) {
-      console.log("params.autoConnectToChain", params.autoConnectToChain);
       onChooseChain(params.autoConnectToChain)();
     }
   }, []);
