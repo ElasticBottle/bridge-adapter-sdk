@@ -178,9 +178,10 @@ export const setChain: BridgeModalActions["setChain"] = async ({
       !isEvmWalletConnected &&
       getEvmAvailableWallets(availableEvmWallets) === 1
     ) {
-      await connectEvmWallet({
+      const connection = await connectEvmWallet({
         connector: availableEvmWallets[0],
       });
+      connection.account;
       updateChain();
       return goBackOneStep();
     }
