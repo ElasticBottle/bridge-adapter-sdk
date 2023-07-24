@@ -1,6 +1,6 @@
-import { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
-import { Separator } from "@radix-ui/react-separator";
+import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useEffect, useState } from "react";
+import { Separator } from "src/components/ui/separator";
 import {
   TOKEN_AMOUNT_ERROR_INDICATOR,
   setTokenAmount,
@@ -79,10 +79,7 @@ export function TokenAndChainWidget({
             </div>
           )}
         </div>
-        <Separator
-          orientation="vertical"
-          className="bsa-h-5 bsa-w-[1px] bsa-bg-muted-foreground"
-        />
+        <Separator orientation="vertical" className="bsa-h-5" />
         <div className="bsa-min-w-max bsa-text-muted-foreground">0 balance</div>
       </div>
     </div>

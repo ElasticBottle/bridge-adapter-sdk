@@ -1,7 +1,7 @@
 import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
 import { SupportedChainNames } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { hasChainDest, parseForErrorString } from "../../../lib/utils";
 import {
@@ -32,33 +32,43 @@ export function SingleChainSelection() {
   }
   const { chainDest } = params;
 
-  const onChooseChain = (chainName: ChainName) => {
-    return () => {
-      setConnectingToChain(chainName);
-      setChain({
-        availableEvmWallets,
-        availableSolanaWallets,
-        chainDestination: chainDest,
-        connectEvmWallet,
-        isEvmWalletConnected,
-        isSolanaWalletConnected,
-        newChain: chainName,
-      })
-        .catch((e) => {
-          const parsedErrorString = parseForErrorString(e);
-          setError(parsedErrorString);
+  const onChooseChain = useCallback(
+    (chainName: ChainName) => {
+      return () => {
+        setConnectingToChain(chainName);
+        setChain({
+          availableEvmWallets,
+          availableSolanaWallets,
+          chainDestination: chainDest,
+          connectEvmWallet,
+          isEvmWalletConnected,
+          isSolanaWalletConnected,
+          newChain: chainName,
         })
-        .finally(() => {
-          setConnectingToChain(undefined);
-        });
-    };
-  };
+          .catch((e) => {
+            const parsedErrorString = parseForErrorString(e);
+            setError(parsedErrorString);
+          })
+          .finally(() => {
+            setConnectingToChain(undefined);
+          });
+      };
+    },
+    [
+      availableEvmWallets,
+      availableSolanaWallets,
+      chainDest,
+      connectEvmWallet,
+      isEvmWalletConnected,
+      isSolanaWalletConnected,
+    ]
+  );
 
   useEffect(() => {
     if ("autoConnectToChain" in params && params.autoConnectToChain) {
       onChooseChain(params.autoConnectToChain)();
     }
-  }, []);
+  }, [onChooseChain, params]);
 
   return (
     <div className="bsa-flex bsa-flex-col bsa-space-y-3">
