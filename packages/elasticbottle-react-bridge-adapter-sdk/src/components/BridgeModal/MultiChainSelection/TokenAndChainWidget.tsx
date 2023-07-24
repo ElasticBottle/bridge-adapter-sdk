@@ -1,8 +1,12 @@
+import { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { Separator } from "@radix-ui/react-separator";
-import type {
-  ChainDestType,
-  ChainSelectionType,
-} from "../../../types/BridgeModal";
+import { useEffect, useState } from "react";
+import {
+  TOKEN_AMOUNT_ERROR_INDICATOR,
+  setTokenAmount,
+  useBridgeModalStore,
+} from "../../../providers/BridgeModalContext";
+import type { ChainSelectionType } from "../../../types/BridgeModal";
 import { Input } from "../../ui/input";
 import { ChainSelectButton } from "../SingleChainSelection/SingleChainSelectionButton";
 import { TokenSelectionButton } from "../TokenSelection/TokenSelectionButton";
@@ -14,6 +18,31 @@ export function TokenAndChainWidget({
   chainDest: ChainDestType;
   chainName: ChainSelectionType;
 }) {
+  const { sourceToken, targetToken } = useBridgeModalStore.use.token();
+  const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState("");
+  const tokenOfInterest = chainDest === "source" ? sourceToken : targetToken;
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    setError("");
+    try {
+      setTokenAmount(value, chainDest);
+    } catch (e) {
+      setError("Please enter a valid number");
+    }
+  };
+
+  useEffect(() => {
+    if (
+      tokenOfInterest.selectedAmountFormatted !== TOKEN_AMOUNT_ERROR_INDICATOR
+    ) {
+      setInputValue(tokenOfInterest.selectedAmountFormatted);
+      setError("");
+    }
+  }, [tokenOfInterest.selectedAmountFormatted]);
+
   if (chainName === "Select a chain") {
     return <ChainSelectButton chainDest={chainDest} chainName={chainName} />;
   }
@@ -32,10 +61,24 @@ export function TokenAndChainWidget({
         />
       </div>
       <div className="bsa-flex bsa-items-center bsa-justify-between bsa-space-x-3 bsa-px-2">
-        <Input
-          placeholder="0.00"
-          className="bsa-border-none bsa-text-xl focus-visible:bsa-ring-0"
-        />
+        <div>
+          <Input
+            placeholder="0.00"
+            className="bsa-border-none bsa-text-xl focus-visible:bsa-ring-0"
+            value={
+              tokenOfInterest.selectedAmountFormatted ===
+              TOKEN_AMOUNT_ERROR_INDICATOR
+                ? inputValue
+                : tokenOfInterest.selectedAmountFormatted
+            }
+            onChange={onInputChange}
+          />
+          {error && (
+            <div className="bsa-text-xs bsa-text-destructive-foreground">
+              {error}
+            </div>
+          )}
+        </div>
         <Separator
           orientation="vertical"
           className="bsa-h-5 bsa-w-[1px] bsa-bg-muted-foreground"

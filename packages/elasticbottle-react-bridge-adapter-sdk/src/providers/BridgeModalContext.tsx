@@ -5,6 +5,7 @@ import type {
 } from "@elasticbottle/core-bridge-adapter-sdk";
 import { BridgeAdapterSdk } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { parseUnits } from "viem";
 import { useConnect } from "wagmi";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
@@ -46,6 +47,7 @@ type BridgeModalActions = {
   ) => void;
   setChain: (args: SetChain) => Promise<void>;
   setToken: (token: TokenWithAmount, chainDest: ChainDestType) => Promise<void>;
+  setTokenAmount: (amount: string, chainDest: ChainDestType) => void;
   goBackOneStep: () => void;
 };
 
@@ -250,5 +252,47 @@ export const setToken: BridgeModalActions["setToken"] = async (
           chainDest === "source" ? token.targetChain : token.sourceChain,
       },
     });
+  }
+};
+
+export const TOKEN_AMOUNT_ERROR_INDICATOR = "-1";
+export const setTokenAmount: BridgeModalActions["setTokenAmount"] = (
+  amount,
+  chainDest
+) => {
+  const tokenOfInterest =
+    chainDest === "source" ? "sourceToken" : "targetToken";
+  const otherToken = chainDest === "source" ? "targetToken" : "sourceToken";
+  const tokens = useBridgeModalStore.getState().token;
+
+  let amountToTransfer = amount;
+  let amountToTransferInBaseUnits: string;
+  let error = undefined;
+  try {
+    amountToTransferInBaseUnits = parseUnits(
+      amount,
+      tokens[tokenOfInterest].decimals
+    ).toString();
+  } catch (e) {
+    amountToTransferInBaseUnits = "0";
+    amountToTransfer = TOKEN_AMOUNT_ERROR_INDICATOR;
+    error = e;
+  }
+  useBridgeModalStore.setState((state) => {
+    state.token[tokenOfInterest].selectedAmountFormatted = amountToTransfer;
+    state.token[tokenOfInterest].selectedAmountInBaseUnits =
+      amountToTransferInBaseUnits;
+
+    if (
+      state.token[tokenOfInterest].isBridgeToken &&
+      state.token[tokenOfInterest].name === state.token[otherToken].name
+    ) {
+      state.token[otherToken].selectedAmountFormatted = amountToTransfer;
+      state.token[otherToken].selectedAmountInBaseUnits =
+        amountToTransferInBaseUnits;
+    }
+  });
+  if (error) {
+    throw error;
   }
 };

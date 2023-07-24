@@ -69,7 +69,7 @@ export function TokenSelection() {
       setToken(
         {
           ...token,
-          selectedAmountFormatted: "0",
+          selectedAmountFormatted: "",
           selectedAmountInBaseUnits: "0",
         },
         chainDest

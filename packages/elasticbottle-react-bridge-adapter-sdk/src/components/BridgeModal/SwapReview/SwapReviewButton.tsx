@@ -1,4 +1,5 @@
 import {
+  TOKEN_AMOUNT_ERROR_INDICATOR,
   setCurrentBridgeStep,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
@@ -12,7 +13,11 @@ export function SwapReviewButton() {
     sourceChain !== "Select a chain" &&
     targetChain !== "Select a chain" &&
     !!sourceToken.address &&
-    !!targetToken.address;
+    !!targetToken.address &&
+    sourceToken.selectedAmountFormatted !== TOKEN_AMOUNT_ERROR_INDICATOR &&
+    sourceToken.selectedAmountFormatted !== "" &&
+    targetToken.selectedAmountFormatted !== TOKEN_AMOUNT_ERROR_INDICATOR &&
+    targetToken.selectedAmountFormatted !== "";
   return (
     <Button
       size={"lg"}
