@@ -1,6 +1,5 @@
 import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useEffect, useState } from "react";
-import { Separator } from "src/components/ui/separator";
 import {
   TOKEN_AMOUNT_ERROR_INDICATOR,
   setTokenAmount,
@@ -8,6 +7,7 @@ import {
 } from "../../../providers/BridgeModalContext";
 import type { ChainSelectionType } from "../../../types/BridgeModal";
 import { Input } from "../../ui/input";
+import { Separator } from "../../ui/separator";
 import { ChainSelectButton } from "../SingleChainSelection/SingleChainSelectionButton";
 import { TokenSelectionButton } from "../TokenSelection/TokenSelectionButton";
 
