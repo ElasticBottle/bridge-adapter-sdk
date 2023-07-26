@@ -36,6 +36,8 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
     }
   }, [customization?.theme]);
 
+  console.log(currentBridgeStep);
+
   let body: JSX.Element;
   switch (currentBridgeStep) {
     case "MULTI_CHAIN_SELECTION": {

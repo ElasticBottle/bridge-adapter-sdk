@@ -1,7 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { withErrorBoundary } from "react-error-boundary";
 import { Button } from "../../ui/button";
 import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
+import { WalletAdapterIcon } from "../WalletAdapterIcon";
+import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
 
 function SolanaWalletConnectionListBase() {
   const {
@@ -31,7 +33,7 @@ function SolanaWalletConnectionListBase() {
       label = "Select Wallet";
       break;
   }
-  console.log("buttonState", buttonState);
+  console.log("buttonState", buttonState, walletName);
   const handleClick = useCallback(() => {
     console.log("buttonState", buttonState);
     switch (buttonState) {
@@ -46,30 +48,65 @@ function SolanaWalletConnectionListBase() {
         return onSelectWallet;
     }
   }, [buttonState, onDisconnect, onConnect, onSelectWallet]);
+
+  useEffect(() => {
+    switch (buttonState) {
+      case "connected":
+        setCurrentBridgeStep({
+          step: "MULTI_CHAIN_SELECTION",
+        });
+        break;
+      case "connecting":
+      case "disconnecting":
+        break;
+      case "has-wallet":
+        onConnect && onConnect();
+        break;
+    }
+  }, [buttonState, onConnect]);
+
   return (
     <>
-      <Button
-        disabled={
-          buttonState === "connecting" || buttonState === "disconnecting"
-        }
-        onClick={onDisconnect}
-      >
-        {label}
-      </Button>
       {wallets.length ? (
-        <>
+        <ul>
           {wallets.map((wallet) => (
-            <button
-              key={wallet.adapter.name}
-              onClick={() => {
-                onSelectWallet(wallet.adapter.name);
-              }}
-            >
-              {wallet.adapter.name}
-            </button>
+            <li key={wallet.adapter.name} className="bsa-mb-2">
+              <Button
+                onClick={() => {
+                  onSelectWallet(wallet.adapter.name);
+                }}
+                variant="outline"
+                className="rounded-xl bsa-flex bsa-w-full bsa-items-center bsa-justify-between bsa-py-6"
+              >
+                {wallet.adapter.name}
+                <WalletAdapterIcon
+                  wallet={wallet}
+                  className="bsa-max-h-[2.5rem] bsa-px-2 bsa-py-[0.3125rem]"
+                />
+              </Button>
+            </li>
           ))}
-        </>
-      ) : null}
+          <li>
+            <Button
+              disabled={
+                buttonState === "connecting" || buttonState === "disconnecting"
+              }
+              onClick={handleClick}
+            >
+              {label}
+            </Button>
+          </li>
+        </ul>
+      ) : (
+        <Button
+          disabled={
+            buttonState === "connecting" || buttonState === "disconnecting"
+          }
+          onClick={onDisconnect}
+        >
+          {label}
+        </Button>
+      )}
     </>
   );
 }

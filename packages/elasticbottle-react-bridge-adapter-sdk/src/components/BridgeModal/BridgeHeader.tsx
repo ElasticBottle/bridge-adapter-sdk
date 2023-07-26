@@ -8,9 +8,11 @@ import {
 import { BridgeStepToTitle } from "../../types/BridgeModal";
 import { Button } from "../ui/button";
 import { DialogHeader, DialogTitle } from "../ui/dialog";
+import { useSolanaWalletMultiButton } from "./WalletSelection/useSolanaWalletMultiButton";
 
 export function BridgeHeader({ title }: { title?: string }) {
   const currentBridgeStep = useBridgeModalStore.use.currentBridgeStep();
+  const { buttonState, onDisconnect } = useSolanaWalletMultiButton();
 
   let HeaderBody = (
     <DialogTitle
@@ -21,6 +23,15 @@ export function BridgeHeader({ title }: { title?: string }) {
       })}
     >
       <div className="bsa-pointer-events-none">{title}</div>
+      {buttonState === "connected" && (
+        <button
+          onClick={() => {
+            onDisconnect && onDisconnect();
+          }}
+        >
+          Disconnect
+        </button>
+      )}
       <Button
         size={"icon"}
         variant={"secondary"}

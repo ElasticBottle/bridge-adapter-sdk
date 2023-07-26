@@ -7,9 +7,16 @@ import {
   SolanaWalletProvider,
 } from "@elasticbottle/react-bridge-adapter-sdk";
 
+import {
+  SolflareWalletAdapter,
+  PhantomWalletAdapter,
+  CoinbaseWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useMemo } from "react";
 
 export default function Pricing() {
   const products = [
@@ -33,8 +40,19 @@ export default function Pricing() {
     },
   ];
 
+  const adapters = useMemo(
+    () =>
+      typeof window === "undefined"
+        ? [] // No wallet adapters when server-side rendering.
+        : [
+            new SolflareWalletAdapter(),
+            new PhantomWalletAdapter(),
+            new CoinbaseWalletAdapter(),
+          ],
+    []
+  );
+
   return (
-    
     <section className="bg-black">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-24 lg:px-8">
         <div className="sm:align-center sm:flex sm:flex-col">
@@ -74,7 +92,10 @@ export default function Pricing() {
                         /month
                       </span>
                     </p>
-                    <SolanaWalletProvider>
+                    <SolanaWalletProvider
+                      wallets={adapters}
+                      autoConnect={false}
+                    >
                       <EvmWalletProvider settings={{}}>
                         <BridgeModalProvider>
                           <BridgeModal
