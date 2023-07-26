@@ -7,8 +7,7 @@ import {
   setCurrentBridgeStep,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
-import type { BridgeStep, BridgeStepParams } from "../../../types/BridgeModal";
-import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
+import type { BridgeStepParams } from "../../../types/BridgeModal";
 
 function SolanaWalletConnectionListBase() {
   const {
