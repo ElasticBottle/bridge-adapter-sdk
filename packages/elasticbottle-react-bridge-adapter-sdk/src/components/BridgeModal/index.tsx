@@ -1,5 +1,4 @@
 "use client";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import type { FallbackProps } from "react-error-boundary";
@@ -38,7 +37,7 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
 
   console.log(currentBridgeStep);
 
-  let body: JSX.Element;
+  let body: React.ReactNode;
   switch (currentBridgeStep) {
     case "MULTI_CHAIN_SELECTION": {
       body = <MultiChainSelection />;

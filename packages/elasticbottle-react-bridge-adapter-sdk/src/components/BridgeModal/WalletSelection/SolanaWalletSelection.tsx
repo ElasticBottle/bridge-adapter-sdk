@@ -3,7 +3,12 @@ import { withErrorBoundary } from "react-error-boundary";
 import { Button } from "../../ui/button";
 import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
 import { WalletAdapterIcon } from "../WalletAdapterIcon";
-import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
+import {
+  setCurrentBridgeStep,
+  useBridgeModalStore,
+} from "../../../providers/BridgeModalContext";
+import type { BridgeStep, BridgeStepParams } from "../../../types/BridgeModal";
+import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 
 function SolanaWalletConnectionListBase() {
   const {
@@ -14,6 +19,8 @@ function SolanaWalletConnectionListBase() {
     wallets,
     walletName,
   } = useSolanaWalletMultiButton();
+  const { chain, chainDest } =
+    useBridgeModalStore.use.currentBridgeStepParams() as BridgeStepParams<"WALLET_SELECTION">;
   let label;
   console.log("walletName", walletName);
   switch (buttonState) {
@@ -33,7 +40,7 @@ function SolanaWalletConnectionListBase() {
       label = "Select Wallet";
       break;
   }
-  console.log("buttonState", buttonState, walletName);
+
   const handleClick = useCallback(() => {
     console.log("buttonState", buttonState);
     switch (buttonState) {
@@ -52,9 +59,16 @@ function SolanaWalletConnectionListBase() {
   useEffect(() => {
     switch (buttonState) {
       case "connected":
-        setCurrentBridgeStep({
-          step: "MULTI_CHAIN_SELECTION",
-        });
+        {
+          const chainParam =
+            chainDest === "source" ? "sourceChain" : "targetChain";
+          useBridgeModalStore.setState((state) => {
+            state.chain[chainParam] = chain;
+          });
+          setCurrentBridgeStep({
+            step: "MULTI_CHAIN_SELECTION",
+          });
+        }
         break;
       case "connecting":
       case "disconnecting":
@@ -63,7 +77,7 @@ function SolanaWalletConnectionListBase() {
         onConnect && onConnect();
         break;
     }
-  }, [buttonState, onConnect]);
+  }, [buttonState, chain, chainDest, onConnect]);
 
   return (
     <>
