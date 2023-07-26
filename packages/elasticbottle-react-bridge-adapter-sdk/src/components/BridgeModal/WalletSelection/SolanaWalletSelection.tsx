@@ -89,7 +89,7 @@ function SolanaWalletConnectionListBase() {
                   onSelectWallet(wallet.adapter.name);
                 }}
                 variant="outline"
-                className="rounded-xl bsa-flex bsa-w-full bsa-items-center bsa-justify-between bsa-py-6"
+                className="bsa-flex bsa-w-full bsa-items-center bsa-justify-between bsa-rounded-xl bsa-py-6"
               >
                 {wallet.adapter.name}
                 <WalletAdapterIcon
