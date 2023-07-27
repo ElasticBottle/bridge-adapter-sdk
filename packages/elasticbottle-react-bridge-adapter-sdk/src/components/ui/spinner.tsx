@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 const spinnerVariants = cva("p-1 bsa-animate-spin", {
   variants: {
     variant: {
-      default: "bsa-text-primary-foreground ",
+      default: "bsa-bg-primary-foreground ",
       destructive: "bsa-bg-destructive bsa-text-destructive-foreground ",
       secondary:
         "bsa-bg-secondary bsa-text-secondary-foreground hover:bsa-bg-secondary/80",

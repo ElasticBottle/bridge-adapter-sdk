@@ -71,7 +71,7 @@ export function SingleChainSelection() {
   }, [onChooseChain, params]);
 
   return (
-    <div className="bsa-flex bsa-flex-col bsa-space-y-3">
+    <div className="bsa-flex bsa-max-h-96 bsa-flex-col bsa-space-y-3 bsa-overflow-auto">
       {SupportedChainNames.map((chainName) => {
         return (
           <React.Fragment key={chainName}>

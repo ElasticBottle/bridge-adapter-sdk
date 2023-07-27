@@ -4,7 +4,6 @@ export const DEFAULT_TOKEN_WITH_AMOUNT: TokenWithAmount = {
   address: "",
   selectedAmountFormatted: "",
   selectedAmountInBaseUnits: "",
-  isBridgeToken: false,
   chain: "Ethereum",
   decimals: 18,
   logoUri: "",

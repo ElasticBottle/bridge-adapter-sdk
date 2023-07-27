@@ -5,7 +5,14 @@ import type {
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 import type { useConnect } from "wagmi";
-import { goerli, mainnet, polygon, polygonMumbai } from "wagmi/chains";
+import {
+  arbitrum,
+  avalanche,
+  bsc,
+  mainnet,
+  optimism,
+  polygon,
+} from "wagmi/chains";
 import type { BridgeStep, BridgeStepParams } from "../types/BridgeModal";
 
 const customTwMerge = extendTailwindMerge({
@@ -21,11 +28,17 @@ export function chainNameToChainId(chainName: ChainName) {
     case "Ethereum": {
       return mainnet.id;
     }
-    case "Goerli": {
-      return goerli.id;
+    case "Arbitrum": {
+      return arbitrum.id;
     }
-    case "Mumbai": {
-      return polygonMumbai.id;
+    case "Optimism": {
+      return optimism.id;
+    }
+    case "Avalanche": {
+      return avalanche.id;
+    }
+    case "BSC": {
+      return bsc.id;
     }
     case "Polygon": {
       return polygon.id;
@@ -59,7 +72,8 @@ export function parseForErrorString(e: unknown) {
       return "";
     } else if (
       e.message.includes("already pending ") ||
-      e.message.includes("already handling a request ")
+      e.message.includes("already handling a request ") ||
+      e.message.includes("Already processing eth_requestAccounts")
     ) {
       return "Please check your wallet for confirmation";
     }

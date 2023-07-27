@@ -1,4 +1,12 @@
-import { Ethereum, Polygon, Solana } from "@thirdweb-dev/chain-icons";
+import {
+  Arbitrum,
+  Avalanche,
+  BinanceUsd,
+  Ethereum,
+  Optimism,
+  Polygon,
+  Solana,
+} from "@thirdweb-dev/chain-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Link2Off } from "lucide-react";
 import type { SVGProps } from "react";
@@ -29,7 +37,6 @@ export interface ChainIconProps
 const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
   ({ chainName, className, size, ...props }, ref) => {
     switch (chainName) {
-      case "Goerli":
       case "Ethereum":
         return (
           <Ethereum
@@ -46,10 +53,41 @@ const ChainIcon = React.forwardRef<SVGSVGElement, ChainIconProps>(
             {...props}
           />
         );
-      case "Mumbai":
       case "Polygon":
         return (
           <Polygon
+            className={cn(iconVariants({ size, className }))}
+            ref={ref}
+            {...props}
+          />
+        );
+      case "Arbitrum":
+        return (
+          <Arbitrum
+            className={cn(iconVariants({ size, className }))}
+            ref={ref}
+            {...props}
+          />
+        );
+      case "Optimism":
+        return (
+          <Optimism
+            className={cn(iconVariants({ size, className }))}
+            ref={ref}
+            {...props}
+          />
+        );
+      case "Avalanche":
+        return (
+          <Avalanche
+            className={cn(iconVariants({ size, className }))}
+            ref={ref}
+            {...props}
+          />
+        );
+      case "BSC":
+        return (
+          <BinanceUsd
             className={cn(iconVariants({ size, className }))}
             ref={ref}
             {...props}
