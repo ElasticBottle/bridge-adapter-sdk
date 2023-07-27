@@ -1,6 +1,8 @@
-import type { ChainName } from "@elasticbottle/core-bridge-adapter-sdk";
+import {
+  chainNameToChainId,
+  type ChainName,
+} from "@elasticbottle/core-bridge-adapter-sdk";
 import { useConnect, useDisconnect } from "wagmi";
-import { chainNameToChainId } from "../../../lib/utils";
 import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
 import { EvmWalletProfile } from "./WalletProfile";

@@ -36,7 +36,8 @@
   "dependencies": {
     "@certusone/wormhole-sdk": "^0.9.22",
     "@solana/spl-token": "^0.3.8",
-    "csv42": "^4.0.0"
+    "csv42": "^4.0.0",
+    "valibot": "^0.3.0"
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.78.0",

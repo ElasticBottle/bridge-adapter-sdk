@@ -1,18 +1,7 @@
-import type {
-  ChainDestType,
-  ChainName,
-} from "@elasticbottle/core-bridge-adapter-sdk";
+import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 import type { useConnect } from "wagmi";
-import {
-  arbitrum,
-  avalanche,
-  bsc,
-  mainnet,
-  optimism,
-  polygon,
-} from "wagmi/chains";
 import type { BridgeStep, BridgeStepParams } from "../types/BridgeModal";
 
 const customTwMerge = extendTailwindMerge({
@@ -21,35 +10,6 @@ const customTwMerge = extendTailwindMerge({
 
 export function cn(...inputs: ClassValue[]) {
   return customTwMerge(clsx(inputs));
-}
-
-export function chainNameToChainId(chainName: ChainName) {
-  switch (chainName) {
-    case "Ethereum": {
-      return mainnet.id;
-    }
-    case "Arbitrum": {
-      return arbitrum.id;
-    }
-    case "Optimism": {
-      return optimism.id;
-    }
-    case "Avalanche": {
-      return avalanche.id;
-    }
-    case "BSC": {
-      return bsc.id;
-    }
-    case "Polygon": {
-      return polygon.id;
-    }
-    case "Solana": {
-      return -1;
-    }
-    default: {
-      throw new Error("Invalid chain name");
-    }
-  }
 }
 
 export function getEvmAvailableWallets(

@@ -1,4 +1,16 @@
-import type { Hash, PublicClient } from "viem";
+import type { PublicClient, WalletClient } from "viem";
+import { createPublicClient, custom, type Hash } from "viem";
+
+export function getPublicClientFromWallet(
+  walletClient: WalletClient
+): PublicClient {
+  const { chain, transport } = walletClient;
+
+  return createPublicClient({
+    chain,
+    transport: custom(transport),
+  });
+}
 
 export async function getBalanceForToken(
   tokenAddress: string,
@@ -59,4 +71,11 @@ export async function getAllowanceForToken(
     args: [userAddress as Hash, spenderAddress as Hash],
   });
   return data;
+}
+
+export function isNativeEvmCoin(address: string) {
+  return (
+    address === "0x0000000000000000000000000000000000000000" ||
+    address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  );
 }
