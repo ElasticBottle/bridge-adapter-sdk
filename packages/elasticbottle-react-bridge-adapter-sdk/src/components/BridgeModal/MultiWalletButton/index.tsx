@@ -9,7 +9,7 @@ import { useSolanaWalletMultiButton } from "../WalletSelection/useSolanaWalletMu
 export function MultiWalletButton() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
   const { buttonState, onDisconnect } = useSolanaWalletMultiButton();
-  const { address, connector, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
   const disconnectSolana =
