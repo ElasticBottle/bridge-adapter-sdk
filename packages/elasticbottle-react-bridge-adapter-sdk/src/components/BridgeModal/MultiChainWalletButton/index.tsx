@@ -6,7 +6,7 @@ import {
 } from "../../../providers/BridgeModalContext";
 import { useSolanaWalletMultiButton } from "../WalletSelection/useSolanaWalletMultiButton";
 
-export function MultiWalletButton() {
+export function MultiChainWalletButton() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
   const { buttonState, onDisconnect } = useSolanaWalletMultiButton();
   const { isConnected } = useAccount();
@@ -17,6 +17,7 @@ export function MultiWalletButton() {
     buttonState === "connected";
   const disconnectEvm =
     (sourceChain === "Ethereum" || targetChain === "Ethereum") && isConnected;
+  // TODO: add dropdown list & disconnect individually / switch to Account Profile screen
   return (
     <>
       {disconnectSolana && (
