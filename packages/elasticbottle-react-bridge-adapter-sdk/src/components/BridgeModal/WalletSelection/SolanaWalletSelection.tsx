@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { withErrorBoundary } from "react-error-boundary";
 import { Button } from "../../ui/button";
 import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
-import { WalletAdapterIcon } from "../WalletAdapterIcon";
+import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
 import {
   setCurrentBridgeStep,
   useBridgeModalStore,
@@ -10,18 +10,11 @@ import {
 import type { BridgeStepParams } from "../../../types/BridgeModal";
 
 function SolanaWalletConnectionListBase() {
-  const {
-    buttonState,
-    onConnect,
-    onDisconnect,
-    onSelectWallet,
-    wallets,
-    walletName,
-  } = useSolanaWalletMultiButton();
+  const { buttonState, onConnect, onDisconnect, onSelectWallet, wallets } =
+    useSolanaWalletMultiButton();
   const { chain, chainDest } =
     useBridgeModalStore.use.currentBridgeStepParams() as BridgeStepParams<"WALLET_SELECTION">;
   let label;
-  console.log("walletName", walletName);
   switch (buttonState) {
     case "connected":
       label = "Disconnect";

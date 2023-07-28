@@ -5,7 +5,7 @@ import {
 import { useConnect, useDisconnect } from "wagmi";
 import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
-import { EvmWalletProfile } from "./WalletProfile";
+import { EvmWalletProfile } from "./EvmWalletProfile";
 
 export function EvmWalletConnectionList({
   chain,
