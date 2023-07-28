@@ -1,7 +1,8 @@
 import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
+import type { BridgeStatus, SolanaOrEvmAccount } from "../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../types/Chain";
 import type { ChainDestType } from "../types/ChainDest";
-import type { Token } from "../types/Token";
+import type { Token, TokenWithAmount } from "../types/Token";
 import { getBridgeAdapters } from "../utils/getBridgeAdapters";
 import { getSourceAndTargetChain } from "../utils/getSourceAndTargetChain";
 import type { AbstractBridgeAdapter } from "./BridgeAdapter/AbstractBridgeAdapter";
@@ -116,18 +117,15 @@ export class BridgeAdapterSdk {
     return Array.from(deduplicatedTokens.values());
   }
 
+  async getRouteInformation(sourceToken: Token, targetToken: Token) {}
+
   async bridge(args: {
-    tokenToBridge: { tokenInfo: Token; amountInBaseUnits: string };
-    sourceAccount: string;
-    sourceAccountSubmitTransaction: (transaction: string) => Promise<void>;
-    targetAccount: string;
-    targetAccountSubmitTransaction: (transaction: string) => Promise<void>;
-    onStateUpdate: (args: {
-      progress: number;
-      state: string;
-    }) => void | Promise<void>;
+    tokenToBridge: { tokenInfo: TokenWithAmount };
+    sourceAccount: SolanaOrEvmAccount;
+    targetAccount: SolanaOrEvmAccount;
+    onStatusUpdate: (args: BridgeStatus[]) => void;
     onError: (error: Error) => void | Promise<void>;
   }) {
-    return Promise.resolve();
+    return Promise.resolve(args);
   }
 }

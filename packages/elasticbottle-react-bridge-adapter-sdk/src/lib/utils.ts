@@ -1,11 +1,7 @@
-import type {
-  ChainDestType,
-  ChainName,
-} from "@elasticbottle/core-bridge-adapter-sdk";
+import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 import type { useConnect } from "wagmi";
-import { goerli, mainnet, polygon, polygonMumbai } from "wagmi/chains";
 import type { BridgeStep, BridgeStepParams } from "../types/BridgeModal";
 
 const customTwMerge = extendTailwindMerge({
@@ -14,29 +10,6 @@ const customTwMerge = extendTailwindMerge({
 
 export function cn(...inputs: ClassValue[]) {
   return customTwMerge(clsx(inputs));
-}
-
-export function chainNameToChainId(chainName: ChainName) {
-  switch (chainName) {
-    case "Ethereum": {
-      return mainnet.id;
-    }
-    case "Goerli": {
-      return goerli.id;
-    }
-    case "Mumbai": {
-      return polygonMumbai.id;
-    }
-    case "Polygon": {
-      return polygon.id;
-    }
-    case "Solana": {
-      return -1;
-    }
-    default: {
-      throw new Error("Invalid chain name");
-    }
-  }
 }
 
 export function getEvmAvailableWallets(
@@ -59,7 +32,8 @@ export function parseForErrorString(e: unknown) {
       return "";
     } else if (
       e.message.includes("already pending ") ||
-      e.message.includes("already handling a request ")
+      e.message.includes("already handling a request ") ||
+      e.message.includes("Already processing eth_requestAccounts")
     ) {
       return "Please check your wallet for confirmation";
     }

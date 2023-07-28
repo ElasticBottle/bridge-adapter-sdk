@@ -1,21 +1,15 @@
+import type { Bridges } from "./Bridges";
 import type { ChainName } from "./Chain";
 
-export type Token =
-  | {
-      logoUri: string;
-      name: string;
-      symbol: string;
-      isBridgeToken: false;
-      address: string;
-      chain: ChainName;
-      decimals: number;
-    }
-  | ({
-      isBridgeToken: true;
-      address: string;
-      chain: ChainName;
-      decimals: number;
-    } & BridgeToken);
+export type Token = {
+  logoUri: string;
+  name: string;
+  symbol: string;
+  address: string;
+  chain: ChainName;
+  decimals: number;
+  bridgeName: Bridges;
+};
 
 export type BridgeToken = {
   logoUri: string;

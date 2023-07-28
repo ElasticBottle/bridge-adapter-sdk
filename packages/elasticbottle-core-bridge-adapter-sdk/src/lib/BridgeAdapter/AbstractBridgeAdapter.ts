@@ -1,4 +1,8 @@
-import type { Bridges } from "../../types/Bridges";
+import type {
+  BridgeStatus,
+  Bridges,
+  SolanaOrEvmAccount,
+} from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
 import type { Token, TokenWithAmount } from "../../types/Token";
@@ -19,21 +23,22 @@ export abstract class AbstractBridgeAdapter {
     chains?: Partial<ChainSourceAndTarget>
   ): Promise<Token[]>;
 
-  abstract getFeeDetails(
-    chains?: Partial<ChainSourceAndTarget>
-  ): Promise<
-    Omit<TokenWithAmount, "userAmountInBaseUnits" | "userAmountFormatted">
-  >;
-
-  abstract lock(
-    args: {
-      token: Token;
-      amountToSwapInBaseUnits: bigint;
-      sourceAccount: string;
-      targetAccount: string;
-      // onProgressUpdate: (progress: number, detail: BridgeDetails) => void; //optional
-    } & Partial<ChainSourceAndTarget>
+  abstract getRouteDetails(
+    sourceToken: Token,
+    targetToken: Token
   ): Promise<void>;
 
-  abstract receive(targetAccount: string): Promise<void>;
+  abstract bridge({
+    onStatusUpdate,
+    sourceAccount,
+    targetAccount,
+    sourceToken,
+    targetToken,
+  }: {
+    sourceToken: TokenWithAmount;
+    targetToken: TokenWithAmount;
+    sourceAccount: SolanaOrEvmAccount;
+    targetAccount: SolanaOrEvmAccount;
+    onStatusUpdate: (args: BridgeStatus[]) => void;
+  }): Promise<void>;
 }

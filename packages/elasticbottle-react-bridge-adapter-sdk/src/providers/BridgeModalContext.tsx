@@ -126,20 +126,8 @@ export const goBackOneStep: BridgeModalActions["goBackOneStep"] = () => {
 export const clearChain = (chainDest: ChainDestType) => {
   useBridgeModalStore.setState((state) => {
     if (chainDest === "source") {
-      if (state.token.sourceToken.chain === state.chain.sourceChain) {
-        return;
-      }
-      if (state.token.sourceToken.isBridgeToken) {
-        state.token.targetToken = DEFAULT_TOKEN_WITH_AMOUNT;
-      }
       state.token.sourceToken = DEFAULT_TOKEN_WITH_AMOUNT;
     } else if (chainDest === "target") {
-      if (state.token.targetToken.chain === state.chain.targetChain) {
-        return;
-      }
-      if (state.token.targetToken.isBridgeToken) {
-        state.token.targetToken = DEFAULT_TOKEN_WITH_AMOUNT;
-      }
       state.token.targetToken = DEFAULT_TOKEN_WITH_AMOUNT;
     }
   });
@@ -227,40 +215,14 @@ export const setToken: BridgeModalActions["setToken"] = async (
   useBridgeModalStore.setState((state) => {
     if (chainDest === "source") {
       state.token.sourceToken = token;
-      if (token.isBridgeToken) {
-        state.token.targetToken = {
-          ...token,
-          address: token.targetAddress,
-          chain: token.targetChain,
-          decimals: token.targetDecimals,
-        };
-      }
     } else if (chainDest === "target") {
       state.token.targetToken = token;
-
-      if (token.isBridgeToken) {
-        state.token.sourceToken = {
-          ...token,
-          address: token.sourceAddress,
-          chain: token.sourceChain,
-          decimals: token.sourceDecimals,
-        };
-      }
     }
   });
   setCurrentBridgeStep({
     step: "MULTI_CHAIN_SELECTION",
   });
-  if (token.isBridgeToken) {
-    setCurrentBridgeStep({
-      step: "SINGLE_CHAIN_SELECTION",
-      params: {
-        chainDest: chainDest === "source" ? "target" : "source",
-        autoConnectToChain:
-          chainDest === "source" ? token.targetChain : token.sourceChain,
-      },
-    });
-  }
+
   return Promise.resolve();
 };
 
@@ -292,10 +254,7 @@ export const setTokenAmount: BridgeModalActions["setTokenAmount"] = (
     state.token[tokenOfInterest].selectedAmountInBaseUnits =
       amountToTransferInBaseUnits;
 
-    if (
-      state.token[tokenOfInterest].isBridgeToken &&
-      state.token[tokenOfInterest].name === state.token[otherToken].name
-    ) {
+    if (state.token[tokenOfInterest].name === state.token[otherToken].name) {
       state.token[otherToken].selectedAmountFormatted = amountToTransfer;
       state.token[otherToken].selectedAmountInBaseUnits =
         amountToTransferInBaseUnits;
