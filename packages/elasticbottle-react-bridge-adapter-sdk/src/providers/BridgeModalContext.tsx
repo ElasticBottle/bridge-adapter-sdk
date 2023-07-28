@@ -112,7 +112,10 @@ export const goBackOneStep: BridgeModalActions["goBackOneStep"] = () => {
   useBridgeModalStore.setState((state) => {
     const previousBridgeStep = state.previousBridgeStep.pop();
     const previousBridgeStepParams = state.previousBridgeStepParams.pop();
-    if (previousBridgeStep === undefined) {
+    if (
+      previousBridgeStep === undefined ||
+      typeof previousBridgeStep === "undefined"
+    ) {
       throw new Error("No previous step");
     }
     state.currentBridgeStep = previousBridgeStep;
