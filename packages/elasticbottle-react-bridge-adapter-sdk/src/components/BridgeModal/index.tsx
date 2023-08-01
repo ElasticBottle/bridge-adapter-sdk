@@ -16,6 +16,7 @@ import { SwapReview } from "./SwapReview";
 import { SwapSettings } from "./SwapSettings";
 import { TokenSelection } from "./TokenSelection";
 import { WalletSelection } from "./WalletSelection";
+import { ProfileDetails } from "./ProfileDetails";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +46,6 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
       body = <SingleChainSelection />;
       break;
     }
-
     case "PENDING_TRANSACTION": {
       body = <PendingTransaction />;
       break;
@@ -68,6 +68,10 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
     }
     case "WALLET_SELECTION": {
       body = <WalletSelection />;
+      break;
+    }
+    case "PROFILE_DETAILS": {
+      body = <ProfileDetails />;
       break;
     }
     default:

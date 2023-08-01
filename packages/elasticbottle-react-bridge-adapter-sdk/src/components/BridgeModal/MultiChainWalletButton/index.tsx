@@ -1,15 +1,17 @@
 import { useAccount, useDisconnect } from "wagmi";
-import { Button } from "../../ui/button";
+import { Button, buttonVariants } from "../../ui/button";
 import {
   clearChain,
+  setCurrentBridgeStep,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
 import { useSolanaWalletMultiButton } from "../WalletSelection/useSolanaWalletMultiButton";
 import { EMPTY_BRIDGE_STEP_TITLE } from "../../../types/BridgeModal";
 import { useCallback } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { EvmWalletProfile } from "../WalletSelection/EvmWalletProfile";
-import { SolanaWalletProfile } from "../WalletSelection/SolanaWalletProfile";
+import { EvmWalletProfile } from "../ProfileDisplays/EvmWalletProfile";
+import { SolanaWalletProfile } from "../ProfileDisplays/SolanaWalletProfile";
+import { cn } from "../../../lib/utils";
 
 export function MultiChainWalletButton() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
@@ -57,17 +59,35 @@ export function MultiChainWalletButton() {
               View Chains
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="bsa-z-50 bsa-flex bsa-flex-col">
+          <PopoverContent className="bsa-z-50 bsa-flex bsa-flex-col bsa-gap-y-2 bsa-bg-background bsa-py-2">
             {solanaWalletConnected && (
               <SolanaWalletProfile
                 onDisconnect={() => disconnectChain("Solana")}
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "lg" }),
+                  "bsa-flex bsa-items-center bsa-justify-between bsa-rounded-md bsa-bg-transparent bsa-px-5 bsa-py-3"
+                )}
               />
             )}
             {evmWalletConnected && (
               <EvmWalletProfile
                 onDisconnect={() => disconnectChain("Ethereum")}
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "lg" }),
+                  "bsa-flex bsa-items-center bsa-justify-between bsa-rounded-md bsa-bg-transparent bsa-px-5 bsa-py-3"
+                )}
               />
             )}
+            <Button
+              variant={"ghost"}
+              onClick={() => {
+                setCurrentBridgeStep({
+                  step: "PROFILE_DETAILS",
+                });
+              }}
+            >
+              Account Profile
+            </Button>
           </PopoverContent>
         </Popover>
       ) : (

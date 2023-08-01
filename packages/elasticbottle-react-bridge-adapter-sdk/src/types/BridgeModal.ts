@@ -13,7 +13,8 @@ export type BridgeStep =
   | "SWAP_SETTINGS"
   | "SWAP_DETAILS"
   | "SWAP_REVIEW"
-  | "PENDING_TRANSACTION";
+  | "PENDING_TRANSACTION"
+  | "PROFILE_DETAILS";
 
 export const BridgeStepToTitle: Record<BridgeStep, string> = {
   MULTI_CHAIN_SELECTION: EMPTY_BRIDGE_STEP_TITLE,
@@ -24,6 +25,7 @@ export const BridgeStepToTitle: Record<BridgeStep, string> = {
   SWAP_DETAILS: "Swap details",
   SWAP_REVIEW: "Review swap",
   PENDING_TRANSACTION: "Pending transaction",
+  PROFILE_DETAILS: "Account",
 };
 
 export type SetCurrentBridgeStepType<T extends BridgeStep> = T extends
