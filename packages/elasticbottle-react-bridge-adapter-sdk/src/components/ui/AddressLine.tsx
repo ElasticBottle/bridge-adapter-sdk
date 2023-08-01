@@ -1,6 +1,7 @@
 import { Copy, CopyCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
+import { useCopyAddress } from "./useCopyAddress";
 
 export function AddressLine({
   address,
@@ -11,27 +12,7 @@ export function AddressLine({
   isName: boolean;
   className?: string;
 }) {
-  const [isCopied, setIsCopied] = useState(false);
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined;
-    if (isCopied) {
-      timeout = setTimeout(() => {
-        setIsCopied(false);
-      }, 1_000);
-    }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [isCopied]);
-
-  const copyAddress = () => {
-    setIsCopied(true);
-    navigator.clipboard.writeText(address).catch((e) => {
-      console.error("ERROR copying value to clipboard", e);
-    });
-  };
+  const { copyAddress, isCopied } = useCopyAddress(address);
 
   const formattedAddress = isName ? address : address.slice(0, 6);
   return (

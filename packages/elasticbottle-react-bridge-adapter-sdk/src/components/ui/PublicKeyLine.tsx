@@ -2,6 +2,7 @@ import type { PublicKey } from "@solana/web3.js";
 import { Copy, CopyCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn, formatPublicKey } from "../../lib/utils";
+import { useCopyAddress } from "./useCopyAddress";
 
 export function PublicKeyLine({
   publicKey,
@@ -12,29 +13,7 @@ export function PublicKeyLine({
   isName: boolean;
   className?: string;
 }) {
-  const [isCopied, setIsCopied] = useState(false);
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined;
-    if (isCopied) {
-      timeout = setTimeout(() => {
-        setIsCopied(false);
-      }, 1_000);
-    }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [isCopied]);
-
-  const copyAddress = () => {
-    if (publicKey) {
-      setIsCopied(true);
-      navigator.clipboard.writeText(publicKey.toBase58()).catch((e) => {
-        console.error("ERROR copying value to clipboard", e);
-      });
-    }
-  };
+  const { copyAddress, isCopied } = useCopyAddress(publicKey?.toBase58());
 
   const formattedAddress = isName
     ? publicKey?.toBase58()
