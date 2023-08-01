@@ -3,6 +3,8 @@ import type {
   ChainName,
 } from "@elasticbottle/core-bridge-adapter-sdk";
 
+export const EMPTY_BRIDGE_STEP_TITLE = "Select a chain";
+
 export type BridgeStep =
   | "MULTI_CHAIN_SELECTION"
   | "SINGLE_CHAIN_SELECTION"
@@ -14,8 +16,8 @@ export type BridgeStep =
   | "PENDING_TRANSACTION";
 
 export const BridgeStepToTitle: Record<BridgeStep, string> = {
-  MULTI_CHAIN_SELECTION: "Select a chain",
-  SINGLE_CHAIN_SELECTION: "Select a chain",
+  MULTI_CHAIN_SELECTION: EMPTY_BRIDGE_STEP_TITLE,
+  SINGLE_CHAIN_SELECTION: EMPTY_BRIDGE_STEP_TITLE,
   WALLET_SELECTION: "Select a wallet",
   TOKEN_SELECTION: "Select a token",
   SWAP_SETTINGS: "Swap settings",

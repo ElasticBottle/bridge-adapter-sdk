@@ -33,7 +33,6 @@ export function useSolanaWalletMultiButton(): ButtonState {
     wallet,
     wallets,
   } = useWallet();
-  console.log("wallets", wallets);
 
   let buttonState: ButtonState["buttonState"];
   if (connecting) {

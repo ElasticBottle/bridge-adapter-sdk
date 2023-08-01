@@ -3,6 +3,7 @@ import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 import type { useConnect } from "wagmi";
 import type { BridgeStep, BridgeStepParams } from "../types/BridgeModal";
+import type { PublicKey } from "@solana/web3.js";
 
 const customTwMerge = extendTailwindMerge({
   prefix: "bsa-",
@@ -48,4 +49,12 @@ export function hasChainDest(
     return false;
   }
   return "chainDest" in params;
+}
+
+export function formatPublicKey(publicKey: PublicKey | null) {
+  if (publicKey) {
+    const base58 = publicKey.toBase58();
+    return base58.slice(0, 4) + ".." + base58.slice(-4);
+  }
+  return "";
 }

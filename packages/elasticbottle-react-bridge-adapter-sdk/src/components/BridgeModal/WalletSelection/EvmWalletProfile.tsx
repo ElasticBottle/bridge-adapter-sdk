@@ -10,7 +10,11 @@ import { AddressLine } from "../../ui/AddressLine";
 import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
 
-export function EvmWalletProfile() {
+export function EvmWalletProfile({
+  onDisconnect,
+}: {
+  onDisconnect?: () => void;
+}) {
   const { address, connector, isConnected } = useAccount();
   const { data: avatar } = useEnsAvatar();
   const { data: ensName } = useEnsName();
@@ -50,7 +54,11 @@ export function EvmWalletProfile() {
           </div>
         </div>
       </div>
-      <Button size={"icon"} variant={"ghost"} onClick={() => disconnect()}>
+      <Button
+        size={"icon"}
+        variant={"ghost"}
+        onClick={() => (onDisconnect ? onDisconnect() : disconnect())}
+      >
         <LogOut />
       </Button>
     </div>
