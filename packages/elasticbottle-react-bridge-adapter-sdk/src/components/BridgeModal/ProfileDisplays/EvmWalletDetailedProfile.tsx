@@ -1,28 +1,34 @@
-import { LogOut, UserCircle2 } from "lucide-react";
-import {
-  useAccount,
-  useDisconnect,
-  useEnsAvatar,
-  useEnsName,
-  useNetwork,
-} from "wagmi";
-import { AddressLine } from "../../ui/AddressLine";
-import { Button } from "../../ui/button";
-import { WalletIcon } from "../../ui/icons/WalletIcon";
+import { UserCircle2 } from "lucide-react";
 import { cn } from "../../../lib/utils";
+import React, { useCallback, useEffect, useState } from "react";
+import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
+import { ChainIcon } from "../../ui/icons/ChainIcon";
+import { ViewAndCopyWallet } from "./ViewAndCopyWallet";
+import { ETHEREUM_BASE_EXPLORER_URL } from "../../../constants/BaseExplorers";
+import { EvmWalletDetail } from "../ProfileDetails/EvmWalletDetail";
+import { useAccount, useDisconnect, useEnsName } from "wagmi";
+import { AddressLine } from "../../ui/AddressLine";
 
 export function EvmWalletDetailedProfile({
-  onDisconnect,
   className,
 }: {
-  onDisconnect?: () => void;
   className?: string;
 }) {
-  const { address, connector, isConnected } = useAccount();
-  const { data: avatar } = useEnsAvatar();
+  const { address, isConnected } = useAccount();
   const { data: ensName } = useEnsName();
-  const { chain } = useNetwork();
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect({
+    onSuccess: () =>
+      setCurrentBridgeStep({
+        step: "WALLET_SELECTION",
+        params: {
+          chain: "Ethereum",
+        },
+      }),
+  });
+
+  const switchWallet = useCallback(() => {
+    disconnect();
+  }, [disconnect]);
 
   if (!isConnected) {
     return (
@@ -38,42 +44,23 @@ export function EvmWalletDetailedProfile({
     );
   }
   return (
-    <div
-      className={cn(
-        "bsa-flex bsa-items-center bsa-justify-between bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3 ",
-        className
-      )}
-    >
-      <div className="bsa-flex bsa-items-center">
-        {avatar ? (
-          <img
-            className="bsa-mr-3 bsa-h-8 bsa-w-8 bsa-rounded-full"
-            src={avatar}
-            alt="Ens Avatar"
-          />
-        ) : (
-          <WalletIcon
-            walletName={connector?.name.toLowerCase() || ""}
-            className="bsa-mr-3 bsa-h-10 bsa-w-10"
-          />
-        )}
-        <div>
-          <AddressLine
-            address={ensName ?? (address || "")}
-            isName={!!ensName}
-          />
-          <div className="bsa-text-sm bsa-text-muted-foreground">
-            {chain?.name}
-          </div>
-        </div>
+    <div className={cn("bsa-flex bsa-flex-col bsa-px-5 bsa-py-3", className)}>
+      <EvmWalletDetail switchWallet={switchWallet} />
+      <div className="bsa-text bsa-flex bsa-w-full bsa-items-center bsa-py-5">
+        <ChainIcon chainName={"Ethereum"} size="2xl" />
+        <AddressLine
+          address={address}
+          isName={!!ensName}
+          moreDetails={true}
+          showCopyButton={false}
+          textClassName="bsa-text-2xl bsa-font-bold bsa-ml-4"
+        />
       </div>
-      <Button
-        size={"icon"}
-        variant={"ghost"}
-        onClick={() => (onDisconnect ? onDisconnect() : disconnect())}
-      >
-        <LogOut />
-      </Button>
+      <ViewAndCopyWallet
+        address={address}
+        baseExplorerUrl={ETHEREUM_BASE_EXPLORER_URL}
+      />
     </div>
   );
 }
+// 0x62D05C8e8f98C99aBD61a5A58d107db64faBE077
