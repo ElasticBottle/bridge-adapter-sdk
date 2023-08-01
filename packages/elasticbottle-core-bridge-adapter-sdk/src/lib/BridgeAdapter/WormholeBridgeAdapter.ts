@@ -550,7 +550,9 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
         wormholeTargetChain: this.chainNameToWormholeChainName(
           targetToken.chain
         ),
-        onNeedToCreateTokenAccount() {},
+        onNeedToCreateTokenAccount() {
+          // Empty for now
+        },
       });
 
       const { sequence } = await this.lockEthToken({
