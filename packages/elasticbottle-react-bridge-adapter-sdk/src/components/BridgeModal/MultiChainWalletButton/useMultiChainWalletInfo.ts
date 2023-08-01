@@ -20,14 +20,14 @@ export const useMultiChainWalletInfo = () => {
     (sourceChain === "Ethereum" || targetChain === "Ethereum") && isConnected;
 
   const disconnectChain = useCallback(
-    (whichChain: "Solana" | "Ethereum") => {
-      if (sourceChain === whichChain) {
+    (whichChain: "Solana" | "Ethereum", clearChainState = true) => {
+      if (sourceChain === whichChain && clearChainState) {
         clearChain("source");
         useBridgeModalStore.setState((state) => {
           state.chain.sourceChain = EMPTY_BRIDGE_STEP_TITLE;
         });
       }
-      if (targetChain === whichChain) {
+      if (targetChain === whichChain && clearChainState) {
         clearChain("target");
         useBridgeModalStore.setState((state) => {
           state.chain.targetChain = EMPTY_BRIDGE_STEP_TITLE;

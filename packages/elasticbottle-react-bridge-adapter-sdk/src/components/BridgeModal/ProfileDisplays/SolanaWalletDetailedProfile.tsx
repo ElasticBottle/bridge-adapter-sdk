@@ -1,19 +1,41 @@
-import { LogOut, UserCircle2 } from "lucide-react";
-import { Button } from "../../ui/button";
-import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
+import { UserCircle2 } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKeyLine } from "../../ui/PublicKeyLine";
 import { cn } from "../../../lib/utils";
+import { SolanaWalletDetail } from "../ProfileDetails/SolanaWalletDetail";
+import React, { useCallback, useEffect, useState } from "react";
+import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
+import { ChainIcon } from "../../ui/icons/ChainIcon";
+import { ViewAndCopyWallet } from "./ViewAndCopyWallet";
+import { SOLANA_BASE_SOLSCAN_URL } from "../../../constants/BaseExplorers";
 
 export function SolanaWalletDetailedProfile({
-  onDisconnect,
   className,
 }: {
-  onDisconnect?: () => void;
   className?: string;
 }) {
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { connected, disconnect, publicKey, wallet } = useWallet();
+  const { connected, disconnect, publicKey } = useWallet();
+  const [walletSwitch, setWalletSwitch] = useState(false);
+
+  const switchWallet = useCallback(async () => {
+    try {
+      await disconnect();
+    } finally {
+      setWalletSwitch(true);
+    }
+  }, [disconnect]);
+
+  useEffect(() => {
+    if (walletSwitch && !connected) {
+      setCurrentBridgeStep({
+        step: "WALLET_SELECTION",
+        params: {
+          chain: "Solana",
+        },
+      });
+    }
+  }, [connected, walletSwitch]);
 
   if (!connected) {
     return (
@@ -29,29 +51,21 @@ export function SolanaWalletDetailedProfile({
     );
   }
   return (
-    <div
-      className={cn(
-        "bsa-flex bsa-items-center bsa-justify-between bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3",
-        className
-      )}
-    >
-      <div className="bsa-flex bsa-items-center">
-        <WalletAdapterIcon
-          wallet={wallet}
-          className="bsa-mr-2 bsa-max-h-[2.5rem] bsa-px-2 bsa-py-[0.3125rem]"
+    <div className={cn("bsa-flex bsa-flex-col bsa-px-5 bsa-py-3", className)}>
+      <SolanaWalletDetail switchWallet={switchWallet} />
+      <div className="bsa-text bsa-flex bsa-w-full bsa-items-center bsa-py-5">
+        <ChainIcon chainName={"Solana"} size="2xl" />
+        <PublicKeyLine
+          publicKey={publicKey}
+          isName={!publicKey}
+          showCopyButton={false}
+          textClassName="bsa-text-2xl bsa-font-bold bsa-ml-4"
         />
-        <div>
-          <PublicKeyLine publicKey={publicKey} isName={!publicKey} />
-          <div className="bsa-text-sm bsa-text-muted-foreground">Solana</div>
-        </div>
       </div>
-      <Button
-        size={"icon"}
-        variant={"ghost"}
-        onClick={onDisconnect ? onDisconnect : disconnect}
-      >
-        <LogOut />
-      </Button>
+      <ViewAndCopyWallet
+        address={publicKey?.toBase58()}
+        baseExplorerUrl={SOLANA_BASE_SOLSCAN_URL}
+      />
     </div>
   );
 }

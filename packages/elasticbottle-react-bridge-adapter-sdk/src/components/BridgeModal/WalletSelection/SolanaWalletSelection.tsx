@@ -52,11 +52,14 @@ function SolanaWalletConnectionListBase() {
     switch (buttonState) {
       case "connected":
         {
-          const chainParam =
-            chainDest === "source" ? "sourceChain" : "targetChain";
-          useBridgeModalStore.setState((state) => {
-            state.chain[chainParam] = chain;
-          });
+          console.log("connected");
+          if (chainDest) {
+            const chainParam =
+              chainDest === "source" ? "sourceChain" : "targetChain";
+            useBridgeModalStore.setState((state) => {
+              state.chain[chainParam] = chain;
+            });
+          }
           setCurrentBridgeStep({
             step: "MULTI_CHAIN_SELECTION",
           });
@@ -64,8 +67,10 @@ function SolanaWalletConnectionListBase() {
         break;
       case "connecting":
       case "disconnecting":
+        console.log(buttonState);
         break;
       case "has-wallet":
+        console.log("test");
         onConnect && onConnect();
         break;
     }
