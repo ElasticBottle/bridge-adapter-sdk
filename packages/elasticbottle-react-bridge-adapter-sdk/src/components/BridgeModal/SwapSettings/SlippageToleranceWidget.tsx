@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   useBridgeModalStore,
   setSlippageTolerance,
-  setCurrentBridgeStep,
   SLIPPING_TOLERANCE_AUTO,
 } from "../../../providers/BridgeModalContext";
 import type { SlippageToleranceType } from "../../../types/BridgeModal";
