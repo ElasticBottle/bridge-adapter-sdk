@@ -32,7 +32,9 @@ export function RelayerFeeWidget() {
     }
   };
 
-  console.log(sourceFee, targetFee);
+  if (sourceChain === "Select a chain" || targetChain === "Select a chain") {
+    return null;
+  }
 
   return (
     <div className="bsa-mt-5 bsa-rounded-lg bsa-border bsa-p-5">
