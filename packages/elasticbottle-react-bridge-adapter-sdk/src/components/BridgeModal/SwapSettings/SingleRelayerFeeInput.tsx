@@ -62,7 +62,7 @@ export function SingleRelayerFeeInput({
           </div>
           <div
             className={cn(
-              "bsa-flex bsa-h-10 bsa-items-center bsa-rounded-md bsa-rounded-bl-none bsa-rounded-tl-none bsa-border bsa-border-l-0 bsa-border-input bsa-bg-background bsa-pr-2 bsa-text-xs bsa-ring-offset-background",
+              "bsa-flex bsa-h-10 bsa-w-1/5 bsa-items-center bsa-rounded-md bsa-rounded-bl-none bsa-rounded-tl-none bsa-border bsa-border-l-0 bsa-border-input bsa-bg-background bsa-pr-2 bsa-text-xs bsa-ring-offset-background",
               active ? "" : "bsa-cursor-not-allowed bsa-opacity-50"
             )}
           >
