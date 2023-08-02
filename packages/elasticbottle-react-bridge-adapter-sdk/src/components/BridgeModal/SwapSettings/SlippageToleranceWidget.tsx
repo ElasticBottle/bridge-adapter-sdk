@@ -35,7 +35,9 @@ export function SlippageToleranceWidget() {
       <div className="bsa-flex bsa-items-center bsa-justify-between">
         <Button
           variant={
-            slippageTolerance === SLIPPING_TOLERANCE_AUTO ? "default" : "ghost"
+            slippageTolerance === SLIPPING_TOLERANCE_AUTO
+              ? "default"
+              : "outline"
           }
           size={"lg"}
           onClick={() => {
@@ -53,7 +55,7 @@ export function SlippageToleranceWidget() {
             className={cn(
               `bsa-rounded-br-none bsa-rounded-tr-none bsa-border-r-0 bsa-text-right bsa-text-xl focus-visible:bsa-ring-0`,
               slippageTolerance === SLIPPING_TOLERANCE_AUTO
-                ? "bsa-text-muted-foreground"
+                ? "bsa-text-muted-foreground bsa-opacity-50"
                 : ""
             )}
             value={
@@ -73,7 +75,7 @@ export function SlippageToleranceWidget() {
           className={cn(
             "bsa-h-10 bsa-rounded-md bsa-rounded-bl-none bsa-rounded-tl-none bsa-border bsa-border-l-0 bsa-border-input bsa-bg-background bsa-py-1 bsa-pr-3 bsa-text-xl bsa-ring-offset-background",
             slippageTolerance === SLIPPING_TOLERANCE_AUTO
-              ? "bsa-text-muted-foreground"
+              ? "bsa-text-muted-foreground bsa-opacity-50"
               : ""
           )}
         >

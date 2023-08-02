@@ -6,6 +6,7 @@ import {
 import { Toggle } from "../../ui/toggle";
 import type { RelayerFeeType } from "../../../types/BridgeModal";
 import { cn } from "../../../lib/utils";
+import { SingleRelayerFeeInput } from "./SingleRelayerFeeInput";
 
 export function RelayerFeeWidget() {
   const { active, targetFee, sourceFee }: RelayerFeeType =
@@ -25,9 +26,17 @@ export function RelayerFeeWidget() {
     }
   };
 
+  const onSetRelayerFee = (target: string) => (fee: number) => {
+    if (target && fee) {
+      setRelayerFee({ [`${target}Fee`]: fee });
+    }
+  };
+
+  console.log(sourceFee, targetFee);
+
   return (
-    <div className="bsa-mt-5 bsa-space-y-3 bsa-rounded-lg bsa-border bsa-p-5">
-      <div className="bsa-flex bsa-items-center bsa-justify-between">
+    <div className="bsa-mt-5 bsa-rounded-lg bsa-border bsa-p-5">
+      <div className="bsa-mb-5 bsa-flex bsa-items-center bsa-justify-between">
         <p>Relayer Fee</p>{" "}
         <div className="bsa-ml-4">
           <Toggle
@@ -52,6 +61,24 @@ export function RelayerFeeWidget() {
             </div>
           )}
         </div>
+      </div>
+      <div className="bsa-mb-8">
+        <SingleRelayerFeeInput
+          chain={sourceChain}
+          token={sourceToken?.symbol}
+          active={active}
+          relayerFee={sourceFee}
+          setRelayerFee={onSetRelayerFee("source")}
+        />
+      </div>
+      <div>
+        <SingleRelayerFeeInput
+          chain={targetChain}
+          token={targetToken?.symbol}
+          active={active}
+          relayerFee={targetFee}
+          setRelayerFee={onSetRelayerFee("target")}
+        />
       </div>
     </div>
   );

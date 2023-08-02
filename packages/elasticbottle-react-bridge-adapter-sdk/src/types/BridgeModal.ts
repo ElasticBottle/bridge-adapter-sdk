@@ -49,7 +49,7 @@ export type ChainSelectionType = ChainName | "Select a chain";
 export type SlippageToleranceType = number | "auto";
 
 export type RelayerFeeType = {
-  active: boolean;
+  active?: boolean;
   sourceFee?: number;
   targetFee?: number;
 };
