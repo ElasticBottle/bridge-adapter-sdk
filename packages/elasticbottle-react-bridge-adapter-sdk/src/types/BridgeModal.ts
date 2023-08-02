@@ -45,3 +45,11 @@ export type BridgeStepParams<T extends BridgeStep> = T extends "TOKEN_SELECTION"
   : undefined;
 
 export type ChainSelectionType = ChainName | "Select a chain";
+
+export type SlippageToleranceType = number | "auto";
+
+export type RelayerFeeType = {
+  active: boolean;
+  sourceFee?: number;
+  targetFee?: number;
+};
