@@ -28,7 +28,10 @@ type BridgeModalState = {
   previousBridgeStepParams: BridgeStepParams<BridgeStep>[];
   currentBridgeStep: BridgeStep;
   currentBridgeStepParams: BridgeStepParams<BridgeStep>;
-  chain: { sourceChain: ChainSelectionType; targetChain: ChainSelectionType };
+  chain: {
+    sourceChain: ChainSelectionType;
+    targetChain: ChainSelectionType;
+  };
   token: { sourceToken: TokenWithAmount; targetToken: TokenWithAmount };
   relayerFee: RelayerFeeType;
   slippageTolerance: SlippageToleranceType;
@@ -121,7 +124,10 @@ export const goBackOneStep: BridgeModalActions["goBackOneStep"] = () => {
   useBridgeModalStore.setState((state) => {
     const previousBridgeStep = state.previousBridgeStep.pop();
     const previousBridgeStepParams = state.previousBridgeStepParams.pop();
-    if (previousBridgeStep === undefined) {
+    if (
+      previousBridgeStep === undefined ||
+      typeof previousBridgeStep === "undefined"
+    ) {
       throw new Error("No previous step");
     }
     state.currentBridgeStep = previousBridgeStep;
@@ -129,7 +135,7 @@ export const goBackOneStep: BridgeModalActions["goBackOneStep"] = () => {
   });
 };
 
-const clearChain = (chainDest: ChainDestType) => {
+export const clearChain = (chainDest: ChainDestType) => {
   useBridgeModalStore.setState((state) => {
     if (chainDest === "source") {
       state.token.sourceToken = DEFAULT_TOKEN_WITH_AMOUNT;
@@ -194,6 +200,7 @@ export const setChain: BridgeModalActions["setChain"] = async ({
     step: "WALLET_SELECTION",
     params: {
       chain: newChain,
+      chainDest: chainDestination,
       onSuccess() {
         useBridgeModalStore.setState((state) => {
           state.chain[chainParam] = newChain;

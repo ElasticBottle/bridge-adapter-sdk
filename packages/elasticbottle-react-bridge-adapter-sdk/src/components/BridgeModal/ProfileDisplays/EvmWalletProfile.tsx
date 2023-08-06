@@ -9,8 +9,15 @@ import {
 import { AddressLine } from "../../ui/AddressLine";
 import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
+import { cn } from "../../../lib/utils";
 
-export function EvmWalletProfile() {
+export function EvmWalletProfile({
+  onDisconnect,
+  className,
+}: {
+  onDisconnect?: () => void;
+  className?: string;
+}) {
   const { address, connector, isConnected } = useAccount();
   const { data: avatar } = useEnsAvatar();
   const { data: ensName } = useEnsName();
@@ -19,14 +26,24 @@ export function EvmWalletProfile() {
 
   if (!isConnected) {
     return (
-      <div className="bsa-flex bsa-items-center bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3">
+      <div
+        className={cn(
+          "bsa-flex bsa-items-center bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3",
+          className
+        )}
+      >
         <UserCircle2 className="bsa-mr-3 bsa-h-8 bsa-w-8" />{" "}
         <div className="bsa-text-lg">Not Connected</div>
       </div>
     );
   }
   return (
-    <div className="bsa-flex bsa-items-center bsa-justify-between bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3 ">
+    <div
+      className={cn(
+        "bsa-flex bsa-items-center bsa-justify-between bsa-rounded-xl bsa-bg-muted bsa-px-5 bsa-py-3 ",
+        className
+      )}
+    >
       <div className="bsa-flex bsa-items-center">
         {avatar ? (
           <img
@@ -50,7 +67,11 @@ export function EvmWalletProfile() {
           </div>
         </div>
       </div>
-      <Button size={"icon"} variant={"ghost"} onClick={() => disconnect()}>
+      <Button
+        size={"icon"}
+        variant={"ghost"}
+        onClick={() => (onDisconnect ? onDisconnect() : disconnect())}
+      >
         <LogOut />
       </Button>
     </div>

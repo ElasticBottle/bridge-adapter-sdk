@@ -92,3 +92,11 @@
     @apply bsa-border-border;
   }
 }
+
+/* TODO: put this in a more fitting place... */
+.solflare-wallet-adapter-iframe {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: auto;
+}

@@ -1,6 +1,7 @@
 import { ChevronLeft, Settings } from "lucide-react";
 import { cn } from "../../lib/utils";
 import {
+  clearChain,
   goBackOneStep,
   setCurrentBridgeStep,
   useBridgeModalStore,
@@ -8,6 +9,8 @@ import {
 import { BridgeStepToTitle } from "../../types/BridgeModal";
 import { Button } from "../ui/button";
 import { DialogHeader, DialogTitle } from "../ui/dialog";
+import { useSolanaWalletMultiButton } from "./WalletSelection/useSolanaWalletMultiButton";
+import { MultiChainWalletButton } from "./MultiChainWalletButton";
 
 export function BridgeHeader({ title }: { title?: string }) {
   const currentBridgeStep = useBridgeModalStore.use.currentBridgeStep();
@@ -21,6 +24,7 @@ export function BridgeHeader({ title }: { title?: string }) {
       })}
     >
       <div className="bsa-pointer-events-none">{title}</div>
+      <MultiChainWalletButton />
       <Button
         size={"icon"}
         variant={"secondary"}
