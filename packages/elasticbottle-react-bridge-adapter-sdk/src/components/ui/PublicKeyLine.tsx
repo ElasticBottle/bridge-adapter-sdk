@@ -1,32 +1,29 @@
+import type { PublicKey } from "@solana/web3.js";
 import { Copy, CopyCheck } from "lucide-react";
-import { cn, formatEvmAddress } from "../../lib/utils";
+import { cn, formatPublicKey } from "../../lib/utils";
 import { useCopyAddress } from "./useCopyAddress";
 
-export function AddressLine({
-  address,
+export function PublicKeyLine({
+  publicKey,
   isName,
-  moreDetails = false,
   showCopyButton = true,
   className,
   textClassName,
 }: {
-  address?: string;
+  publicKey: PublicKey | null;
   isName: boolean;
-  moreDetails?: boolean;
   showCopyButton?: boolean;
   className?: string;
   textClassName?: string;
 }) {
-  const { copyAddress, isCopied } = useCopyAddress(address);
+  const { copyAddress, isCopied } = useCopyAddress(publicKey?.toBase58());
 
   const formattedAddress = isName
-    ? address
-    : moreDetails
-    ? formatEvmAddress(address)
-    : address?.slice(0, 6);
+    ? publicKey?.toBase58()
+    : formatPublicKey(publicKey);
   return (
     <div className={cn("bsa-flex bsa-items-center", className)}>
-      <div className={cn("bsa-mr-1", textClassName)}>{formattedAddress} </div>
+      <div className={cn("bsa-mr-1", textClassName)}>{formattedAddress}</div>
       {showCopyButton && (
         <div
           className="bsa-inline-flex bsa-h-6 bsa-w-6 bsa-items-center bsa-justify-center bsa-rounded-md bsa-p-1 bsa-text-sm bsa-font-medium bsa-ring-offset-background bsa-transition-colors hover:bsa-bg-accent  hover:bsa-text-accent-foreground focus-visible:bsa-outline-none focus-visible:bsa-ring-2 focus-visible:bsa-ring-ring focus-visible:bsa-ring-offset-2"

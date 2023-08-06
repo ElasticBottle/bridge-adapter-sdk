@@ -9,4 +9,5 @@ export const DEFAULT_TOKEN_WITH_AMOUNT: TokenWithAmount = {
   logoUri: "",
   name: "USDC",
   symbol: "USDC",
+  bridgeName: "wormhole",
 };

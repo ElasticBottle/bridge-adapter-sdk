@@ -21,6 +21,7 @@ const iconVariants = cva("", {
       md: "bsa-h-6 bsa-w-6",
       lg: "bsa-h-7 bsa-w-7",
       xl: "bsa-h-8 bsa-w-8",
+      "2xl": "bsa-h-12 bsa-w-12",
     },
   },
   defaultVariants: {

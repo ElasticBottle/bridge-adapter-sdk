@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { withErrorBoundary } from "react-error-boundary";
 import { Button } from "../../ui/button";
 import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
-import { WalletAdapterIcon } from "../WalletAdapterIcon";
+import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
 import {
   setCurrentBridgeStep,
   useBridgeModalStore,
@@ -10,18 +10,11 @@ import {
 import type { BridgeStepParams } from "../../../types/BridgeModal";
 
 function SolanaWalletConnectionListBase() {
-  const {
-    buttonState,
-    onConnect,
-    onDisconnect,
-    onSelectWallet,
-    wallets,
-    walletName,
-  } = useSolanaWalletMultiButton();
+  const { buttonState, onConnect, onDisconnect, onSelectWallet, wallets } =
+    useSolanaWalletMultiButton();
   const { chain, chainDest } =
     useBridgeModalStore.use.currentBridgeStepParams() as BridgeStepParams<"WALLET_SELECTION">;
   let label;
-  console.log("walletName", walletName);
   switch (buttonState) {
     case "connected":
       label = "Disconnect";
@@ -59,11 +52,14 @@ function SolanaWalletConnectionListBase() {
     switch (buttonState) {
       case "connected":
         {
-          const chainParam =
-            chainDest === "source" ? "sourceChain" : "targetChain";
-          useBridgeModalStore.setState((state) => {
-            state.chain[chainParam] = chain;
-          });
+          console.log("connected");
+          if (chainDest) {
+            const chainParam =
+              chainDest === "source" ? "sourceChain" : "targetChain";
+            useBridgeModalStore.setState((state) => {
+              state.chain[chainParam] = chain;
+            });
+          }
           setCurrentBridgeStep({
             step: "MULTI_CHAIN_SELECTION",
           });
@@ -71,8 +67,10 @@ function SolanaWalletConnectionListBase() {
         break;
       case "connecting":
       case "disconnecting":
+        console.log(buttonState);
         break;
       case "has-wallet":
+        console.log("test");
         onConnect && onConnect();
         break;
     }
