@@ -6,7 +6,7 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 
 const labelVariants = cva(
-  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  "bsa-text-sm bsa-font-medium bsa-leading-none peer-disabled:bsa-cursor-not-allowed peer-disabled:bsa-opacity-70"
 );
 
 const Label = React.forwardRef<

@@ -1,11 +1,10 @@
 import { useState } from "react";
 import {
-  useBridgeModalStore,
   setRelayerFee,
+  useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
-import { Toggle } from "../../ui/toggle";
 import type { RelayerFeeType } from "../../../types/BridgeModal";
-import { cn } from "../../../lib/utils";
+import { Switch } from "../../ui/switch";
 import { SingleRelayerFeeInput } from "./SingleRelayerFeeInput";
 
 export function RelayerFeeWidget() {
@@ -41,22 +40,7 @@ export function RelayerFeeWidget() {
       <div className="bsa-mb-5 bsa-flex bsa-items-center bsa-justify-between">
         <p>Relayer Fee</p>{" "}
         <div className="bsa-ml-4">
-          <Toggle
-            text={toggleValue ? "ON" : "OFF"}
-            className={cn(
-              "bsa-w-[74px]",
-              "bsa-bg-background data-[state=checked]:bsa-bg-[#4F5E6B]"
-            )}
-            switchClassName={cn(
-              "bsa-bg-[#2B2E3C] bsa-h-8 bsa-w-8 data-[state=checked]:bsa-translate-x-[39px]"
-            )}
-            textClassName={cn(
-              "bsa-top-2 bsa-text-sm",
-              toggleValue ? "bsa-left-2" : "bsa-right-2"
-            )}
-            checked={active}
-            onCheckedChange={onCheckedChange}
-          />
+          <Switch checked={active} onCheckedChange={onCheckedChange} />
           {error && (
             <div className="bsa-text-xs bsa-text-destructive-foreground">
               {error}
