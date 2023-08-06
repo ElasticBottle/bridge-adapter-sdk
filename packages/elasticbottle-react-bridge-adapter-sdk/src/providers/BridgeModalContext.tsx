@@ -17,7 +17,9 @@ import type {
   BridgeStep,
   BridgeStepParams,
   ChainSelectionType,
+  RelayerFeeType,
   SetCurrentBridgeStepType,
+  SlippageToleranceType,
 } from "../types/BridgeModal";
 
 type BridgeModalState = {
@@ -31,6 +33,8 @@ type BridgeModalState = {
     targetChain: ChainSelectionType;
   };
   token: { sourceToken: TokenWithAmount; targetToken: TokenWithAmount };
+  relayerFee: RelayerFeeType;
+  slippageTolerance: SlippageToleranceType;
 };
 
 type SetChain = {
@@ -51,6 +55,8 @@ type BridgeModalActions = {
   setChain: (args: SetChain) => Promise<void>;
   setToken: (token: TokenWithAmount, chainDest: ChainDestType) => Promise<void>;
   setTokenAmount: (amount: string, chainDest: ChainDestType) => void;
+  setSlippageTolerance: (slippageTolerance: SlippageToleranceType) => void;
+  setRelayerFee: (relayerFee: RelayerFeeType) => void;
   goBackOneStep: () => void;
 };
 
@@ -88,6 +94,12 @@ const useBridgeModalStoreBase = create<BridgeModalState>()(
           sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
           targetToken: DEFAULT_TOKEN_WITH_AMOUNT,
         },
+        relayerFee: {
+          active: false,
+          sourceFee: 0,
+          targetFee: 0,
+        },
+        slippageTolerance: "auto",
       };
     })
   )
@@ -263,4 +275,23 @@ export const setTokenAmount: BridgeModalActions["setTokenAmount"] = (
   if (error) {
     throw error;
   }
+};
+
+export const SLIPPING_TOLERANCE_AUTO: SlippageToleranceType = "auto";
+export const setSlippageTolerance: BridgeModalActions["setSlippageTolerance"] =
+  (slippageTolerance) => {
+    useBridgeModalStore.setState((state) => {
+      state.slippageTolerance = slippageTolerance;
+    });
+  };
+
+export const setRelayerFee: BridgeModalActions["setRelayerFee"] = (
+  relayerFee
+) => {
+  useBridgeModalStore.setState((state) => {
+    state.relayerFee = {
+      ...state.relayerFee,
+      ...relayerFee,
+    };
+  });
 };
