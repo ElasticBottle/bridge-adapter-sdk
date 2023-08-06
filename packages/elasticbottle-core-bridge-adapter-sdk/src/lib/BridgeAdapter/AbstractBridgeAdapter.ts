@@ -26,7 +26,7 @@ export abstract class AbstractBridgeAdapter {
   abstract getRouteDetails(
     sourceToken: Token,
     targetToken: Token
-  ): Promise<void>;
+  ): Promise<void | unknown>;
 
   abstract bridge({
     onStatusUpdate,

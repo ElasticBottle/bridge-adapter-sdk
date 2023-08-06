@@ -117,7 +117,9 @@ export class BridgeAdapterSdk {
     return Array.from(deduplicatedTokens.values());
   }
 
-  async getRouteInformation(sourceToken: Token, targetToken: Token) {}
+  async getRouteInformation(sourceToken: Token, targetToken: Token) {
+    // Empty for now
+  }
 
   async bridge(args: {
     tokenToBridge: { tokenInfo: TokenWithAmount };

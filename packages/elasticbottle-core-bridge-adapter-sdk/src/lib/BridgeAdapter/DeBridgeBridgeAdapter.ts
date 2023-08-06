@@ -1,5 +1,6 @@
 import { approveEth, getAllowanceEth } from "@certusone/wormhole-sdk";
 import {
+  type Output,
   array,
   boolean,
   merge,
@@ -48,7 +49,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
   private QuoteSchema = object({
     estimation: object({
       srcChainTokenIn: merge([
-        omit(this.TokenSchema, "logoURI" as any),
+        omit(this.TokenSchema, ["logoURI"]),
         object({
           chainId: number(),
           amount: string(),
@@ -57,7 +58,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         }),
       ]),
       srcChainTokenOut: merge([
-        omit(this.TokenSchema, "logoURI" as any),
+        omit(this.TokenSchema, ["logoURI"]),
         object({
           chainId: number(),
           amount: string(),
@@ -65,7 +66,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         }),
       ]),
       dstChainTokenOut: merge([
-        omit(this.TokenSchema, "logoURI" as any),
+        omit(this.TokenSchema, ["logoURI"]),
         object({
           chainId: number(),
           amount: string(),
@@ -189,7 +190,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
   async getRouteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
-  ): Promise<any> {
+  ): Promise<Output<typeof this.QuoteSchema>> {
     const supportedChainList = await this.getSupportedChains();
     if (
       !supportedChainList.includes(sourceToken.chain) ||
