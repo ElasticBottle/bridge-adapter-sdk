@@ -1,7 +1,5 @@
 import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
-import { useWalletClient } from "wagmi";
 import {
   TOKEN_AMOUNT_ERROR_INDICATOR,
   setTokenAmount,
@@ -9,6 +7,7 @@ import {
 } from "../../../providers/BridgeModalContext";
 import { Input } from "../../ui/input";
 import { ChainAndTokenSelectButton } from "../ChainAndTokenSelect/ChainAndTokenSelectButton";
+import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
 import { useTokenBalance } from "./useTokenBalance";
 
 export function TokenAndChainWidget({
@@ -27,8 +26,7 @@ export function TokenAndChainWidget({
   if (errorGettingTokenBalance) {
     throw errorGettingTokenBalance;
   }
-  const { data: walletClient } = useWalletClient();
-  const { publicKey } = useWallet();
+  const isWalletConnected = useIsWalletConnected();
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -64,7 +62,7 @@ export function TokenAndChainWidget({
                 : tokenOfInterest.selectedAmountFormatted
             }
             onChange={onInputChange}
-            disabled={!publicKey || !walletClient}
+            disabled={!isWalletConnected}
           />
           {error && (
             <div className="bsa-text-xs bsa-text-destructive-foreground">

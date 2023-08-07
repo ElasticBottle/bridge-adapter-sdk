@@ -3,16 +3,11 @@ import {
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
 import { Button } from "../../ui/button";
+import { useCanConnectWallet } from "./useCanConnectWallet";
 
 export function WalletSelectionButton() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
-  const { sourceToken, targetToken } = useBridgeModalStore.use.token();
-
-  const canConnectWallet =
-    sourceChain !== "Select a chain" &&
-    targetChain !== "Select a chain" &&
-    !!sourceToken.address &&
-    !!targetToken.address;
+  const canConnectWallet = useCanConnectWallet();
 
   return (
     <Button
@@ -69,7 +64,7 @@ export function WalletSelectionButton() {
         }
       }}
     >
-      Connect Wallet
+      {canConnectWallet ? "Connect Wallet" : "Select tokens"}
     </Button>
   );
 }

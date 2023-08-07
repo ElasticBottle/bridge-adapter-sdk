@@ -30,7 +30,6 @@ type BridgeModalState = {
     targetChain: ChainSelectionType;
   };
   token: { sourceToken: TokenWithAmount; targetToken: TokenWithAmount };
-  accounts: { sourceAccount: string; targetAccount: string };
   relayerFee: RelayerFeeType;
   slippageTolerance: SlippageToleranceType;
 };
@@ -48,7 +47,6 @@ type BridgeModalActions = {
   setChain: (args: SetChain) => Promise<void>;
   setToken: (token: TokenWithAmount, chainDest: ChainDestType) => Promise<void>;
   setTokenAmount: (amount: string, chainDest: ChainDestType) => void;
-  setAccount: (account: string, chainDest: ChainDestType) => void;
   setSlippageTolerance: (slippageTolerance: SlippageToleranceType) => void;
   setRelayerFee: (relayerFee: RelayerFeeType) => void;
   goBackOneStep: () => void;
@@ -86,7 +84,7 @@ const useBridgeModalStoreBase = create<BridgeModalState>()(
         },
         token: {
           sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
-          targetToken: DEFAULT_TOKEN_WITH_AMOUNT,
+          targetToken: { ...DEFAULT_TOKEN_WITH_AMOUNT, chain: "Solana" },
         },
         accounts: {
           sourceAccount: "",
@@ -218,17 +216,6 @@ export const setTokenAmount: BridgeModalActions["setTokenAmount"] = (
   if (error) {
     throw error;
   }
-};
-
-export const setAccount: BridgeModalActions["setAccount"] = (
-  account,
-  chainDest
-) => {
-  const accountOfInterest =
-    chainDest === "source" ? "sourceAccount" : "targetAccount";
-  useBridgeModalStore.setState((state) => {
-    state.accounts[accountOfInterest] = account;
-  });
 };
 
 export const SLIPPING_TOLERANCE_AUTO: SlippageToleranceType = "auto";

@@ -1,11 +1,12 @@
 import { Separator } from "@radix-ui/react-separator";
-import { useBridgeModalStore } from "../../../providers/BridgeModalContext";
 import { SwapReviewButton } from "../SwapReview/SwapReviewButton";
 import { WalletSelectionButton } from "../WalletSelection/WalletSelectionButton";
+import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
 import { TokenAndChainWidget } from "./TokenAndChainWidget";
 
 export function MultiChainSelection() {
-  const { sourceAccount, targetAccount } = useBridgeModalStore.use.accounts();
+  const isWalletConnected = useIsWalletConnected();
+
   return (
     <>
       <div className="bsa-flex bsa-flex-col bsa-space-y-4">
@@ -24,11 +25,7 @@ export function MultiChainSelection() {
         </div>
         <TokenAndChainWidget chainDest="target" />
       </div>
-      {sourceAccount && targetAccount ? (
-        <SwapReviewButton />
-      ) : (
-        <WalletSelectionButton />
-      )}
+      {isWalletConnected ? <SwapReviewButton /> : <WalletSelectionButton />}
     </>
   );
 }
