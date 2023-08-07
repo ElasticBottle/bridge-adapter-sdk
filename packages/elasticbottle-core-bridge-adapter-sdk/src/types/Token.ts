@@ -8,7 +8,7 @@ export type Token = {
   address: string;
   chain: ChainName;
   decimals: number;
-  bridgeName: Bridges;
+  bridgeNames: Bridges[];
 };
 
 export type BridgeToken = {

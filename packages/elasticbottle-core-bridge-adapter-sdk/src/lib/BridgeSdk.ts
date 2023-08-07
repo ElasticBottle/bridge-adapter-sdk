@@ -70,7 +70,8 @@ export class BridgeAdapterSdk {
 
   async getSupportedTokens(
     interestedTokenList: ChainDestType,
-    chains?: Partial<ChainSourceAndTarget>
+    chains?: Partial<ChainSourceAndTarget>,
+    tokens?: { sourceToken: Token; targetToken: Token }
   ): Promise<Token[]> {
     const { source, target } = getSourceAndTargetChain({
       overrideSourceChain: chains?.sourceChain,
@@ -84,19 +85,23 @@ export class BridgeAdapterSdk {
 
     const tokenResponses = await Promise.allSettled(
       this.bridgeAdapters.map(async (bridgeAdapter) => {
-        return bridgeAdapter.getSupportedTokens(interestedTokenList, {
-          sourceChain: source,
-          targetChain: target,
-        });
+        return bridgeAdapter.getSupportedTokens(
+          interestedTokenList,
+          {
+            sourceChain: source,
+            targetChain: target,
+          },
+          tokens
+        );
       })
     );
 
-    const tokens = tokenResponses
+    const supportedTokens = tokenResponses
       .map((tokenResponse) => {
         if (tokenResponse.status === "fulfilled") {
           return tokenResponse.value;
         } else {
-          console.error(
+          console.warn(
             "Failed to get tokens from bridge",
             tokenResponse.reason
           );
@@ -105,12 +110,21 @@ export class BridgeAdapterSdk {
       .filter((tokenResponse) => !!tokenResponse)
       .flat() as Token[];
 
-    return this.deduplicateTokens(tokens);
+    return this.deduplicateTokens(supportedTokens);
   }
 
   private deduplicateTokens(tokens: Token[]): Token[] {
     const deduplicatedTokens = tokens.reduce((prev, curr) => {
-      prev.set(curr.address, curr);
+      if (prev.has(curr.address)) {
+        const prevToken = prev.get(curr.address);
+        if (!prevToken) throw new Error("prevToken is undefined");
+        prev.set(curr.address, {
+          ...prevToken,
+          bridgeNames: [...prevToken.bridgeNames, ...curr.bridgeNames],
+        });
+      } else {
+        prev.set(curr.address, curr);
+      }
       return prev;
     }, new Map<string, Token>());
 

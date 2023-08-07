@@ -237,7 +237,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
           logoUri: token.logoUri,
           symbol: token.symbol,
           name: token.name,
-          bridgeName: "wormhole",
+          bridgeNames: ["wormhole"],
         };
       });
     } else if (interestedTokenList === "target") {
@@ -252,7 +252,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
           logoUri: token.logoUri,
           symbol: token.symbol,
           name: token.name,
-          bridgeName: "wormhole",
+          bridgeNames: ["wormhole"],
         };
       });
     }

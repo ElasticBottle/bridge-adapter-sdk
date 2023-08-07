@@ -1,16 +1,19 @@
 import { approveEth, getAllowanceEth } from "@certusone/wormhole-sdk";
 import {
-  type Output,
+  ValiError,
   array,
   boolean,
+  flatten,
   merge,
   number,
   object,
   omit,
   optional,
   parse,
+  record,
   string,
-  url,
+  useDefault,
+  type Output,
 } from "valibot";
 import type {
   BridgeStatus,
@@ -37,11 +40,12 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     name: string(),
     decimals: number(),
     address: string(),
-    logoURI: string([url()]),
+    logoURI: useDefault(string([]), ""),
   });
   private TokenListSchema = array(this.TokenSchema);
+  private TokenRecordSchema = record(string(), this.TokenSchema);
   private TokenObjectSchema = object({
-    tokens: this.TokenListSchema,
+    tokens: this.TokenRecordSchema,
   });
   private deBridgeEvmFee = "0xb3E9C57fB983491416a0C77b07629C0991c3FD59";
   private deBridgeSolanaFee = "3uAfBoHB1cTyB7H8G2KTpSgZS1T1ME4bHb8uqzqhWsfe";
@@ -101,7 +105,9 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
       if (!chainsResp.ok) {
         throw new Error("Failed to fetch supported chains");
       }
-      const chains = await chainsResp.json();
+      const { chains } = object({ chains: array(number()) }).parse(
+        await chainsResp.json()
+      );
       if (!(chains instanceof Array)) {
         throw new Error("Invalid response from server");
       }
@@ -151,7 +157,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         const solanaTokenList = parse(this.TokenListSchema, solanaTokenListRaw);
         this.tokenList[chain] = solanaTokenList.map((token) => {
           return {
-            bridgeName: "deBridge",
+            bridgeNames: ["deBridge"],
             chain,
             logoUri: token.logoURI,
             address: token.address,
@@ -170,18 +176,38 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         }
         const tokenListRaw = await tokenListResp.json();
 
-        const tokenList = parse(this.TokenObjectSchema, tokenListRaw);
-        this.tokenList[chain] = tokenList.tokens.map((token) => {
-          return {
-            bridgeName: "deBridge",
-            chain,
-            logoUri: token.logoURI,
-            address: token.address,
-            decimals: token.decimals,
-            name: token.name,
-            symbol: token.symbol,
-          };
-        });
+        try {
+          const tokenList = parse(this.TokenObjectSchema, tokenListRaw);
+          if (chain === "Ethereum") {
+            // blur token image missing on debridge
+            tokenList.tokens[
+              "0x5283d291dbcf85356a21ba090e6db59121208b44"
+            ].logoURI =
+              "https://assets.coingecko.com/coins/images/28453/large/blur.png?1670745921";
+          }
+          this.tokenList[chain] = Object.values(tokenList.tokens).map(
+            (token) => {
+              return {
+                bridgeNames: ["deBridge"],
+                chain,
+                logoUri: token.logoURI,
+                address: token.address,
+                decimals: token.decimals,
+                name: token.name,
+                symbol: token.symbol,
+              };
+            }
+          );
+          console.log("this.tokenList[chain]", this.tokenList[chain], chain);
+        } catch (e) {
+          if (e instanceof ValiError) {
+            console.log(
+              "Error parsing response from server for deBridge",
+              flatten(e)
+            );
+          }
+          throw e;
+        }
       }
     }
     return this.tokenList[chain];

@@ -20,7 +20,8 @@ export abstract class AbstractBridgeAdapter {
 
   abstract getSupportedTokens(
     interestedTokenList: ChainDestType,
-    chains?: Partial<ChainSourceAndTarget>
+    chains?: Partial<ChainSourceAndTarget>,
+    tokens?: { sourceToken: Token; targetToken: Token }
   ): Promise<Token[]>;
 
   abstract getRouteDetails(
