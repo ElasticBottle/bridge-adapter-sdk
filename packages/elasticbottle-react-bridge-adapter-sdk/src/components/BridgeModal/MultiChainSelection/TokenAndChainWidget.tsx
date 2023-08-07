@@ -1,27 +1,33 @@
 import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
+import { useWalletClient } from "wagmi";
 import {
   TOKEN_AMOUNT_ERROR_INDICATOR,
   setTokenAmount,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
-import type { ChainSelectionType } from "../../../types/BridgeModal";
 import { Input } from "../../ui/input";
-import { Separator } from "../../ui/separator";
-import { ChainSelectButton } from "../SingleChainSelection/SingleChainSelectionButton";
-import { TokenSelectionButton } from "../TokenSelection/TokenSelectionButton";
+import { ChainAndTokenSelectButton } from "../ChainAndTokenSelect/ChainAndTokenSelectButton";
+import { useTokenBalance } from "./useTokenBalance";
 
 export function TokenAndChainWidget({
-  chainName,
   chainDest,
 }: {
   chainDest: ChainDestType;
-  chainName: ChainSelectionType;
 }) {
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
   const tokenOfInterest = chainDest === "source" ? sourceToken : targetToken;
+
+  const { error: errorGettingTokenBalance, tokenBalance } =
+    useTokenBalance(tokenOfInterest);
+  if (errorGettingTokenBalance) {
+    throw errorGettingTokenBalance;
+  }
+  const { data: walletClient } = useWalletClient();
+  const { publicKey } = useWallet();
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -43,24 +49,9 @@ export function TokenAndChainWidget({
     }
   }, [tokenOfInterest.selectedAmountFormatted]);
 
-  if (chainName === "Select a chain") {
-    return <ChainSelectButton chainDest={chainDest} chainName={chainName} />;
-  }
-
   return (
-    <div className="bsa-space-y-3 bsa-rounded-lg bsa-border bsa-p-5">
+    <div className="bsa-space-x-3 bsa-rounded-lg bsa-border bsa-p-5">
       <div className="bsa-flex bsa-justify-between">
-        <TokenSelectionButton
-          chainDest={chainDest}
-          className="bsa-w-min bsa-px-2"
-        />
-        <ChainSelectButton
-          chainDest={chainDest}
-          chainName={chainName}
-          className="bsa-w-min bsa-px-2"
-        />
-      </div>
-      <div className="bsa-flex bsa-items-center bsa-justify-between bsa-space-x-3 bsa-px-2">
         <div>
           <Input
             placeholder="0.00"
@@ -72,6 +63,7 @@ export function TokenAndChainWidget({
                 : tokenOfInterest.selectedAmountFormatted
             }
             onChange={onInputChange}
+            disabled={!publicKey || !walletClient}
           />
           {error && (
             <div className="bsa-text-xs bsa-text-destructive-foreground">
@@ -79,8 +71,15 @@ export function TokenAndChainWidget({
             </div>
           )}
         </div>
-        <Separator orientation="vertical" className="bsa-h-5" />
-        <div className="bsa-min-w-max bsa-text-muted-foreground">0 balance</div>
+        <div className="bsa-flex bsa-flex-col bsa-items-end bsa-space-y-2">
+          <ChainAndTokenSelectButton
+            chainDest={chainDest}
+            className="bsa-px-2"
+          />
+          <div className="bsa-min-w-max bsa-text-muted-foreground">
+            {tokenBalance ?? "0"} {tokenOfInterest.symbol || "Balance"}
+          </div>
+        </div>
       </div>
     </div>
   );

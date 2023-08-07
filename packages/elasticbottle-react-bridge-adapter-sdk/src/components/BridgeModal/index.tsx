@@ -8,15 +8,15 @@ import "../../style/global.css";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { BridgeHeader } from "./BridgeHeader";
+import { ChainAndTokenSelect } from "./ChainAndTokenSelect";
 import { MultiChainSelection } from "./MultiChainSelection";
 import { PendingTransaction } from "./PendingTransaction";
-import { SingleChainSelection } from "./SingleChainSelection";
+import { ProfileDetails } from "./ProfileDetails";
 import { SwapDetails } from "./SwapDetails";
 import { SwapReview } from "./SwapReview";
 import { SwapSettings } from "./SwapSettings";
 import { TokenSelection } from "./TokenSelection";
 import { WalletSelection } from "./WalletSelection";
-import { ProfileDetails } from "./ProfileDetails";
 
 const queryClient = new QueryClient();
 
@@ -42,10 +42,7 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
       body = <MultiChainSelection />;
       break;
     }
-    case "SINGLE_CHAIN_SELECTION": {
-      body = <SingleChainSelection />;
-      break;
-    }
+
     case "PENDING_TRANSACTION": {
       body = <PendingTransaction />;
       break;
@@ -72,6 +69,10 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
     }
     case "PROFILE_DETAILS": {
       body = <ProfileDetails />;
+      break;
+    }
+    case "TOKEN_CHAIN_SELECTION": {
+      body = <ChainAndTokenSelect />;
       break;
     }
     default:
@@ -142,9 +143,12 @@ function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
   }
   console.error(error);
   return (
-    <div>
-      Something unknown went wrong, check the developer console for more
-      information
-    </div>
+    <>
+      <div>
+        Something unknown went wrong, check the developer console for more
+        information.
+      </div>
+      <pre>Raw Error: {JSON.stringify(error)}</pre>
+    </>
   );
 }

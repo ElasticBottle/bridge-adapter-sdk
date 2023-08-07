@@ -7,9 +7,9 @@ export const EMPTY_BRIDGE_STEP_TITLE = "Select a chain";
 
 export type BridgeStep =
   | "MULTI_CHAIN_SELECTION"
-  | "SINGLE_CHAIN_SELECTION"
   | "WALLET_SELECTION"
   | "TOKEN_SELECTION"
+  | "TOKEN_CHAIN_SELECTION"
   | "SWAP_SETTINGS"
   | "SWAP_DETAILS"
   | "SWAP_REVIEW"
@@ -18,9 +18,9 @@ export type BridgeStep =
 
 export const BridgeStepToTitle: Record<BridgeStep, string> = {
   MULTI_CHAIN_SELECTION: EMPTY_BRIDGE_STEP_TITLE,
-  SINGLE_CHAIN_SELECTION: EMPTY_BRIDGE_STEP_TITLE,
   WALLET_SELECTION: "Select a wallet",
   TOKEN_SELECTION: "Select a token",
+  TOKEN_CHAIN_SELECTION: "Select a token",
   SWAP_SETTINGS: "Swap settings",
   SWAP_DETAILS: "Swap details",
   SWAP_REVIEW: "Review swap",
@@ -29,7 +29,7 @@ export const BridgeStepToTitle: Record<BridgeStep, string> = {
 };
 
 export type SetCurrentBridgeStepType<T extends BridgeStep> = T extends
-  | "SINGLE_CHAIN_SELECTION"
+  | "TOKEN_CHAIN_SELECTION"
   | "WALLET_SELECTION"
   | "TOKEN_SELECTION"
   ? {
@@ -40,10 +40,10 @@ export type SetCurrentBridgeStepType<T extends BridgeStep> = T extends
       step: T;
     };
 
-export type BridgeStepParams<T extends BridgeStep> = T extends "TOKEN_SELECTION"
+export type BridgeStepParams<T extends BridgeStep> = T extends
+  | "TOKEN_SELECTION"
+  | "TOKEN_CHAIN_SELECTION"
   ? { chainDest: ChainDestType }
-  : T extends "SINGLE_CHAIN_SELECTION"
-  ? { chainDest: ChainDestType; autoConnectToChain?: ChainName }
   : T extends "WALLET_SELECTION"
   ? { chain: ChainName; chainDest?: ChainDestType; onSuccess?: () => void }
   : undefined;

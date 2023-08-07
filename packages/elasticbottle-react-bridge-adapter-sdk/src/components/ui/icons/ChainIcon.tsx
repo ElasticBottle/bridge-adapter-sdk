@@ -17,6 +17,8 @@ import type { ChainSelectionType } from "../../../types/BridgeModal";
 const iconVariants = cva("", {
   variants: {
     size: {
+      "2xs": "bsa-h-3 bsa-w-3",
+      xs: "bsa-h-4 bsa-w-4",
       sm: "bsa-h-5 bsa-w-5",
       md: "bsa-h-6 bsa-w-6",
       lg: "bsa-h-7 bsa-w-7",

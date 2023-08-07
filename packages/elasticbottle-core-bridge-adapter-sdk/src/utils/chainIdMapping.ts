@@ -36,32 +36,40 @@ export function chainIdToChainName(chainId: number): ChainName | undefined {
   }
 }
 
-export const SOLANA_FAKE_CHAIN_ID = -1;
-export function chainNameToChainId(chainName: ChainName) {
+export function chainNameToViemChain(chainName: ChainName) {
   switch (chainName) {
     case "Ethereum": {
-      return mainnet.id;
+      return mainnet;
     }
     case "Arbitrum": {
-      return arbitrum.id;
+      return arbitrum;
     }
     case "Optimism": {
-      return optimism.id;
+      return optimism;
     }
     case "Avalanche": {
-      return avalanche.id;
+      return avalanche;
     }
     case "BSC": {
-      return bsc.id;
+      return bsc;
     }
     case "Polygon": {
-      return polygon.id;
+      return polygon;
     }
     case "Solana": {
-      return SOLANA_FAKE_CHAIN_ID;
+      throw new Error("Viem does not support Solana");
     }
     default: {
       throw new Error("Invalid chain name");
     }
   }
+}
+
+export const SOLANA_FAKE_CHAIN_ID = -1;
+export function chainNameToChainId(chainName: ChainName) {
+  if (chainName === "Solana") {
+    return SOLANA_FAKE_CHAIN_ID;
+  }
+  const chain = chainNameToViemChain(chainName);
+  return chain.id;
 }

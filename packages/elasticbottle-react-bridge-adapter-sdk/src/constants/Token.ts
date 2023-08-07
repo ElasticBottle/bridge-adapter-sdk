@@ -7,7 +7,7 @@ export const DEFAULT_TOKEN_WITH_AMOUNT: TokenWithAmount = {
   chain: "Ethereum",
   decimals: 18,
   logoUri: "",
-  name: "USDC",
-  symbol: "USDC",
-  bridgeName: "wormhole",
+  name: "",
+  symbol: "",
+  bridgeNames: [],
 };

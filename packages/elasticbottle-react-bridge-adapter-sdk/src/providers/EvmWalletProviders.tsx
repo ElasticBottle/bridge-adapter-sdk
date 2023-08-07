@@ -7,7 +7,7 @@ import {
   type Chain,
   type ChainProviderFn,
 } from "wagmi";
-import { goerli, polygon, polygonMumbai } from "wagmi/chains";
+import { arbitrum, avalanche, bsc, optimism, polygon } from "wagmi/chains";
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
@@ -39,7 +39,7 @@ export function EvmWalletProvider({
   const config = useMemo(() => {
     const { chains, publicClient, webSocketPublicClient } =
       configureChains<Chain>(
-        [mainnet, goerli, polygon, polygonMumbai],
+        [mainnet, polygon, arbitrum, optimism, bsc, avalanche],
         [
           publicProvider(),
           !!infuraApiKey && infuraProvider({ apiKey: infuraApiKey }),

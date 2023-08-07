@@ -1,9 +1,9 @@
 import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
+import { PublicKey } from "@solana/web3.js";
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
-import type { useConnect } from "wagmi";
+import { type useConnect } from "wagmi";
 import type { BridgeStep, BridgeStepParams } from "../types/BridgeModal";
-import type { PublicKey } from "@solana/web3.js";
 
 const customTwMerge = extendTailwindMerge({
   prefix: "bsa-",
@@ -59,8 +59,12 @@ export function formatPublicKey(publicKey: PublicKey | null) {
   return "";
 }
 
-export function formatEvmAddress(address?: string) {
-  if (address) {
+export function formatEvmAddress(address?: string | PublicKey) {
+  if (address instanceof PublicKey) {
+    const base58 = address.toBase58();
+    return base58.slice(0, 4) + ".." + base58.slice(-4);
+  }
+  if (typeof address === "string") {
     return address.slice(0, 6) + ".." + address.slice(-4);
   }
   return "";
