@@ -39,13 +39,13 @@ export function useTokenBalance(token: Token) {
         console.log("results", results);
 
         for (const item of results.value) {
-          const tokenInfo = item.account.data.parsed;
-          console.log("tokenInfo", tokenInfo);
-          const address = tokenInfo.mint;
-          const amount = tokenInfo.tokenAmount.uiAmount;
-          if (tokenInfo.mint === token.address) {
-            return amount as string;
-          }
+          // const tokenInfo = item.account.data.parsed;
+          // console.log("tokenInfo", tokenInfo);
+          // const address = tokenInfo.mint;
+          // const amount = tokenInfo.tokenAmount.uiAmount;
+          // if (tokenInfo.mint === token.address) {
+          //   return amount as string;
+          // }
         }
         // No associated token account found
         return "0";

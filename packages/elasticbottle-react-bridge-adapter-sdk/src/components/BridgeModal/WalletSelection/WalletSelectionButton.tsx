@@ -27,27 +27,46 @@ export function WalletSelectionButton() {
         ) {
           return;
         }
-        setCurrentBridgeStep({
-          step: "WALLET_SELECTION",
-          params: {
-            chain: sourceChain,
-            chainDest: "source",
-            onSuccess() {
-              setCurrentBridgeStep({
-                step: "WALLET_SELECTION",
-                params: {
-                  chain: targetChain,
-                  chainDest: "target",
-                  onSuccess() {
-                    setCurrentBridgeStep({
-                      step: "MULTI_CHAIN_SELECTION",
-                    });
-                  },
-                },
-              });
+        if (
+          (sourceChain === "Solana" && targetChain === "Solana") ||
+          (sourceChain !== "Solana" && targetChain !== "Solana")
+        ) {
+          // Both EVM or both Solana
+          setCurrentBridgeStep({
+            step: "WALLET_SELECTION",
+            params: {
+              chain: targetChain,
+              chainDest: "target",
+              onSuccess() {
+                setCurrentBridgeStep({
+                  step: "MULTI_CHAIN_SELECTION",
+                });
+              },
             },
-          },
-        });
+          });
+        } else {
+          setCurrentBridgeStep({
+            step: "WALLET_SELECTION",
+            params: {
+              chain: sourceChain,
+              chainDest: "source",
+              onSuccess() {
+                setCurrentBridgeStep({
+                  step: "WALLET_SELECTION",
+                  params: {
+                    chain: targetChain,
+                    chainDest: "target",
+                    onSuccess() {
+                      setCurrentBridgeStep({
+                        step: "MULTI_CHAIN_SELECTION",
+                      });
+                    },
+                  },
+                });
+              },
+            },
+          });
+        }
       }}
     >
       Connect Wallet
