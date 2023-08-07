@@ -1,9 +1,9 @@
+import { useWallet } from "@solana/wallet-adapter-react";
 import { LogOut, UserCircle2 } from "lucide-react";
+import { cn } from "../../../lib/utils";
+import { PublicKeyLine } from "../../ui/PublicKeyLine";
 import { Button } from "../../ui/button";
 import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKeyLine } from "../../ui/PublicKeyLine";
-import { cn } from "../../../lib/utils";
 
 export function SolanaWalletProfile({
   onDisconnect,

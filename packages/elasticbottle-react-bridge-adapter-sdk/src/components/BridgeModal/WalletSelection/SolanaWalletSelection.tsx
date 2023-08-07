@@ -1,13 +1,13 @@
 import { useCallback, useEffect } from "react";
 import { withErrorBoundary } from "react-error-boundary";
-import { Button } from "../../ui/button";
-import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
-import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
 import {
   setCurrentBridgeStep,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
 import type { BridgeStepParams } from "../../../types/BridgeModal";
+import { Button } from "../../ui/button";
+import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
+import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
 
 function SolanaWalletConnectionListBase() {
   const { buttonState, onConnect, onDisconnect, onSelectWallet, wallets } =

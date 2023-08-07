@@ -1,13 +1,13 @@
-import { UserCircle2 } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKeyLine } from "../../ui/PublicKeyLine";
-import { cn } from "../../../lib/utils";
-import { SolanaWalletDetail } from "../ProfileDetails/SolanaWalletDetail";
-import React, { useCallback, useEffect, useState } from "react";
-import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
-import { ChainIcon } from "../../ui/icons/ChainIcon";
-import { ViewAndCopyWallet } from "./ViewAndCopyWallet";
+import { UserCircle2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { SOLANA_BASE_SOLSCAN_URL } from "../../../constants/BaseExplorers";
+import { cn } from "../../../lib/utils";
+import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
+import { PublicKeyLine } from "../../ui/PublicKeyLine";
+import { ChainIcon } from "../../ui/icons/ChainIcon";
+import { SolanaWalletDetail } from "../ProfileDetails/SolanaWalletDetail";
+import { ViewAndCopyWallet } from "./ViewAndCopyWallet";
 
 export function SolanaWalletDetailedProfile({
   className,

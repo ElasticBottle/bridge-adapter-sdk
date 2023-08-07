@@ -1,6 +1,5 @@
 import { Copy, CopyCheck, ExternalLink } from "lucide-react";
 import { useCopyAddress } from "../../ui/useCopyAddress";
-import * as React from "react";
 
 export function ViewAndCopyWallet({
   baseExplorerUrl = "",

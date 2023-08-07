@@ -1,14 +1,9 @@
-import { useAccount, useDisconnect } from "wagmi";
+import { cn } from "../../../lib/utils";
+import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
 import { Button, buttonVariants } from "../../ui/button";
-import {
-  clearChain,
-  setCurrentBridgeStep,
-  useBridgeModalStore,
-} from "../../../providers/BridgeModalContext";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { EvmWalletProfile } from "../ProfileDisplays/EvmWalletProfile";
 import { SolanaWalletProfile } from "../ProfileDisplays/SolanaWalletProfile";
-import { cn } from "../../../lib/utils";
 import { useMultiChainWalletInfo } from "./useMultiChainWalletInfo";
 
 export function MultiChainWalletButton() {

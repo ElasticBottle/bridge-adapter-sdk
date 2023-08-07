@@ -1,13 +1,13 @@
 import { UserCircle2 } from "lucide-react";
-import { cn } from "../../../lib/utils";
-import React, { useCallback, useEffect, useState } from "react";
-import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
-import { ChainIcon } from "../../ui/icons/ChainIcon";
-import { ViewAndCopyWallet } from "./ViewAndCopyWallet";
-import { ETHEREUM_BASE_EXPLORER_URL } from "../../../constants/BaseExplorers";
-import { EvmWalletDetail } from "../ProfileDetails/EvmWalletDetail";
+import { useCallback } from "react";
 import { useAccount, useDisconnect, useEnsName } from "wagmi";
+import { ETHEREUM_BASE_EXPLORER_URL } from "../../../constants/BaseExplorers";
+import { cn } from "../../../lib/utils";
+import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
 import { AddressLine } from "../../ui/AddressLine";
+import { ChainIcon } from "../../ui/icons/ChainIcon";
+import { EvmWalletDetail } from "../ProfileDetails/EvmWalletDetail";
+import { ViewAndCopyWallet } from "./ViewAndCopyWallet";
 
 export function EvmWalletDetailedProfile({
   className,
