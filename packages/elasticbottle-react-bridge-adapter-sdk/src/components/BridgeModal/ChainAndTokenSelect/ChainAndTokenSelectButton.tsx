@@ -22,7 +22,7 @@ export function ChainAndTokenSelectButton({
   const isTokenChosen = !!tokenOfInterest.address;
 
   let TokenDisplay = (
-    <div className="bsa-relative bsa-flex bsa-flex-grow bsa-items-center bsa-space-x-2">
+    <div className="bsa-relative bsa-flex bsa-flex-grow bsa-items-center bsa-space-x-2 bsa-py-1">
       <ChainIcon
         size={"sm"}
         chainName={chainOfInterest}

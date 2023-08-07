@@ -81,8 +81,7 @@ export function TokenSelect() {
         Select a chain first
       </div>
     );
-  }
-  if (!isLoadingTokens) {
+  } else if (!isLoadingTokens && filteredTokens.length === 0) {
     TokenList = (
       <div className="bsa-w-full bsa-text-center bsa-text-muted-foreground">
         No Tokens found

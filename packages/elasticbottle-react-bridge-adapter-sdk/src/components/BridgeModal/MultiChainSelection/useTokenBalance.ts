@@ -3,7 +3,7 @@ import {
   type Token,
 } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 import { createPublicClient, formatUnits, http, parseAbi } from "viem";
 import { useWalletClient } from "wagmi";
@@ -28,7 +28,7 @@ export function useTokenBalance(token: Token) {
           return "0";
         }
         const connection = new Connection(
-          clusterApiUrl("mainnet-beta"),
+          "https://solana-mainnet.g.alchemy.com/v2/Pt4N65LbFsR5ofrJXw8626s5qtMDMp6j",
           "confirmed"
         );
         // Get the initial solana token balance
@@ -36,6 +36,8 @@ export function useTokenBalance(token: Token) {
           publicKey,
           { mint: new PublicKey(token.address) }
         );
+        console.log("results", results);
+
         for (const item of results.value) {
           const tokenInfo = item.account.data.parsed;
           console.log("tokenInfo", tokenInfo);
@@ -45,6 +47,8 @@ export function useTokenBalance(token: Token) {
             return amount as string;
           }
         }
+        // No associated token account found
+        return "0";
       } else {
         if (!walletClient?.transport || !walletClient?.account.address) {
           // no wallet connected yet on evm
@@ -53,21 +57,33 @@ export function useTokenBalance(token: Token) {
         if (!token.address.startsWith("0x")) {
           throw new Error(`Invalid token address ${token.address}`);
         }
-
+        -0;
         const publicClient = createPublicClient({
           transport: http(),
           chain: chainNameToViemChain(token.chain),
         });
 
-        const data = await publicClient.readContract({
+        const byteCode = await publicClient.getBytecode({
           address: token.address as `0x{string}`,
-          abi: parseAbi([
-            "function balanceOf(address owner) view returns (uint256)",
-          ]),
-          functionName: "balanceOf",
-          args: [walletClient?.account.address],
         });
-        return formatUnits(data, token.decimals);
+        if (byteCode) {
+          const userBalannce = await publicClient.readContract({
+            address: token.address as `0x{string}`,
+            abi: parseAbi([
+              "function balanceOf(address owner) view returns (uint256)",
+            ]),
+            functionName: "balanceOf",
+            args: [walletClient?.account.address],
+          });
+          console.log("userBalannce", userBalannce);
+          return formatUnits(userBalannce, token.decimals);
+        } else {
+          const userBalannce = await publicClient.getBalance({
+            address: walletClient?.account.address,
+          });
+          console.log("userBalannce", userBalannce);
+          return formatUnits(userBalannce, token.decimals);
+        }
       }
     },
     queryKey: ["getTokenBalance", token.chain, token.address],

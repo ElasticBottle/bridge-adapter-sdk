@@ -23,6 +23,7 @@ export function TokenAndChainWidget({
 
   const { error: errorGettingTokenBalance, tokenBalance } =
     useTokenBalance(tokenOfInterest);
+  console.log("tokenBalance", tokenBalance);
   if (errorGettingTokenBalance) {
     throw errorGettingTokenBalance;
   }

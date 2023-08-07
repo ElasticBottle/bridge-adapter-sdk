@@ -39,6 +39,5 @@ export function useTokenInfo(chainDest: ChainDestType) {
       targetToken,
     ],
   });
-  console.log("isLoadingTokens", isLoadingTokens);
   return { tokens, isLoadingTokens, error };
 }
