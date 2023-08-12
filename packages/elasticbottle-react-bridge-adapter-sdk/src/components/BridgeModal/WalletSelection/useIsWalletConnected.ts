@@ -8,9 +8,27 @@ export function useIsWalletConnected() {
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
 
   if (sourceToken.chain === "Solana" && targetToken.chain === "Solana") {
-    return isSolanaWalletConnected;
+    return {
+      isWalletConnected: isSolanaWalletConnected,
+      needEvmWalletConnection: false,
+      // this should never be used since its solana. Added for typing completeness
+      evmChainNeeded: sourceToken.chain,
+      needSolanaWalletConnection: true,
+    };
   } else if (sourceToken.chain !== "Solana" && targetToken.chain !== "Solana") {
-    return isEvmWalletConnected;
+    return {
+      isWalletConnected: isEvmWalletConnected,
+      needEvmWalletConnection: true,
+      evmChainNeeded: sourceToken.chain,
+      needSolanaWalletConnection: false,
+    };
   }
-  return isEvmWalletConnected && isSolanaWalletConnected;
+
+  return {
+    isWalletConnected: isEvmWalletConnected && isSolanaWalletConnected,
+    needEvmWalletConnection: true,
+    evmChainNeeded:
+      sourceToken.chain === "Solana" ? targetToken.chain : sourceToken.chain,
+    needSolanaWalletConnection: true,
+  };
 }

@@ -4,9 +4,15 @@ import {
 } from "../../../providers/BridgeModalContext";
 import { Button } from "../../ui/button";
 import { useCanConnectWallet } from "./useCanConnectWallet";
+import { useIsWalletConnected } from "./useIsWalletConnected";
 
 export function WalletSelectionButton() {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
+  const {
+    needEvmWalletConnection,
+    needSolanaWalletConnection,
+    evmChainNeeded,
+  } = useIsWalletConnected();
   const canConnectWallet = useCanConnectWallet();
 
   return (
@@ -22,41 +28,38 @@ export function WalletSelectionButton() {
         ) {
           return;
         }
-        if (
-          (sourceChain === "Solana" && targetChain === "Solana") ||
-          (sourceChain !== "Solana" && targetChain !== "Solana")
-        ) {
-          // Both EVM or both Solana
+
+        if (needSolanaWalletConnection) {
           setCurrentBridgeStep({
             step: "WALLET_SELECTION",
             params: {
-              chain: targetChain,
-              chainDest: "target",
+              chain: "Solana",
               onSuccess() {
-                setCurrentBridgeStep({
-                  step: "MULTI_CHAIN_SELECTION",
-                });
+                console.log("needEvmWalletConnection", needEvmWalletConnection);
+                if (needEvmWalletConnection) {
+                  setCurrentBridgeStep({
+                    step: "WALLET_SELECTION",
+                    params: {
+                      chain: evmChainNeeded,
+                      onSuccess() {
+                        setCurrentBridgeStep({
+                          step: "MULTI_CHAIN_SELECTION",
+                        });
+                      },
+                    },
+                  });
+                }
               },
             },
           });
-        } else {
+        } else if (needEvmWalletConnection) {
           setCurrentBridgeStep({
             step: "WALLET_SELECTION",
             params: {
-              chain: sourceChain,
-              chainDest: "source",
+              chain: evmChainNeeded,
               onSuccess() {
                 setCurrentBridgeStep({
-                  step: "WALLET_SELECTION",
-                  params: {
-                    chain: targetChain,
-                    chainDest: "target",
-                    onSuccess() {
-                      setCurrentBridgeStep({
-                        step: "MULTI_CHAIN_SELECTION",
-                      });
-                    },
-                  },
+                  step: "MULTI_CHAIN_SELECTION",
                 });
               },
             },

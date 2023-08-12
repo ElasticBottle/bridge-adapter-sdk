@@ -45,7 +45,7 @@ export type BridgeStepParams<T extends BridgeStep> = T extends
   | "TOKEN_CHAIN_SELECTION"
   ? { chainDest: ChainDestType }
   : T extends "WALLET_SELECTION"
-  ? { chain: ChainName; chainDest?: ChainDestType; onSuccess?: () => void }
+  ? { chain: ChainName; onSuccess?: () => void }
   : undefined;
 
 export type ChainSelectionType = ChainName | "Select a chain";

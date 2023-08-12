@@ -4,14 +4,14 @@ import {
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
 import { Button } from "../../ui/button";
+import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
 
 export function SwapReviewButton() {
-  const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
+  const { isWalletConnected } = useIsWalletConnected();
 
   const canReviewSwap =
-    sourceChain !== "Select a chain" &&
-    targetChain !== "Select a chain" &&
+    isWalletConnected &&
     !!sourceToken.address &&
     !!targetToken.address &&
     sourceToken.selectedAmountFormatted !== TOKEN_AMOUNT_ERROR_INDICATOR &&

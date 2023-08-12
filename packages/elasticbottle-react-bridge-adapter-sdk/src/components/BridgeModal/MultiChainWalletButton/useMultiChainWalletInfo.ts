@@ -1,11 +1,11 @@
+import { useCallback, useMemo } from "react";
+import { useAccount, useDisconnect } from "wagmi";
 import {
   clearChain,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
-import { useSolanaWalletMultiButton } from "../WalletSelection/useSolanaWalletMultiButton";
-import { useCallback, useMemo } from "react";
 import { EMPTY_BRIDGE_STEP_TITLE } from "../../../types/BridgeModal";
-import { useAccount, useDisconnect } from "wagmi";
+import { useSolanaWalletMultiButton } from "../WalletSelection/useSolanaWalletMultiButton";
 
 export const useMultiChainWalletInfo = () => {
   const { sourceChain, targetChain } = useBridgeModalStore.use.chain();
@@ -17,7 +17,7 @@ export const useMultiChainWalletInfo = () => {
     (sourceChain === "Solana" || targetChain === "Solana") &&
     buttonState === "connected";
   const evmWalletConnected =
-    (sourceChain === "Ethereum" || targetChain === "Ethereum") && isConnected;
+    sourceChain !== "Solana" && targetChain !== "Solana" && isConnected;
 
   const disconnectChain = useCallback(
     (whichChain: "Solana" | "Ethereum", clearChainState = true) => {

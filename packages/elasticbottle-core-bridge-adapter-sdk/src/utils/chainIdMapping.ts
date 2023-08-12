@@ -66,9 +66,12 @@ export function chainNameToViemChain(chainName: ChainName) {
 }
 
 export const SOLANA_FAKE_CHAIN_ID = -1;
-export function chainNameToChainId(chainName: ChainName) {
+export function chainNameToChainId(
+  chainName: ChainName,
+  solanaChainOverride: number = SOLANA_FAKE_CHAIN_ID
+) {
   if (chainName === "Solana") {
-    return SOLANA_FAKE_CHAIN_ID;
+    return solanaChainOverride;
   }
   const chain = chainNameToViemChain(chainName);
   return chain.id;

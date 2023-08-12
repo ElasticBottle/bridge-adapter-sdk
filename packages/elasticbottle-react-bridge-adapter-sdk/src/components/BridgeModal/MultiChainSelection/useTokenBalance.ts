@@ -9,6 +9,7 @@ import { createPublicClient, formatUnits, http, parseAbi } from "viem";
 import { useWalletClient } from "wagmi";
 
 export function useTokenBalance(token: Token) {
+  console.log("token", token);
   const { data: walletClient } = useWalletClient();
   const { publicKey } = useWallet();
   const {
@@ -86,7 +87,12 @@ export function useTokenBalance(token: Token) {
         }
       }
     },
-    queryKey: ["getTokenBalance", token.chain, token.address],
+    queryKey: [
+      "getTokenBalance",
+      token.address,
+      token.chain,
+      walletClient?.account.address,
+    ],
   });
 
   return { tokenBalance, isTokenBalanceLoading, error };

@@ -49,6 +49,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
   });
   private deBridgeEvmFee = "0xb3E9C57fB983491416a0C77b07629C0991c3FD59";
   private deBridgeSolanaFee = "3uAfBoHB1cTyB7H8G2KTpSgZS1T1ME4bHb8uqzqhWsfe";
+  private deBridgeSolanaChainId = 7565164;
 
   private QuoteSchema = object({
     estimation: object({
@@ -234,7 +235,10 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     const quoteUrl = new URL("https://api.dln.trade/v1.0/dln/order/quote");
     quoteUrl.searchParams.set(
       "srcChainId",
-      chainNameToChainId(sourceToken.chain).toString()
+      chainNameToChainId(
+        sourceToken.chain,
+        this.deBridgeSolanaChainId
+      ).toString()
     );
     quoteUrl.searchParams.set("srcChainTokenIn", sourceToken.address);
     quoteUrl.searchParams.set(
@@ -243,9 +247,13 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     );
     quoteUrl.searchParams.set(
       "dstChainId",
-      chainNameToChainId(targetToken.chain).toString()
+      chainNameToChainId(
+        targetToken.chain,
+        this.deBridgeSolanaChainId
+      ).toString()
     );
     quoteUrl.searchParams.set("dstChainTokenOut", targetToken.address);
+    quoteUrl.searchParams.set("dstChainTokenOutAmount", "auto");
     quoteUrl.searchParams.set("prependOperatingExpense", "true");
     quoteUrl.searchParams.set("affiliateFeePercent", "0.05");
     const quoteResp = await fetch(quoteUrl);

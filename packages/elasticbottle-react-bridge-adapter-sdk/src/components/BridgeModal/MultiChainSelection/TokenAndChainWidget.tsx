@@ -26,7 +26,7 @@ export function TokenAndChainWidget({
   if (errorGettingTokenBalance) {
     throw errorGettingTokenBalance;
   }
-  const isWalletConnected = useIsWalletConnected();
+  const { isWalletConnected } = useIsWalletConnected();
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

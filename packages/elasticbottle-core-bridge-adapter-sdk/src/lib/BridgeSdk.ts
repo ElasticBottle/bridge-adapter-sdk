@@ -133,6 +133,10 @@ export class BridgeAdapterSdk {
 
   async getRouteInformation(sourceToken: Token, targetToken: Token) {
     // Empty for now
+    const info = this.bridgeAdapters.map(async (bridgeAdapter) => {
+      return bridgeAdapter.getRouteDetails(sourceToken, targetToken);
+    });
+    return Promise.all(info);
   }
 
   async bridge(args: {

@@ -260,7 +260,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
   }
 
   getRouteDetails(sourceToken: Token, targetToken: Token): Promise<void> {
-    throw new Error("Method not implemented.");
+    return Promise.resolve();
   }
 
   private chainNameToWormholeChainName(

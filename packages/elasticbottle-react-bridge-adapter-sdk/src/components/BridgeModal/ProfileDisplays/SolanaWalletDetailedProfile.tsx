@@ -1,6 +1,6 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { UserCircle2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { SOLANA_BASE_SOLSCAN_URL } from "../../../constants/BaseExplorers";
 import { cn } from "../../../lib/utils";
 import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
@@ -16,26 +16,21 @@ export function SolanaWalletDetailedProfile({
 }) {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { connected, disconnect, publicKey } = useWallet();
-  const [walletSwitch, setWalletSwitch] = useState(false);
 
   const switchWallet = useCallback(async () => {
-    try {
-      await disconnect();
-    } finally {
-      setWalletSwitch(true);
-    }
-  }, [disconnect]);
-
-  useEffect(() => {
-    if (walletSwitch && !connected) {
-      setCurrentBridgeStep({
-        step: "WALLET_SELECTION",
-        params: {
-          chain: "Solana",
+    await disconnect();
+    setCurrentBridgeStep({
+      step: "WALLET_SELECTION",
+      params: {
+        chain: "Solana",
+        onSuccess() {
+          setCurrentBridgeStep({
+            step: "MULTI_CHAIN_SELECTION",
+          });
         },
-      });
-    }
-  }, [connected, walletSwitch]);
+      },
+    });
+  }, [disconnect]);
 
   if (!connected) {
     return (

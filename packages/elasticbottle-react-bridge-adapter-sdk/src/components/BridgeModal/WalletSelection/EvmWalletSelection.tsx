@@ -5,7 +5,7 @@ import {
 import { useConnect, useDisconnect } from "wagmi";
 import { Button } from "../../ui/button";
 import { WalletIcon } from "../../ui/icons/WalletIcon";
-import { EvmWalletProfile } from "../ProfileDisplays/EvmWalletProfile";
+import { EvmWalletDetailedProfile } from "../ProfileDisplays/EvmWalletDetailedProfile";
 
 export function EvmWalletConnectionList({
   chain,
@@ -22,7 +22,7 @@ export function EvmWalletConnectionList({
 
   return (
     <div className="bsa-flex bsa-flex-col bsa-space-y-4">
-      <EvmWalletProfile />
+      <EvmWalletDetailedProfile />
       {connectors.map((connector) => {
         if (!connector.ready) {
           return null;
