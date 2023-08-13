@@ -3,11 +3,9 @@ import { SwapReviewButton } from "../SwapReview/SwapReviewButton";
 import { WalletSelectionButton } from "../WalletSelection/WalletSelectionButton";
 import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
 import { TokenAndChainWidget } from "./TokenAndChainWidget";
-import { useQuoteInfo } from "./useQuoteInfo";
 
 export function MultiChainSelection() {
   const { isWalletConnected } = useIsWalletConnected();
-  const { isLoadingRouteInfo, routeInfo } = useQuoteInfo();
   return (
     <>
       <div className="bsa-flex bsa-flex-col bsa-space-y-4">
@@ -26,6 +24,7 @@ export function MultiChainSelection() {
         </div>
         <TokenAndChainWidget chainDest="target" />
       </div>
+
       {isWalletConnected ? <SwapReviewButton /> : <WalletSelectionButton />}
     </>
   );
