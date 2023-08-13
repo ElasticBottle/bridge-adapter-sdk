@@ -264,6 +264,9 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     sourceToken: TokenWithAmount,
     targetToken: Token
   ): Promise<QuoteInformation> {
+    if (sourceToken.name !== targetToken.name) {
+      throw new Error("Cannot bridge to another token with wormhole");
+    }
     return Promise.resolve({
       sourceToken: sourceToken,
       bridgeName: this.name(),

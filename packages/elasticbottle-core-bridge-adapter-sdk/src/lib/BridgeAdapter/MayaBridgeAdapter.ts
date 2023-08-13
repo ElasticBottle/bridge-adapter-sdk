@@ -38,7 +38,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
   }
 
   name(): Bridges {
-    return "deBridge";
+    return "mayan";
   }
   async getSupportedChains(): Promise<ChainName[]> {
     return Promise.resolve([

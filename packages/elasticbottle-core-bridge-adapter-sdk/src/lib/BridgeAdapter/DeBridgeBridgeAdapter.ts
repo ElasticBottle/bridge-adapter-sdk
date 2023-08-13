@@ -289,7 +289,9 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         ).toString(),
       },
       tradeDetails: {
-        estimatedTimeMinutes: quote.order.approximateFulfillmentDelay,
+        estimatedTimeMinutes: Math.round(
+          quote.order.approximateFulfillmentDelay / 60
+        ),
         fee: [
           {
             ...sourceToken,
