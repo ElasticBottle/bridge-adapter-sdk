@@ -2,6 +2,7 @@ import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
 import type { BridgeStatus, SolanaOrEvmAccount } from "../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../types/Chain";
 import type { ChainDestType } from "../types/ChainDest";
+import type { SwapInformation } from "../types/SwapInformation";
 import type { Token, TokenWithAmount } from "../types/Token";
 import { getBridgeAdapters } from "../utils/getBridgeAdapters";
 import { getSourceAndTargetChain } from "../utils/getSourceAndTargetChain";
@@ -148,7 +149,7 @@ export class BridgeAdapterSdk {
           );
         }
       })
-      .filter((routeInfo) => !!routeInfo);
+      .filter((routeInfo): routeInfo is SwapInformation => !!routeInfo);
     return routes;
   }
 

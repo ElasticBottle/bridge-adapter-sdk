@@ -40,7 +40,7 @@ import type {
 } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
-import type { QuoteInformation } from "../../types/QuoteInformation";
+import type { SwapInformation } from "../../types/SwapInformation";
 import type {
   BridgeToken,
   Token,
@@ -263,7 +263,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
   getQuoteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
-  ): Promise<QuoteInformation> {
+  ): Promise<SwapInformation> {
     if (sourceToken.name !== targetToken.name) {
       throw new Error("Cannot bridge to another token with wormhole");
     }

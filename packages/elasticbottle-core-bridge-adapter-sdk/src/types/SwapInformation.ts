@@ -4,7 +4,7 @@ import type {
   TokenWithExpectedOutput,
 } from "./Token";
 
-export type QuoteInformation = {
+export type SwapInformation = {
   sourceToken: TokenWithAmount;
   targetToken: TokenWithExpectedOutput;
   bridgeName: string;

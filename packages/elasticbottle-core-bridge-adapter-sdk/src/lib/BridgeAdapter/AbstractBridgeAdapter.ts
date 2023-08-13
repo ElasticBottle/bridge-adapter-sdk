@@ -5,7 +5,7 @@ import type {
 } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
-import type { QuoteInformation } from "../../types/QuoteInformation";
+import type { SwapInformation } from "../../types/SwapInformation";
 import type { Token, TokenWithAmount } from "../../types/Token";
 
 export abstract class AbstractBridgeAdapter {
@@ -28,7 +28,7 @@ export abstract class AbstractBridgeAdapter {
   abstract getQuoteDetails(
     sourceToken: Token,
     targetToken: Token
-  ): Promise<QuoteInformation>;
+  ): Promise<SwapInformation>;
 
   abstract bridge({
     onStatusUpdate,

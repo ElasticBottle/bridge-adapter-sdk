@@ -16,7 +16,7 @@ import type {
 } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
-import type { QuoteInformation } from "../../types/QuoteInformation";
+import type { SwapInformation } from "../../types/SwapInformation";
 import type { Token, TokenWithAmount } from "../../types/Token";
 import { isEvmAccount, isSolanaAccount } from "../../utils/bridge";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
@@ -95,7 +95,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
   async getQuoteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
-  ): Promise<QuoteInformation> {
+  ): Promise<SwapInformation> {
     const supportedChainList = await this.getSupportedChains();
     if (
       !supportedChainList.includes(sourceToken.chain) ||
