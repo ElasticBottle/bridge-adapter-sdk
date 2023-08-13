@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useBridgeModalStore } from "../../../providers/BridgeModalContext";
 
-export function useRouteInfos() {
+export function useQuoteInfo() {
   const sdk = useBridgeModalStore.use.sdk();
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
   const { data, isInitialLoading, error } = useQuery({
     queryFn: async () => {
-      const routeInfo = await sdk.getRouteInformation(sourceToken, targetToken);
+      const routeInfo = await sdk.getQuoteInformation(sourceToken, targetToken);
       console.log("routeInfo", routeInfo);
+      return routeInfo;
     },
     queryKey: ["bridgeInfo", sourceToken, targetToken],
     enabled:
@@ -19,5 +20,5 @@ export function useRouteInfos() {
     throw error;
   }
 
-  return { routeInfos: data, isLoadingRouteInfos: isInitialLoading };
+  return { routeInfo: data, isLoadingRouteInfo: isInitialLoading };
 }

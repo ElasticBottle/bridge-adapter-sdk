@@ -15,7 +15,7 @@ import {
   useDefault,
   type Output,
 } from "valibot";
-import { parseUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 import type {
   BridgeStatus,
   Bridges,
@@ -29,6 +29,7 @@ import { isEvmAccount } from "../../utils/bridge";
 import {
   chainIdToChainName,
   chainNameToChainId,
+  chainNameToNativeCurrency,
 } from "../../utils/chainIdMapping";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
 import { walletClientToSigner } from "../../utils/viem/ethers";
@@ -218,7 +219,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     return this.tokenList[chain];
   }
 
-  async getRouteDetails(
+  async getQuoteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
   ): Promise<QuoteInformation> {
@@ -266,7 +267,10 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     }
     const quoteRaw = await quoteResp.json();
     const quote = parse(this.QuoteSchema, quoteRaw);
+    console.log("quote", quote);
     this.debridgeQuote = quote;
+    const sourceNativeCurrency = chainNameToNativeCurrency(sourceToken.chain);
+
     return {
       bridgeName: this.name(),
       sourceToken: sourceToken,
@@ -286,10 +290,40 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
       },
       tradeDetails: {
         estimatedTimeMinutes: quote.order.approximateFulfillmentDelay,
-        // TODO
-        fee: sourceToken,
+        fee: [
+          {
+            ...sourceToken,
+            selectedAmountInBaseUnits:
+              quote.estimation.srcChainTokenIn.approximateOperatingExpense,
+            selectedAmountFormatted: formatUnits(
+              BigInt(
+                quote.estimation.srcChainTokenIn.approximateOperatingExpense
+              ),
+              sourceToken.decimals
+            ),
+            details: `Taker's gas fee on ${targetToken.chain}`,
+          },
+          {
+            ...sourceNativeCurrency,
+            details: "Debridge Protocol Fee",
+            selectedAmountInBaseUnits: quote.fixFee,
+            selectedAmountFormatted: formatUnits(
+              BigInt(quote.fixFee),
+              sourceNativeCurrency.decimals
+            ),
+          },
+        ],
         priceImpact: 0,
-        routeInformation: [],
+        routeInformation: [
+          {
+            fromTokenSymbol: sourceToken.symbol,
+            toTokenSymbol: quote.estimation.srcChainTokenOut.symbol,
+          },
+          {
+            fromTokenSymbol: quote.estimation.srcChainTokenOut.symbol,
+            toTokenSymbol: targetToken.symbol,
+          },
+        ],
       },
     };
   }
@@ -347,26 +381,30 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     targetAccount: SolanaOrEvmAccount;
     onStatusUpdate: (args: BridgeStatus[]) => void;
   }): Promise<void> {
-    const quote = await this.getRouteDetails(sourceToken, targetToken);
-
+    if (!this.debridgeQuote) {
+      throw new Error("No quote found");
+    }
     if (sourceToken.chain !== "Solana") {
       if (!isEvmAccount(sourceAccount)) {
         throw new Error("Source account is not an EVM account");
       }
-      if (quote.tx?.allowanceAmount && quote.tx?.allowanceTarget) {
+      if (
+        this.debridgeQuote.tx?.allowanceAmount &&
+        this.debridgeQuote.tx?.allowanceTarget
+      ) {
         // handle approval
         const ethersSigner = walletClientToSigner(sourceAccount);
         const allowance = await getAllowanceEth(
-          quote.tx?.allowanceTarget,
+          this.debridgeQuote.tx?.allowanceTarget,
           sourceToken.address,
           ethersSigner
         );
-        if (allowance.lt(quote.tx?.allowanceAmount)) {
+        if (allowance.lt(this.debridgeQuote.tx?.allowanceAmount)) {
           await approveEth(
-            quote.tx.allowanceTarget,
+            this.debridgeQuote.tx.allowanceTarget,
             sourceToken.address,
             ethersSigner,
-            quote.tx.allowanceAmount
+            this.debridgeQuote.tx.allowanceAmount
           );
         }
       }

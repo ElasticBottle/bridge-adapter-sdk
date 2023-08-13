@@ -4,7 +4,6 @@ import { useBridgeModalStore } from "../../../providers/BridgeModalContext";
 import type { BridgeStepParams } from "../../../types/BridgeModal";
 import { Button } from "../../ui/button";
 import { WalletAdapterIcon } from "../../ui/icons/WalletAdapterIcon";
-import { SolanaWalletDetailedProfile } from "../ProfileDisplays/SolanaWalletDetailedProfile";
 import { useSolanaWalletMultiButton } from "./useSolanaWalletMultiButton";
 
 function SolanaWalletConnectionListBase() {
@@ -32,7 +31,6 @@ function SolanaWalletConnectionListBase() {
 
   return (
     <div className="bsa-flex bsa-flex-col bsa-space-y-4">
-      <SolanaWalletDetailedProfile />
       {wallets.map((wallet) => (
         <Button
           key={wallet.adapter.name}

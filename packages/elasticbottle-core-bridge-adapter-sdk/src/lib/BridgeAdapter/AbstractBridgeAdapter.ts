@@ -25,7 +25,7 @@ export abstract class AbstractBridgeAdapter {
     tokens?: { sourceToken: Token; targetToken: Token }
   ): Promise<Token[]>;
 
-  abstract getRouteDetails(
+  abstract getQuoteDetails(
     sourceToken: Token,
     targetToken: Token
   ): Promise<QuoteInformation>;

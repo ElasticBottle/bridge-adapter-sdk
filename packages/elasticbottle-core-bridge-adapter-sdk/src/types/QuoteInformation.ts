@@ -1,13 +1,20 @@
-import type { TokenWithAmount, TokenWithExpectedOutput } from "./Token";
+import type {
+  FeeToken,
+  TokenWithAmount,
+  TokenWithExpectedOutput,
+} from "./Token";
 
 export type QuoteInformation = {
   sourceToken: TokenWithAmount;
   targetToken: TokenWithExpectedOutput;
   bridgeName: string;
   tradeDetails: {
-    fee: TokenWithAmount;
+    fee: FeeToken[];
     priceImpact: number;
     estimatedTimeMinutes: number;
-    routeInformation: { from: string; to: string; protocol: string }[];
+    routeInformation: {
+      fromTokenSymbol: string;
+      toTokenSymbol: string;
+    }[];
   };
 };

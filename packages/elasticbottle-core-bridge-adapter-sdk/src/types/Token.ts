@@ -38,8 +38,9 @@ type TokenExpectedOutput = {
   expectedOutputFormatted: string;
   minOutputInBaseUnits: string;
   minOutputFormatted: string;
-}
+};
 
 export type TokenWithExpectedOutput = Token & TokenExpectedOutput;
+export type FeeToken = Token & TokenUserAmount & { details: string };
 export type TokenWithAmount = Token & TokenUserAmount;
 export type TokenWithUserBalance = Token & TokenUserBalance;

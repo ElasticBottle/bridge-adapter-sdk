@@ -131,10 +131,10 @@ export class BridgeAdapterSdk {
     return Array.from(deduplicatedTokens.values());
   }
 
-  async getRouteInformation(sourceToken: Token, targetToken: Token) {
+  async getQuoteInformation(sourceToken: Token, targetToken: Token) {
     const routeInfos = await Promise.allSettled(
       this.bridgeAdapters.map(async (bridgeAdapter) => {
-        return bridgeAdapter.getRouteDetails(sourceToken, targetToken);
+        return bridgeAdapter.getQuoteDetails(sourceToken, targetToken);
       })
     );
     const routes = routeInfos

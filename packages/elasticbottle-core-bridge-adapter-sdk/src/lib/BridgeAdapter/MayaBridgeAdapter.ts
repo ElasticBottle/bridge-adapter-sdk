@@ -92,7 +92,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
     return this.tokenList[chain];
   }
 
-  async getRouteDetails(
+  async getQuoteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
   ): Promise<QuoteInformation> {
@@ -141,15 +141,23 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
       tradeDetails: {
         priceImpact: quote.priceImpact,
         estimatedTimeMinutes: quote.eta,
-        fee: {
-          ...sourceToken,
-          selectedAmountFormatted: quote.swapRelayerFee.toString(),
-          selectedAmountInBaseUnits: parseUnits(
-            quote.swapRelayerFee.toString(),
-            sourceToken.decimals
-          ).toString(),
-        },
-        routeInformation: [],
+        fee: [
+          {
+            ...sourceToken,
+            selectedAmountFormatted: quote.swapRelayerFee.toString(),
+            selectedAmountInBaseUnits: parseUnits(
+              quote.swapRelayerFee.toString(),
+              sourceToken.decimals
+            ).toString(),
+            details: "Relayer Fee",
+          },
+        ],
+        routeInformation: quote.route.map((info) => {
+          return {
+            fromTokenSymbol: info.fromSymbol,
+            toTokenSymbol: info.toSymbol,
+          };
+        }),
       },
     };
   }

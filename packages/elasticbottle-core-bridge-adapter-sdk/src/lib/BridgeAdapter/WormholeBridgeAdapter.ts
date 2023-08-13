@@ -40,6 +40,7 @@ import type {
 } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
+import type { QuoteInformation } from "../../types/QuoteInformation";
 import type {
   BridgeToken,
   Token,
@@ -259,8 +260,27 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     throw new Error("Invalid interestedTokenList value");
   }
 
-  getRouteDetails(sourceToken: Token, targetToken: Token): Promise<void> {
-    return Promise.resolve();
+  getQuoteDetails(
+    sourceToken: TokenWithAmount,
+    targetToken: Token
+  ): Promise<QuoteInformation> {
+    return Promise.resolve({
+      sourceToken: sourceToken,
+      bridgeName: this.name(),
+      targetToken: {
+        ...targetToken,
+        expectedOutputFormatted: sourceToken.selectedAmountFormatted,
+        expectedOutputInBaseUnits: sourceToken.selectedAmountInBaseUnits,
+        minOutputFormatted: sourceToken.selectedAmountFormatted,
+        minOutputInBaseUnits: sourceToken.selectedAmountInBaseUnits,
+      },
+      tradeDetails: {
+        estimatedTimeMinutes: 10,
+        fee: [],
+        priceImpact: 0,
+        routeInformation: [],
+      },
+    });
   }
 
   private chainNameToWormholeChainName(

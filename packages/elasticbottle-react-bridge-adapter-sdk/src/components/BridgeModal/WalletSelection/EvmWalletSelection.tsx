@@ -22,7 +22,6 @@ export function EvmWalletConnectionList({
 
   return (
     <div className="bsa-flex bsa-flex-col bsa-space-y-4">
-      <EvmWalletDetailedProfile />
       {connectors.map((connector) => {
         if (!connector.ready) {
           return null;
