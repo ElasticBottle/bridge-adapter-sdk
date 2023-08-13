@@ -4,11 +4,7 @@ import type {
 } from "@solana/web3.js";
 import type { WalletClient } from "viem";
 
-export type Bridges =
-  | "wormhole"
-  | "allBridge core"
-  | "allBridge classic"
-  | "deBridge";
+export type Bridges = "wormhole" | "mayan" | "deBridge";
 
 export type SolanaAccount = {
   signTransaction: (

@@ -1,5 +1,6 @@
 import type { AbstractBridgeAdapter } from "../lib/BridgeAdapter/AbstractBridgeAdapter";
 import { DeBridgeBridgeAdapter } from "../lib/BridgeAdapter/DeBridgeBridgeAdapter";
+import { MayanBridgeAdapter } from "../lib/BridgeAdapter/MayaBridgeAdapter";
 import { WormholeBridgeAdapter } from "../lib/BridgeAdapter/WormholeBridgeAdapter";
 import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
 import type { ChainSourceAndTarget } from "../types/Chain";
@@ -15,6 +16,10 @@ export function getBridgeAdapters({
   const allowedBridgeAdapters: { [bridge: string]: AbstractBridgeAdapter } = {
     wormhole: new WormholeBridgeAdapter({ sourceChain, targetChain }),
     deBridge: new DeBridgeBridgeAdapter({
+      sourceChain,
+      targetChain,
+    }),
+    mayan: new MayanBridgeAdapter({
       sourceChain,
       targetChain,
     }),

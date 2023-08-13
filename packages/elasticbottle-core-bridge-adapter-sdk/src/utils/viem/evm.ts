@@ -1,16 +1,5 @@
-import type { PublicClient, WalletClient } from "viem";
-import { createPublicClient, custom, type Hash } from "viem";
-
-export function getPublicClientFromWallet(
-  walletClient: WalletClient
-): PublicClient {
-  const { chain, transport } = walletClient;
-
-  return createPublicClient({
-    chain,
-    transport: custom(transport),
-  });
-}
+import type { PublicClient } from "viem";
+import { type Hash } from "viem";
 
 export async function getBalanceForToken(
   tokenAddress: string,

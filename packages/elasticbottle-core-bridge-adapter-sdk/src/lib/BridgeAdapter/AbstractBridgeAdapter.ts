@@ -5,6 +5,7 @@ import type {
 } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
+import type { QuoteInformation } from "../../types/QuoteInformation";
 import type { Token, TokenWithAmount } from "../../types/Token";
 
 export abstract class AbstractBridgeAdapter {
@@ -27,7 +28,7 @@ export abstract class AbstractBridgeAdapter {
   abstract getRouteDetails(
     sourceToken: Token,
     targetToken: Token
-  ): Promise<void | unknown>;
+  ): Promise<QuoteInformation>;
 
   abstract bridge({
     onStatusUpdate,

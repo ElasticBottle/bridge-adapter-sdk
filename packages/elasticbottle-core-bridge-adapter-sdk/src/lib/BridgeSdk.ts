@@ -132,11 +132,24 @@ export class BridgeAdapterSdk {
   }
 
   async getRouteInformation(sourceToken: Token, targetToken: Token) {
-    // Empty for now
-    const info = this.bridgeAdapters.map(async (bridgeAdapter) => {
-      return bridgeAdapter.getRouteDetails(sourceToken, targetToken);
-    });
-    return Promise.all(info);
+    const routeInfos = await Promise.allSettled(
+      this.bridgeAdapters.map(async (bridgeAdapter) => {
+        return bridgeAdapter.getRouteDetails(sourceToken, targetToken);
+      })
+    );
+    const routes = routeInfos
+      .map((routeInfo) => {
+        if (routeInfo.status === "fulfilled") {
+          return routeInfo.value;
+        } else {
+          console.warn(
+            "Error fetching route info for one of the bridge",
+            routeInfo.reason
+          );
+        }
+      })
+      .filter((routeInfo) => !!routeInfo);
+    return routes;
   }
 
   async bridge(args: {

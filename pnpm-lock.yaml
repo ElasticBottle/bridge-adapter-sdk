@@ -186,6 +186,9 @@ importers:
       '@certusone/wormhole-sdk':
         specifier: ^0.9.22
         version: 0.9.22(google-protobuf@3.21.2)
+      '@mayanfinance/swap-sdk':
+        specifier: ^4.2.3
+        version: 4.2.3
       '@solana/spl-token':
         specifier: ^0.3.8
         version: 0.3.8(@solana/web3.js@1.78.0)
@@ -4635,6 +4638,20 @@ packages:
       globby: 11.1.0
       jju: 1.4.0
       read-yaml-file: 1.1.0
+    dev: false
+
+  /@mayanfinance/swap-sdk@4.2.3:
+    resolution: {integrity: sha512-i7rgo0dzqVCTpN57K2fT/4BzK62UIVf8UJXu+9ZmWupLPhOzHGPx1yaMEuSzqOtwNPaqorfIcTU3VwJ2NM4pnA==}
+    dependencies:
+      '@solana/buffer-layout': 4.0.1
+      '@solana/web3.js': 1.78.0(encoding@0.1.13)
+      cross-fetch: 3.1.8(encoding@0.1.13)
+      ethers: 5.7.2
+      js-sha3: 0.8.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
     dev: false
 
   /@metamask/eth-sig-util@4.0.1:

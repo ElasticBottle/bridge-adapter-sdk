@@ -15,6 +15,7 @@ import {
   useDefault,
   type Output,
 } from "valibot";
+import { parseUnits } from "viem";
 import type {
   BridgeStatus,
   Bridges,
@@ -22,6 +23,7 @@ import type {
 } from "../../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
+import type { QuoteInformation } from "../../types/QuoteInformation";
 import type { Token, TokenWithAmount } from "../../types/Token";
 import { isEvmAccount } from "../../utils/bridge";
 import {
@@ -90,6 +92,8 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     }),
     fixFee: string(),
   });
+  private debridgeQuote: Output<typeof this.QuoteSchema> | undefined;
+
   constructor(args: Partial<ChainSourceAndTarget>) {
     super(args);
   }
@@ -217,7 +221,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
   async getRouteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
-  ): Promise<Output<typeof this.QuoteSchema>> {
+  ): Promise<QuoteInformation> {
     const supportedChainList = await this.getSupportedChains();
     if (
       !supportedChainList.includes(sourceToken.chain) ||
@@ -262,7 +266,32 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     }
     const quoteRaw = await quoteResp.json();
     const quote = parse(this.QuoteSchema, quoteRaw);
-    return quote;
+    this.debridgeQuote = quote;
+    return {
+      bridgeName: this.name(),
+      sourceToken: sourceToken,
+      targetToken: {
+        ...targetToken,
+        expectedOutputFormatted:
+          quote.estimation.dstChainTokenOut.recommendedAmount,
+        expectedOutputInBaseUnits: parseUnits(
+          quote.estimation.dstChainTokenOut.recommendedAmount,
+          targetToken.decimals
+        ).toString(),
+        minOutputFormatted: quote.estimation.dstChainTokenOut.recommendedAmount,
+        minOutputInBaseUnits: parseUnits(
+          quote.estimation.dstChainTokenOut.recommendedAmount,
+          targetToken.decimals
+        ).toString(),
+      },
+      tradeDetails: {
+        estimatedTimeMinutes: quote.order.approximateFulfillmentDelay,
+        // TODO
+        fee: sourceToken,
+        priceImpact: 0,
+        routeInformation: [],
+      },
+    };
   }
 
   private async createDebridgeTransaction() {
