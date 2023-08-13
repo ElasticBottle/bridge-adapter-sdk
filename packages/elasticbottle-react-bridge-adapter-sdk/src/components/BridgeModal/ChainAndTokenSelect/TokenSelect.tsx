@@ -1,6 +1,7 @@
 // import { useQuery } from "@tanstack/react-query";
 import { type Token } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useEffect, useState } from "react";
+import { FixedSizeList } from "react-window";
 import { formatUnits, parseUnits } from "viem";
 import { hasChainDest } from "../../../lib/utils";
 import {
@@ -67,13 +68,13 @@ export function TokenSelect() {
   };
 
   let TokenList = (
-    <>
+    <div className="bsa-flex bsa-flex-col bsa-space-y-5 bsa-overflow-auto">
       {Array(5)
         .fill(0)
         .map((_, idx) => {
           return <Skeleton key={idx} className="bsa-h-10 bsa-w-full" />;
         })}
-    </>
+    </div>
   );
   if (chainOfInterest === "Select a chain") {
     TokenList = (
@@ -87,16 +88,36 @@ export function TokenSelect() {
         No Tokens found
       </div>
     );
-  } else if (filteredTokens.length > 0) {
+  } else if (!isLoadingTokens && filteredTokens.length > 0) {
+    const tokenItemHeight = 45;
+    const gutter = 10;
+
     TokenList = (
-      <>
-        {filteredTokens.map((token) => {
+      <FixedSizeList
+        itemSize={tokenItemHeight + gutter}
+        height={330}
+        itemCount={filteredTokens.length}
+        width={"100%"}
+      >
+        {({ index, style }) => {
+          const token = filteredTokens[index];
           return (
             <Button
               key={token.address}
               variant={"ghost"}
               size={"lg"}
               className="bsa-items-center bsa-justify-between bsa-px-4"
+              style={{
+                ...style,
+                top:
+                  (typeof style?.top === "number"
+                    ? style?.top
+                    : parseInt(style?.top ?? "0")) + gutter,
+                height:
+                  (typeof style.height === "number"
+                    ? style.height
+                    : parseInt(style?.height ?? "0")) - gutter,
+              }}
               onClick={onTokenClick(token)}
             >
               <div className="bsa-flex bsa-items-center bsa-space-x-2">
@@ -116,8 +137,8 @@ export function TokenSelect() {
               </div>
             </Button>
           );
-        })}
-      </>
+        }}
+      </FixedSizeList>
     );
   }
 
@@ -131,7 +152,7 @@ export function TokenSelect() {
           setTokenSearch(e.target.value);
         }}
       />
-      <div className="bsa-flex bsa-max-h-80 bsa-flex-col bsa-space-y-5 bsa-overflow-auto bsa-px-1 bsa-py-1">
+      <div className=" bsa-max-h-80 bsa-w-full bsa-px-1 bsa-py-1">
         {TokenList}
       </div>
     </div>

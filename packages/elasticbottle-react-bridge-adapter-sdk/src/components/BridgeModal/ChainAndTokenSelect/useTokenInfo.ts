@@ -8,7 +8,7 @@ export function useTokenInfo(chainDest: ChainDestType) {
   const sdk = useBridgeModalStore.use.sdk();
   const {
     data: tokens,
-    isInitialLoading: isLoadingTokens,
+    isLoading: isLoadingTokens,
     error,
   } = useQuery({
     queryFn: async () => {
