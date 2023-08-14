@@ -1,6 +1,7 @@
 import type {
   BridgeAdapterSdkArgs,
   ChainDestType,
+  SwapInformation,
   TokenWithAmount,
 } from "@elasticbottle/core-bridge-adapter-sdk";
 import { BridgeAdapterSdk } from "@elasticbottle/core-bridge-adapter-sdk";
@@ -30,6 +31,7 @@ type BridgeModalState = {
     targetChain: ChainSelectionType;
   };
   token: { sourceToken: TokenWithAmount; targetToken: TokenWithAmount };
+  swapInformation?: SwapInformation;
   relayerFee: RelayerFeeType;
   slippageTolerance: SlippageToleranceType;
 };
@@ -47,9 +49,11 @@ type BridgeModalActions = {
   setChain: (args: SetChain) => Promise<void>;
   setToken: (token: TokenWithAmount, chainDest: ChainDestType) => Promise<void>;
   setTokenAmount: (amount: string, chainDest: ChainDestType) => void;
+  setSwapInformation: (swapInformation: SwapInformation) => void;
+  goBackOneStep: () => void;
+
   setSlippageTolerance: (slippageTolerance: SlippageToleranceType) => void;
   setRelayerFee: (relayerFee: RelayerFeeType) => void;
-  goBackOneStep: () => void;
 };
 
 type WithSelectors<S> = S extends { getState: () => infer T }
@@ -85,10 +89,6 @@ const useBridgeModalStoreBase = create<BridgeModalState>()(
         token: {
           sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
           targetToken: { ...DEFAULT_TOKEN_WITH_AMOUNT, chain: "Solana" },
-        },
-        accounts: {
-          sourceAccount: "",
-          targetAccount: "",
         },
         relayerFee: {
           active: false,
@@ -216,6 +216,14 @@ export const setTokenAmount: BridgeModalActions["setTokenAmount"] = (
   if (error) {
     throw error;
   }
+};
+
+export const setSwapInformation: BridgeModalActions["setSwapInformation"] = (
+  swapInformation
+) => {
+  useBridgeModalStore.setState((state) => {
+    state.swapInformation = swapInformation;
+  });
 };
 
 export const SLIPPING_TOLERANCE_AUTO: SlippageToleranceType = "auto";

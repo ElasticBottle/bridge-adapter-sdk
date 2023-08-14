@@ -1,7 +1,6 @@
 import { ChevronLeft, Settings } from "lucide-react";
 import { cn } from "../../lib/utils";
 import {
-  clearChain,
   goBackOneStep,
   setCurrentBridgeStep,
   useBridgeModalStore,
@@ -9,7 +8,6 @@ import {
 import { BridgeStepToTitle } from "../../types/BridgeModal";
 import { Button } from "../ui/button";
 import { DialogHeader, DialogTitle } from "../ui/dialog";
-import { useSolanaWalletMultiButton } from "./WalletSelection/useSolanaWalletMultiButton";
 import { MultiChainWalletButton } from "./MultiChainWalletButton";
 
 export function BridgeHeader({ title }: { title?: string }) {

@@ -1,5 +1,6 @@
 import {
   chainNameToViemChain,
+  formatTokenBalance,
   type Token,
 } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -76,14 +77,14 @@ export function useTokenBalance(token: Token) {
             functionName: "balanceOf",
             args: [walletClient?.account.address],
           });
-          console.log("userBalannce", userBalannce);
-          return formatUnits(userBalannce, token.decimals);
+          console.log("userBalannce token", userBalannce);
+          return formatTokenBalance(formatUnits(userBalannce, token.decimals));
         } else {
           const userBalannce = await publicClient.getBalance({
             address: walletClient?.account.address,
           });
-          console.log("userBalannce", userBalannce);
-          return formatUnits(userBalannce, token.decimals);
+          console.log("userBalannce coin", userBalannce);
+          return formatTokenBalance(formatUnits(userBalannce, token.decimals));
         }
       }
     },

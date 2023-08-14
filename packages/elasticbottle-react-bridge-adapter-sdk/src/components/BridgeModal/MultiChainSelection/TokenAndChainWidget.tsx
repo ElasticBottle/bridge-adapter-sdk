@@ -22,7 +22,6 @@ export function TokenAndChainWidget({
 
   const { error: errorGettingTokenBalance, tokenBalance } =
     useTokenBalance(tokenOfInterest);
-  console.log("tokenBalance", tokenBalance);
   if (errorGettingTokenBalance) {
     throw errorGettingTokenBalance;
   }
@@ -76,7 +75,7 @@ export function TokenAndChainWidget({
             className="bsa-px-2"
           />
           <div className="bsa-min-w-max bsa-text-muted-foreground">
-            {tokenBalance ?? "0"} {tokenOfInterest.symbol || "Balance"}
+            Balance: {tokenBalance ?? "0"} {tokenOfInterest.symbol}
           </div>
         </div>
       </div>

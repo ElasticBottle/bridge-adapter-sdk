@@ -1,4 +1,8 @@
-import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
+import {
+  type ChainDestType,
+  type FeeToken,
+  type SwapInformation,
+} from "@elasticbottle/core-bridge-adapter-sdk";
 import { PublicKey } from "@solana/web3.js";
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
@@ -68,4 +72,37 @@ export function formatEvmAddress(address?: string | PublicKey) {
     return address.slice(0, 6) + ".." + address.slice(-4);
   }
   return "";
+}
+
+export function formatTime(timeInMinutes: number) {
+  if (timeInMinutes <= 2) {
+    return "< 2 min";
+  }
+  return `${timeInMinutes} min`;
+}
+
+export function formatSwapFee(fees: FeeToken[]) {
+  return fees
+    .map((fee) => {
+      return `${fee.selectedAmountFormatted} ${fee.symbol}`;
+    })
+    .join(" + ");
+}
+
+export function isSwapInfoEqual(
+  swapInfo1: SwapInformation,
+  swapInfo2: SwapInformation
+) {
+  return (
+    swapInfo1.sourceToken.address.toLowerCase() !==
+      swapInfo2.sourceToken.address.toLowerCase() ||
+    swapInfo1.targetToken.address.toLowerCase() !==
+      swapInfo2.targetToken.address.toLowerCase() ||
+    swapInfo1.sourceToken.selectedAmountInBaseUnits !==
+      swapInfo2.sourceToken.selectedAmountInBaseUnits ||
+    swapInfo1.targetToken.expectedOutputInBaseUnits !==
+      swapInfo2.targetToken.expectedOutputInBaseUnits ||
+    swapInfo1.targetToken.minOutputInBaseUnits !==
+      swapInfo2.targetToken.minOutputInBaseUnits
+  );
 }

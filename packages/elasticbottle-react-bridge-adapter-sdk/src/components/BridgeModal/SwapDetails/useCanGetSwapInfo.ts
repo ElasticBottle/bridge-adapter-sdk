@@ -1,9 +1,9 @@
 import { useBridgeModalStore } from "../../../providers/BridgeModalContext";
 
-export function useCanGetQuoteInfo() {
+export function useCanGetSwapInfo() {
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
   return {
-    canGetQuoteInfo:
+    canGetSwapInfo:
       !!sourceToken.address &&
       !!targetToken.address &&
       sourceToken.selectedAmountInBaseUnits !== "0",

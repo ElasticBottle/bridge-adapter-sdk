@@ -1,23 +1,13 @@
 import {
-  TOKEN_AMOUNT_ERROR_INDICATOR,
   setCurrentBridgeStep,
   useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
 import { Button } from "../../ui/button";
-import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
 
 export function SwapReviewButton() {
-  const { sourceToken, targetToken } = useBridgeModalStore.use.token();
-  const { isWalletConnected } = useIsWalletConnected();
+  const swapInformation = useBridgeModalStore.use.swapInformation?.();
+  const canReviewSwap = !!swapInformation;
 
-  const canReviewSwap =
-    isWalletConnected &&
-    !!sourceToken.address &&
-    !!targetToken.address &&
-    sourceToken.selectedAmountFormatted !== TOKEN_AMOUNT_ERROR_INDICATOR &&
-    sourceToken.selectedAmountFormatted !== "" &&
-    targetToken.selectedAmountFormatted !== TOKEN_AMOUNT_ERROR_INDICATOR &&
-    targetToken.selectedAmountFormatted !== "";
   return (
     <Button
       size={"lg"}

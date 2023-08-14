@@ -1,4 +1,5 @@
 import { Separator } from "@radix-ui/react-separator";
+import { SwapDetailButton } from "../SwapDetails/SwapDetailsButton";
 import { SwapReviewButton } from "../SwapReview/SwapReviewButton";
 import { WalletSelectionButton } from "../WalletSelection/WalletSelectionButton";
 import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
@@ -24,7 +25,7 @@ export function MultiChainSelection() {
         </div>
         <TokenAndChainWidget chainDest="target" />
       </div>
-
+      <SwapDetailButton />
       {isWalletConnected ? <SwapReviewButton /> : <WalletSelectionButton />}
     </>
   );

@@ -1,24 +1,39 @@
+import { ChevronRight } from "lucide-react";
 import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
 import { Button } from "../../ui/button";
-import { useCanGetQuoteInfo } from "./useCanGetQuoteInfo";
-import { useQuoteInfo } from "./useQuoteInfo";
+import { useCanGetSwapInfo } from "./useCanGetSwapInfo";
+import { useSwapInfo } from "./useSwapInfo";
 
-export function WalletSelectionButton() {
-  const { isLoadingQuoteInfo, quoteInfo } = useQuoteInfo();
-  const { canGetQuoteInfo } = useCanGetQuoteInfo();
+export function SwapDetailButton() {
+  const { isLoadingSwapInfo, swapInfo } = useSwapInfo();
+  console.log("isLoadingSwapInfo, swapInfo", isLoadingSwapInfo, swapInfo);
+  const { canGetSwapInfo } = useCanGetSwapInfo();
+  console.log("canGetSwapInfo", canGetSwapInfo);
+  let ButtonBody: string | JSX.Element = "No Swap Route Chosen";
+  if (canGetSwapInfo && isLoadingSwapInfo) {
+    ButtonBody = "Fetching Swap Route Details";
+  } else if (canGetSwapInfo && !isLoadingSwapInfo && swapInfo) {
+    ButtonBody = (
+      <>
+        <div>View Swap Route Details</div>
+        <ChevronRight />
+      </>
+    );
+  }
   return (
     <Button
       size={"lg"}
-      disabled={!canGetQuoteInfo}
-      className="bsa-mt-10 bsa-w-full"
-      variant={canGetQuoteInfo ? "outline" : "ghost"}
+      disabled={!canGetSwapInfo}
+      isLoading={isLoadingSwapInfo}
+      className="bsa-mt-10 bsa-w-full bsa-justify-between"
+      variant={canGetSwapInfo ? "outline" : "ghost"}
       onClick={() => {
         setCurrentBridgeStep({
           step: "SWAP_DETAILS",
         });
       }}
     >
-      {canGetQuoteInfo ? "Choose route" : "Route Details"}
+      {ButtonBody}
     </Button>
   );
 }
