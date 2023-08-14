@@ -13,9 +13,9 @@ export function MultiChainWalletButton() {
     <>
       {solanaWalletConnected || evmWalletConnected ? (
         <Popover>
-          <PopoverTrigger>
+          <PopoverTrigger asChild>
             <Button variant="ghost" aria-label="Show chains">
-              View Chains
+              View Accounts
             </Button>
           </PopoverTrigger>
           <PopoverContent className="bsa-z-50 bsa-flex bsa-flex-col bsa-gap-y-2 bsa-bg-background bsa-py-2">
