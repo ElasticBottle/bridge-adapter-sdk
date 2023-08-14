@@ -5892,7 +5892,7 @@ packages:
       react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(encoding@0.1.13)(react@18.2.0)
+      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(react@18.2.0)
 
   /@react-native-community/cli-clean@11.3.5(encoding@0.1.13):
     resolution: {integrity: sha512-1+7BU962wKkIkHRp/uW3jYbQKKGtU7L+R3g59D8K6uLccuxJYUBJv18753ojMa6SD3SAq5Xh31bAre+YwVcOTA==}
@@ -5981,15 +5981,15 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@react-native-community/cli-plugin-metro@11.3.5(@babel/core@7.22.9)(encoding@0.1.13):
+  /@react-native-community/cli-plugin-metro@11.3.5(@babel/core@7.22.9):
     resolution: {integrity: sha512-r9AekfeLKdblB7LfWB71IrNy1XM03WrByQlUQajUOZAP2NmUUBLl9pMZscPjJeOSgLpHB9ixEFTIOhTabri/qg==}
     dependencies:
       '@react-native-community/cli-server-api': 11.3.5(encoding@0.1.13)
       '@react-native-community/cli-tools': 11.3.5(encoding@0.1.13)
       chalk: 4.1.2
       execa: 5.1.1
-      metro: 0.76.7(encoding@0.1.13)
-      metro-config: 0.76.7(encoding@0.1.13)
+      metro: 0.76.7
+      metro-config: 0.76.7
       metro-core: 0.76.7
       metro-react-native-babel-transformer: 0.76.7(@babel/core@7.22.9)
       metro-resolver: 0.76.7
@@ -6040,7 +6040,7 @@ packages:
     dependencies:
       joi: 17.9.2
 
-  /@react-native-community/cli@11.3.5(@babel/core@7.22.9)(encoding@0.1.13):
+  /@react-native-community/cli@11.3.5(@babel/core@7.22.9):
     resolution: {integrity: sha512-wMXgKEWe6uesw7vyXKKjx5EDRog0QdXHxdgRguG14AjQRao1+4gXEWq2yyExOTi/GDY6dfJBUGTCwGQxhnk/Lg==}
     engines: {node: '>=16'}
     hasBin: true
@@ -6050,7 +6050,7 @@ packages:
       '@react-native-community/cli-debugger-ui': 11.3.5
       '@react-native-community/cli-doctor': 11.3.5(encoding@0.1.13)
       '@react-native-community/cli-hermes': 11.3.5(encoding@0.1.13)
-      '@react-native-community/cli-plugin-metro': 11.3.5(@babel/core@7.22.9)(encoding@0.1.13)
+      '@react-native-community/cli-plugin-metro': 11.3.5(@babel/core@7.22.9)
       '@react-native-community/cli-server-api': 11.3.5(encoding@0.1.13)
       '@react-native-community/cli-tools': 11.3.5(encoding@0.1.13)
       '@react-native-community/cli-types': 11.3.5
@@ -6101,7 +6101,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(encoding@0.1.13)(react@18.2.0)
+      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(react@18.2.0)
 
   /@rushstack/eslint-patch@1.3.2:
     resolution: {integrity: sha512-V+MvGwaHH03hYhY+k6Ef/xKd6RYlc4q8WBx+2ANmipHJcKuktNcI/NgEsJgdSUF6Lw32njT6OnrRsKYCdgHjYw==}
@@ -6225,7 +6225,7 @@ packages:
     peerDependencies:
       react-native: '>0.69'
     dependencies:
-      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(encoding@0.1.13)(react@18.2.0)
+      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(react@18.2.0)
 
   /@solana-mobile/wallet-adapter-mobile@2.0.1(@solana/web3.js@1.78.0)(react-native@0.72.3):
     resolution: {integrity: sha512-QIM8nqVRmv8yEsTEfMbzWH7NoVVC6F417Z/tf6FpOVn1N6MqiZc5kvajsaRJKXrHzi5r5023SKErjg9LjZshXw==}
@@ -7134,7 +7134,7 @@ packages:
       '@tanstack/query-core': 4.29.19
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(encoding@0.1.13)(react@18.2.0)
+      react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(react@18.2.0)
       use-sync-external-store: 1.2.0(react@18.2.0)
 
   /@terra-money/terra.js@3.1.9:
@@ -8301,7 +8301,7 @@ packages:
   /@walletconnect/window-metadata@1.0.0:
     resolution: {integrity: sha512-9eFvmJxIKCC3YWOL97SgRkKhlyGXkrHwamfechmqszbypFspaSk+t2jQXAEU7YClHF6Qjw5eYOmy1//zFi9/GA==}
     dependencies:
-      '@walletconnect/window-getters': 1.0.0
+      '@walletconnect/window-getters': 1.0.1
     dev: false
 
   /@walletconnect/window-metadata@1.0.1:
@@ -10621,7 +10621,6 @@ packages:
     resolution: {integrity: sha512-Z3ymjopaoft7JDoxZcEb3pwdGh7yiYMhOwm2doUt6ASXlMavpNlK6Cre0+IMl2VSGyEU9rkiperQhp5iRxn5Pg==}
     dependencies:
       fast-safe-stringify: 2.1.1
-    dev: false
 
   /ethereum-cryptography@0.1.3:
     resolution: {integrity: sha512-w8/4x1SGGzc+tO97TASLja6SLd3fRIK2tLVcV2Gx4IB21hE19atll5Cq9o3d0ZmAYC/8aw0ipieTSiekAea4SQ==}
@@ -11976,7 +11975,7 @@ packages:
     engines: {node: '>=10.0.0'}
     dependencies:
       '@metamask/safe-event-emitter': 2.0.0
-      eth-rpc-errors: 4.0.2
+      eth-rpc-errors: 4.0.3
 
   /json-rpc-random-id@1.0.1:
     resolution: {integrity: sha512-RJ9YYNCkhVDBuP4zN5BBtYAzEl03yq/jIIsyif0JY9qyJuQQZNeDK7anAPKKlyEtLSj2s8h6hNh2F8zO5q7ScA==}
@@ -12382,14 +12381,14 @@ packages:
       metro-core: 0.76.7
       rimraf: 3.0.2
 
-  /metro-config@0.76.7(encoding@0.1.13):
+  /metro-config@0.76.7:
     resolution: {integrity: sha512-CFDyNb9bqxZemiChC/gNdXZ7OQkIwmXzkrEXivcXGbgzlt/b2juCv555GWJHyZSlorwnwJfY3uzAFu4A9iRVfg==}
     engines: {node: '>=16'}
     dependencies:
       connect: 3.7.0
       cosmiconfig: 5.2.1
       jest-validate: 29.6.2
-      metro: 0.76.7(encoding@0.1.13)
+      metro: 0.76.7
       metro-cache: 0.76.7
       metro-core: 0.76.7
       metro-runtime: 0.76.7
@@ -12569,7 +12568,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-transform-worker@0.76.7(encoding@0.1.13):
+  /metro-transform-worker@0.76.7:
     resolution: {integrity: sha512-cGvELqFMVk9XTC15CMVzrCzcO6sO1lURfcbgjuuPdzaWuD11eEyocvkTX0DPiRjsvgAmicz4XYxVzgYl3MykDw==}
     engines: {node: '>=16'}
     dependencies:
@@ -12578,7 +12577,7 @@ packages:
       '@babel/parser': 7.22.7
       '@babel/types': 7.22.5
       babel-preset-fbjs: 3.4.0(@babel/core@7.22.9)
-      metro: 0.76.7(encoding@0.1.13)
+      metro: 0.76.7
       metro-babel-transformer: 0.76.7
       metro-cache: 0.76.7
       metro-cache-key: 0.76.7
@@ -12591,7 +12590,7 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro@0.76.7(encoding@0.1.13):
+  /metro@0.76.7:
     resolution: {integrity: sha512-67ZGwDeumEPnrHI+pEDSKH2cx+C81Gx8Mn5qOtmGUPm/Up9Y4I1H2dJZ5n17MWzejNo0XAvPh0QL0CrlJEODVQ==}
     engines: {node: '>=16'}
     hasBin: true
@@ -12621,7 +12620,7 @@ packages:
       metro-babel-transformer: 0.76.7
       metro-cache: 0.76.7
       metro-cache-key: 0.76.7
-      metro-config: 0.76.7(encoding@0.1.13)
+      metro-config: 0.76.7
       metro-core: 0.76.7
       metro-file-map: 0.76.7
       metro-inspector-proxy: 0.76.7(encoding@0.1.13)
@@ -12633,7 +12632,7 @@ packages:
       metro-source-map: 0.76.7
       metro-symbolicate: 0.76.7
       metro-transform-plugins: 0.76.7
-      metro-transform-worker: 0.76.7(encoding@0.1.13)
+      metro-transform-worker: 0.76.7
       mime-types: 2.1.35
       node-fetch: 2.6.12(encoding@0.1.13)
       nullthrows: 1.1.1
@@ -13889,7 +13888,7 @@ packages:
       warning: 4.0.3
     dev: false
 
-  /react-native@0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(encoding@0.1.13)(react@18.2.0):
+  /react-native@0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(react@18.2.0):
     resolution: {integrity: sha512-QqISi+JVmCssNP2FlQ4MWhlc4O/I00MRE1/GClvyZ8h/6kdsyk/sOirkYdZqX3+DrJfI3q+OnyMnsyaXIQ/5tQ==}
     engines: {node: '>=16'}
     hasBin: true
@@ -13897,7 +13896,7 @@ packages:
       react: 18.2.0
     dependencies:
       '@jest/create-cache-key-function': 29.6.2
-      '@react-native-community/cli': 11.3.5(@babel/core@7.22.9)(encoding@0.1.13)
+      '@react-native-community/cli': 11.3.5(@babel/core@7.22.9)
       '@react-native-community/cli-platform-android': 11.3.5(encoding@0.1.13)
       '@react-native-community/cli-platform-ios': 11.3.5(encoding@0.1.13)
       '@react-native/assets-registry': 0.72.0

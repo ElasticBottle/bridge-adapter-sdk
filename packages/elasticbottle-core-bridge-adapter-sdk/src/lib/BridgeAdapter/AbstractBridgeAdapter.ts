@@ -1,4 +1,5 @@
 import type {
+  BridgeAdapterArgs,
   BridgeStatus,
   Bridges,
   SolanaOrEvmAccount,
@@ -6,14 +7,16 @@ import type {
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
 import type { SwapInformation } from "../../types/SwapInformation";
-import type { Token, TokenWithAmount } from "../../types/Token";
+import type { Token } from "../../types/Token";
 
 export abstract class AbstractBridgeAdapter {
-  sourceChain: ChainName | undefined;
-  targetChain: ChainName | undefined;
-  constructor({ sourceChain, targetChain }: Partial<ChainSourceAndTarget>) {
+  protected sourceChain: ChainName | undefined;
+  protected targetChain: ChainName | undefined;
+  protected settings: BridgeAdapterArgs["settings"];
+  constructor({ sourceChain, targetChain, settings }: BridgeAdapterArgs) {
     this.sourceChain = sourceChain;
     this.targetChain = targetChain;
+    this.settings = settings;
   }
   abstract name(): Bridges;
 
@@ -34,13 +37,11 @@ export abstract class AbstractBridgeAdapter {
     onStatusUpdate,
     sourceAccount,
     targetAccount,
-    sourceToken,
-    targetToken,
+    swapInformation,
   }: {
-    sourceToken: TokenWithAmount;
-    targetToken: TokenWithAmount;
+    swapInformation: SwapInformation;
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
-    onStatusUpdate: (args: BridgeStatus[]) => void;
+    onStatusUpdate: (args: BridgeStatus) => void;
   }): Promise<void>;
 }

@@ -1,14 +1,18 @@
 import type { BridgeAdapterSetting } from "../types/BridgeAdapterSetting";
-import type { BridgeStatus, SolanaOrEvmAccount } from "../types/Bridges";
+import type {
+  BridgeAdapterArgs,
+  BridgeStatus,
+  SolanaOrEvmAccount,
+} from "../types/Bridges";
 import type { ChainName, ChainSourceAndTarget } from "../types/Chain";
 import type { ChainDestType } from "../types/ChainDest";
 import type { SwapInformation } from "../types/SwapInformation";
-import type { Token, TokenWithAmount } from "../types/Token";
+import type { Token } from "../types/Token";
 import { getBridgeAdapters } from "../utils/getBridgeAdapters";
 import { getSourceAndTargetChain } from "../utils/getSourceAndTargetChain";
 import type { AbstractBridgeAdapter } from "./BridgeAdapter/AbstractBridgeAdapter";
 
-export type BridgeAdapterSdkArgs = Partial<ChainSourceAndTarget> & {
+export type BridgeAdapterSdkArgs = BridgeAdapterArgs & {
   bridgeAdapterSetting?: BridgeAdapterSetting;
 };
 
@@ -19,7 +23,7 @@ export class BridgeAdapterSdk {
   bridgeAdapters: AbstractBridgeAdapter[] = [];
   constructor(args?: BridgeAdapterSdkArgs) {
     if (args) {
-      const { sourceChain, targetChain, bridgeAdapterSetting } = args;
+      const { sourceChain, targetChain, bridgeAdapterSetting, settings } = args;
       this.sourceChain = sourceChain;
       this.targetChain = targetChain;
       this.bridgeAdapterSetting = bridgeAdapterSetting;
@@ -27,6 +31,7 @@ export class BridgeAdapterSdk {
         sourceChain: this.sourceChain,
         targetChain: this.targetChain,
         bridgeAdapterSetting: this.bridgeAdapterSetting,
+        settings,
       });
     }
   }
@@ -132,7 +137,7 @@ export class BridgeAdapterSdk {
     return Array.from(deduplicatedTokens.values());
   }
 
-  async getQuoteInformation(sourceToken: Token, targetToken: Token) {
+  async getSwapInformation(sourceToken: Token, targetToken: Token) {
     const routeInfos = await Promise.allSettled(
       this.bridgeAdapters.map(async (bridgeAdapter) => {
         return bridgeAdapter.getQuoteDetails(sourceToken, targetToken);
@@ -153,13 +158,28 @@ export class BridgeAdapterSdk {
     return routes;
   }
 
-  async bridge(args: {
-    tokenToBridge: { tokenInfo: TokenWithAmount };
+  async bridge({
+    onStatusUpdate,
+    sourceAccount,
+    swapInformation,
+    targetAccount,
+  }: {
+    swapInformation: SwapInformation;
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
-    onStatusUpdate: (args: BridgeStatus[]) => void;
-    onError: (error: Error) => void | Promise<void>;
+    onStatusUpdate: (args: BridgeStatus) => void;
   }) {
-    return Promise.resolve(args);
+    const bridgeAdapter = this.bridgeAdapters.find((bridgeAdapter) => {
+      return bridgeAdapter.name() === swapInformation.bridgeName;
+    });
+    if (!bridgeAdapter) {
+      throw new Error("No bridge adapter found");
+    }
+    return bridgeAdapter.bridge({
+      onStatusUpdate,
+      sourceAccount,
+      targetAccount,
+      swapInformation,
+    });
   }
 }

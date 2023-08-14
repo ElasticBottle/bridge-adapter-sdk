@@ -15,7 +15,7 @@ export function useSwapInfo() {
 
   const { data, isLoading, error } = useQuery({
     queryFn: async () => {
-      const routeInfo = await sdk.getQuoteInformation(sourceToken, targetToken);
+      const routeInfo = await sdk.getSwapInformation(sourceToken, targetToken);
       console.log("routeInfo", routeInfo);
       return routeInfo;
     },

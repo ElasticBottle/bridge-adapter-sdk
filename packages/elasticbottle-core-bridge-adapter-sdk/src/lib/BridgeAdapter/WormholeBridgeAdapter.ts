@@ -32,6 +32,7 @@ import {
 import { csv2json, parseValue } from "csv42";
 import { CHAIN_NAMES } from "../../constants/ChainNames";
 import type {
+  BridgeAdapterArgs,
   BridgeStatus,
   Bridges,
   EvmAccount,
@@ -46,6 +47,7 @@ import type {
   Token,
   Token as TokenType,
   TokenWithAmount,
+  TokenWithExpectedOutput,
 } from "../../types/Token";
 import { isEvmAccount, isSolanaAccount } from "../../utils/bridge";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
@@ -63,7 +65,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     "https://wormhole-v2-mainnet-api.staking.fund",
     "https://wormhole-v2-mainnet.01node.com",
   ];
-  constructor(args: Partial<ChainSourceAndTarget>) {
+  constructor(args: BridgeAdapterArgs) {
     super(args);
   }
   name(): Bridges {
@@ -443,7 +445,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     targetAccount,
   }: {
     signedVAA: Uint8Array;
-    token: TokenWithAmount;
+    token: TokenWithExpectedOutput;
     targetAccount: SolanaAccount;
   }) {
     const connection = new Connection(clusterApiUrl("mainnet-beta"));
@@ -534,15 +536,15 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     onStatusUpdate,
     sourceAccount,
     targetAccount,
-    sourceToken,
-    targetToken,
+    swapInformation,
   }: {
-    sourceToken: TokenWithAmount;
-    targetToken: TokenWithAmount;
+    swapInformation: SwapInformation;
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
-    onStatusUpdate: (args: BridgeStatus[]) => void;
+    onStatusUpdate: (args: BridgeStatus) => void;
   }): Promise<void> {
+    const { sourceToken, targetToken } = swapInformation;
+
     if (sourceToken.chain === targetToken.chain) {
       throw new Error(
         "Cannot use wormhole to bridge between two tokens on the same chain"

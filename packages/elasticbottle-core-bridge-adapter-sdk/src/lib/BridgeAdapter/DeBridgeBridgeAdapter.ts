@@ -17,6 +17,7 @@ import {
 } from "valibot";
 import { formatUnits } from "viem";
 import type {
+  BridgeAdapterArgs,
   BridgeStatus,
   Bridges,
   SolanaOrEvmAccount,
@@ -99,7 +100,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
   });
   private debridgeQuote: Output<typeof this.QuoteSchema> | undefined;
 
-  constructor(args: Partial<ChainSourceAndTarget>) {
+  constructor(args: BridgeAdapterArgs) {
     super(args);
   }
 
@@ -223,7 +224,6 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     return this.tokenList[chain];
   }
 
-  private;
   async getQuoteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
@@ -268,11 +268,9 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     quoteUrl.searchParams.set("affiliateFeePercent", "0.05");
     const quoteResp = await fetch(quoteUrl);
     if (!quoteResp.ok) {
-      console.warn(
-        "Failed to fetch quote for debridge",
-        await quoteResp.text()
+      throw new Error(
+        `Failed to fetch quote for debridge. ${await quoteResp.text()}`
       );
-      throw new Error("Failed to fetch quote for debridge");
     }
     const quoteRaw = await quoteResp.json();
     console.log("quoteRaw", quoteRaw);
@@ -396,18 +394,17 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     onStatusUpdate,
     sourceAccount,
     targetAccount,
-    sourceToken,
-    targetToken,
+    swapInformation,
   }: {
-    sourceToken: TokenWithAmount;
-    targetToken: TokenWithAmount;
+    swapInformation: SwapInformation;
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
-    onStatusUpdate: (args: BridgeStatus[]) => void;
+    onStatusUpdate: (args: BridgeStatus) => void;
   }): Promise<void> {
     if (!this.debridgeQuote) {
       throw new Error("No quote found");
     }
+    const { sourceToken } = swapInformation;
     if (sourceToken.chain !== "Solana") {
       if (!isEvmAccount(sourceAccount)) {
         throw new Error("Source account is not an EVM account");

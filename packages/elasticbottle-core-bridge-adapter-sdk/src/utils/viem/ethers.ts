@@ -1,17 +1,7 @@
-import { providers } from "ethers";
-import type { HttpTransport, PublicClient, WalletClient } from "viem";
-import { createPublicClient, custom } from "viem";
-
-export function getPublicClientFromWallet(
-  walletClient: WalletClient
-): PublicClient {
-  const { chain, transport } = walletClient;
-
-  return createPublicClient({
-    chain,
-    transport: custom(transport),
-  });
-}
+import { getDefaultProvider, providers } from "ethers";
+import { type WalletClient } from "viem";
+import type { ChainName } from "../../types/Chain";
+import { chainNameToViemChain } from "../chainIdMapping";
 
 export function walletClientToSigner(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient;
@@ -27,21 +17,37 @@ export function walletClientToSigner(walletClient: WalletClient) {
   return signer;
 }
 
-export function publicClientToProvider(publicClient: PublicClient) {
-  const { chain, transport } = publicClient;
-  if (!chain) throw new Error("Chain is undefined");
-  const network = {
-    chainId: chain.id,
-    name: chain.name,
-    ensAddress: chain.contracts?.ensRegistry?.address,
-  };
-  if (transport.type === "fallback")
-    return new providers.FallbackProvider(
-      (transport.transports as ReturnType<HttpTransport>[]).map(
-        ({ value }) => new providers.JsonRpcProvider(value?.url, network)
-      )
-    );
-  // TODO: Fix typing here
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  return new providers.JsonRpcProvider(transport.url, network);
+const supportedAlchemyChains: ChainName[] = [
+  "Ethereum",
+  "Polygon",
+  "Arbitrum",
+  "Optimism",
+];
+const supportedInfuraChains: ChainName[] = [
+  "BSC",
+  "Avalanche",
+  "Arbitrum",
+  "Optimism",
+  "Polygon",
+  "Ethereum",
+];
+
+export function getProviderFromKeys({
+  chainName,
+  alchemyApiKey,
+  infuraApiKey,
+}: {
+  alchemyApiKey?: string;
+  infuraApiKey?: string;
+  chainName: ChainName;
+}) {
+  const chain = chainNameToViemChain(chainName);
+
+  if (alchemyApiKey && supportedAlchemyChains.includes(chainName)) {
+    return new providers.AlchemyProvider(chain.id, alchemyApiKey);
+  }
+  if (infuraApiKey && supportedInfuraChains.includes(chainName)) {
+    return new providers.InfuraProvider(chain.id, infuraApiKey);
+  }
+  return getDefaultProvider(chain.rpcUrls.default.http[0]);
 }

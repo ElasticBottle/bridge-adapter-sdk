@@ -1,3 +1,4 @@
+import { approveEth, getAllowanceEth } from "@certusone/wormhole-sdk";
 import type {
   ChainName as MayanChainName,
   Quote,
@@ -8,8 +9,11 @@ import {
   swapFromEvm,
   swapFromSolana,
 } from "@mayanfinance/swap-sdk";
+import { Connection } from "@solana/web3.js";
+import { object, parse, string } from "valibot";
 import { parseUnits } from "viem";
 import type {
+  BridgeAdapterArgs,
   BridgeStatus,
   Bridges,
   SolanaOrEvmAccount,
@@ -23,8 +27,7 @@ import { formatTokenBalance } from "../../utils/formatTokenBalance";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
 import { getWalletAddress } from "../../utils/getWalletAddress";
 import {
-  getPublicClientFromWallet,
-  publicClientToProvider,
+  getProviderFromKeys,
   walletClientToSigner,
 } from "../../utils/viem/ethers";
 import { AbstractBridgeAdapter } from "./AbstractBridgeAdapter";
@@ -33,8 +36,10 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
   private tokenList: Record<string, Token[]> = {};
   private mayanQuote: Quote | undefined;
   private mayanSolanaFee = "3uAfBoHB1cTyB7H8G2KTpSgZS1T1ME4bHb8uqzqhWsfe";
+  private mayanSwapContractAddress =
+    "0x80F53dcf568bE566F99Ab9F37eaa2B3AA10B3C95";
 
-  constructor(args: Partial<ChainSourceAndTarget>) {
+  constructor(args: BridgeAdapterArgs) {
     super(args);
   }
 
@@ -118,7 +123,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
       fromChain: sourceToken.chain.toLowerCase() as MayanChainName,
       toChain: targetToken.chain.toLowerCase() as MayanChainName,
       slippage: 3,
-      gasDrop: 0, // optional
+      gasDrop: 0.001, // optional
       referrer: this.mayanSolanaFee,
     });
     console.log("quote", quote);
@@ -171,47 +176,151 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
     onStatusUpdate,
     sourceAccount,
     targetAccount,
-    sourceToken,
-    targetToken,
+    swapInformation,
   }: {
-    sourceToken: TokenWithAmount;
-    targetToken: TokenWithAmount;
+    swapInformation: SwapInformation;
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
-    onStatusUpdate: (args: BridgeStatus[]) => void;
+    onStatusUpdate: (args: BridgeStatus) => void;
   }): Promise<void> {
     if (!this.mayanQuote) {
       throw new Error("No quote found");
     }
+    const { sourceToken } = swapInformation;
 
-    const timoutInSeconds = 300;
+    const timoutInSeconds = 4_200; // 70 minutes, mayan's default value
+    let transactionHash = "";
 
     if (sourceToken.chain !== "Solana") {
       if (!isEvmAccount(sourceAccount)) {
         throw new Error("Source account is not an EVM account");
       }
+      const sourceSigner = walletClientToSigner(sourceAccount);
+
+      const allowance = await getAllowanceEth(
+        this.mayanSwapContractAddress,
+        swapInformation.sourceToken.address,
+        sourceSigner
+      );
+      if (allowance.lt(swapInformation.sourceToken.selectedAmountInBaseUnits)) {
+        onStatusUpdate({
+          information: `Approving ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+          name: "Approval",
+          status: "IN_PROGRESS",
+        });
+        await approveEth(
+          this.mayanSwapContractAddress,
+          swapInformation.sourceToken.address,
+          sourceSigner,
+          swapInformation.sourceToken.selectedAmountInBaseUnits
+        );
+        onStatusUpdate({
+          information: `Approving ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+          name: "Approval",
+          status: "COMPLETED",
+        });
+      }
+
+      onStatusUpdate({
+        information: `Pending confirmation to lock  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "IN_PROGRESS",
+      });
       const swapTrx = await swapFromEvm(
         this.mayanQuote,
         getWalletAddress(targetAccount),
         timoutInSeconds,
         this.mayanSolanaFee,
-        publicClientToProvider(getPublicClientFromWallet(sourceAccount)),
+        getProviderFromKeys({
+          chainName: sourceToken.chain,
+          alchemyApiKey: this.settings?.evm?.alchemyApiKey,
+          infuraApiKey: this.settings?.evm?.infuraApiKey,
+        }),
         walletClientToSigner(sourceAccount)
       );
-      console.log("evm swapTrx", swapTrx);
+      onStatusUpdate({
+        information: `Locking  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "IN_PROGRESS",
+      });
+      const receipt = await swapTrx.wait();
+      onStatusUpdate({
+        information: `Locking  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "IN_PROGRESS",
+      });
+      transactionHash = receipt.transactionHash;
     } else {
       if (!isSolanaAccount(sourceAccount)) {
         throw new Error("Source account is not a Solana account");
       }
-      const swapTrx = await swapFromSolana(
+      onStatusUpdate({
+        information: `Locking  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "IN_PROGRESS",
+      });
+      transactionHash = await swapFromSolana(
         this.mayanQuote,
         getWalletAddress(sourceAccount),
         getWalletAddress(targetAccount),
         timoutInSeconds,
         this.mayanSolanaFee,
-        sourceAccount.signTransaction
+        sourceAccount.signTransaction,
+        this.settings?.solana?.solanaRpcUrl
+          ? new Connection(this.settings?.solana?.solanaRpcUrl)
+          : undefined
       );
-      console.log("solana swapTrx", swapTrx);
+      onStatusUpdate({
+        information: `Locking  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "COMPLETED",
+      });
+    }
+
+    setInterval(() => {
+      this.getMayanTransactionStatus(transactionHash, onStatusUpdate).catch(
+        (e) => {
+          console.error("Error fetching mayan transaction status", e);
+        }
+      );
+    }, 5_000);
+  }
+
+  private async getMayanTransactionStatus(
+    transactionhash: string,
+    onStatusUpdate: (args: BridgeStatus) => void
+  ) {
+    const statusUrl = `https://explorer-api.mayan.finance/v3/swap/trx/${transactionhash}`;
+    const response = await fetch(statusUrl);
+    if (!response.ok) {
+      throw new Error("Error fetching mayan transaction status");
+    }
+    const rawData = await response.json();
+    const parsedData = parse(
+      object({
+        status: string(),
+      }),
+      rawData
+    );
+    if (parsedData.status.includes("SETTLED")) {
+      console.log("parsedData.status", parsedData.status);
+      onStatusUpdate({
+        information: "Swap Successfully completed.",
+        name: "Completed",
+        status: "IN_PROGRESS",
+      });
+    } else {
+      let information = parsedData.status;
+      switch (parsedData.status) {
+        case "INITIATED_ON_EVM":
+          information = "Finalizing locked tokens";
+          break;
+      }
+      onStatusUpdate({
+        information: information,
+        name: "PendingConfirmation",
+        status: "IN_PROGRESS",
+      });
     }
   }
 }
