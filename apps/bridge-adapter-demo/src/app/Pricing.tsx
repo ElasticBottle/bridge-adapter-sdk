@@ -8,9 +8,9 @@ import {
 } from "@elasticbottle/react-bridge-adapter-sdk";
 
 import {
-  SolflareWalletAdapter,
-  PhantomWalletAdapter,
   CoinbaseWalletAdapter,
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 
 import { Button } from "@/components/ui/button";
@@ -96,7 +96,16 @@ export default function Pricing() {
                       wallets={adapters}
                       autoConnect={false}
                     >
-                      <EvmWalletProvider settings={{}}>
+                      <EvmWalletProvider
+                        settings={{
+                          coinbaseWalletSettings: {
+                            appName: "Example Defi Dapp",
+                          },
+                          walletConnectProjectId:
+                            process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ??
+                            "",
+                        }}
+                      >
                         <BridgeModalProvider>
                           <BridgeModal
                             customization={{

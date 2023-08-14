@@ -25,5 +25,5 @@
       "cache": false
     }
   },
-  "globalEnv": ["NODE_ENV"]
+  "globalEnv": ["NODE_ENV", "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID"]
 }
