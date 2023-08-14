@@ -289,7 +289,13 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
             information = "Unlocking tokens";
           } else if (status.includes("SETTLED")) {
             information = "Swap Successfully completed.";
+            onStatusUpdate({
+              information: information,
+              name: "Completed",
+              status: "IN_PROGRESS",
+            });
             clearInterval(interval);
+            return;
           }
 
           onStatusUpdate({

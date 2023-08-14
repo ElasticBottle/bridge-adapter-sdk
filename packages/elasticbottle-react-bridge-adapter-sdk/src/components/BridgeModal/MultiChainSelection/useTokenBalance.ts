@@ -40,15 +40,19 @@ export function useTokenBalance(token: Token) {
         );
 
         for (const item of results.value) {
+          console.log("item", item);
           const tokenInfoSchema = object({
             data: object({
               parsed: object({
-                mint: string(),
-                tokenAmount: object({ uiAmountString: string() }),
+                info: object({
+                  mint: string(),
+                  tokenAmount: object({ uiAmountString: string() }),
+                }),
               }),
             }),
           });
-          const tokenInfo = parse(tokenInfoSchema, item.account).data.parsed;
+          const tokenInfo = parse(tokenInfoSchema, item.account).data.parsed
+            .info;
           console.log("tokenInfo", tokenInfo);
           const address = tokenInfo.mint;
           const amount = tokenInfo.tokenAmount.uiAmountString;
@@ -65,7 +69,6 @@ export function useTokenBalance(token: Token) {
         if (!token.address.startsWith("0x")) {
           throw new Error(`Invalid token address ${token.address}`);
         }
-        -0;
         const publicClient = createPublicClient({
           transport: http(),
           chain: chainNameToViemChain(token.chain),

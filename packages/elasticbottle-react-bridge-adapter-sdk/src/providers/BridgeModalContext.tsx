@@ -54,6 +54,7 @@ type BridgeModalActions = {
 
   setSlippageTolerance: (slippageTolerance: SlippageToleranceType) => void;
   setRelayerFee: (relayerFee: RelayerFeeType) => void;
+  resetBridgeModalStore: () => void;
 };
 
 type WithSelectors<S> = S extends { getState: () => infer T }
@@ -73,31 +74,32 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
   return store;
 };
 
+const DEFAULT_BRIDGE_ADAPTER_STATE = {
+  sdk: new BridgeAdapterSdk(),
+  previousBridgeStep: [],
+  currentBridgeStep: "MULTI_CHAIN_SELECTION",
+  previousBridgeStepParams: [],
+  currentBridgeStepParams: undefined,
+  chain: {
+    sourceChain: "Select a chain",
+    targetChain: "Select a chain",
+  },
+  token: {
+    sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
+    targetToken: { ...DEFAULT_TOKEN_WITH_AMOUNT, chain: "Solana" },
+  },
+  swapInformation: undefined,
+  relayerFee: {
+    active: false,
+    sourceFee: 0,
+    targetFee: 0,
+  },
+  slippageTolerance: "auto",
+} satisfies BridgeModalState;
 const useBridgeModalStoreBase = create<BridgeModalState>()(
   devtools(
     immer<BridgeModalState>(() => {
-      return {
-        sdk: new BridgeAdapterSdk(),
-        previousBridgeStep: [],
-        currentBridgeStep: "MULTI_CHAIN_SELECTION",
-        previousBridgeStepParams: [],
-        currentBridgeStepParams: undefined,
-        chain: {
-          sourceChain: "Select a chain",
-          targetChain: "Select a chain",
-        },
-        token: {
-          sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
-          targetToken: { ...DEFAULT_TOKEN_WITH_AMOUNT, chain: "Solana" },
-        },
-        swapInformation: undefined,
-        relayerFee: {
-          active: false,
-          sourceFee: 0,
-          targetFee: 0,
-        },
-        slippageTolerance: "auto",
-      };
+      return DEFAULT_BRIDGE_ADAPTER_STATE;
     })
   )
 );
@@ -226,6 +228,11 @@ export const setSwapInformation: BridgeModalActions["setSwapInformation"] = (
     state.swapInformation = swapInformation;
   });
 };
+
+export const resetBridgeModalStore: BridgeModalActions["resetBridgeModalStore"] =
+  () => {
+    useBridgeModalStore.setState({ ...DEFAULT_BRIDGE_ADAPTER_STATE });
+  };
 
 export const SLIPPING_TOLERANCE_AUTO: SlippageToleranceType = "auto";
 export const setSlippageTolerance: BridgeModalActions["setSlippageTolerance"] =

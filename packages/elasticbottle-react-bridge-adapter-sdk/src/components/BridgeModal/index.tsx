@@ -3,7 +3,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import type { FallbackProps } from "react-error-boundary";
 import { ErrorBoundary } from "react-error-boundary";
-import { useBridgeModalStore } from "../../providers/BridgeModalContext";
+import {
+  resetBridgeModalStore,
+  useBridgeModalStore,
+} from "../../providers/BridgeModalContext";
 import "../../style/global.css";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
@@ -16,6 +19,7 @@ import { SwapDetails } from "./SwapDetails";
 import { SwapReview } from "./SwapReview";
 import { SwapSettings } from "./SwapSettings";
 import { TokenSelection } from "./TokenSelection";
+import { CompletedTransaction } from "./TransactionCompleted";
 import { WalletSelection } from "./WalletSelection";
 
 const queryClient = new QueryClient();
@@ -75,13 +79,23 @@ export function BridgeModal({ children, customization }: BridgeModalProps) {
       body = <ChainAndTokenSelect />;
       break;
     }
+    case "TRANSACTION_COMPLETED": {
+      body = <CompletedTransaction />;
+      break;
+    }
     default:
       throw new Error(`BAD STATE: Unknown bridge step`);
   }
 
+  const onOpenChange = () => {
+    if (currentBridgeStep === "TRANSACTION_COMPLETED") {
+      resetBridgeModalStore();
+    }
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Dialog>
+      <Dialog onOpenChange={onOpenChange}>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent
           className="bsa-h-[600px] bsa-max-w-md bsa-border-border bsa-bg-background bsa-text-foreground"

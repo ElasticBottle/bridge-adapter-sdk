@@ -385,10 +385,25 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     const createTxUrl = new URL(
       "https://api.dln.trade/v1.0/dln/order/create-tx?"
     );
-    createTxUrl.searchParams.set("fee", this.deBridgeEvmFee);
+    createTxUrl.searchParams.set(
+      "srcChainId",
+      this.debridgeQuote.estimation.srcChainTokenIn.chainId.toString()
+    );
+    createTxUrl.searchParams.set(
+      "srcChainTokenIn",
+      this.debridgeQuote.estimation.srcChainTokenIn.address
+    );
     createTxUrl.searchParams.set(
       "srcChainTokenInAmount",
       this.debridgeQuote.estimation.srcChainTokenIn.amount
+    );
+    createTxUrl.searchParams.set(
+      "dstChainId",
+      this.debridgeQuote.estimation.dstChainTokenOut.chainId.toString()
+    );
+    createTxUrl.searchParams.set(
+      "dstChainTokenOut",
+      this.debridgeQuote.estimation.dstChainTokenOut.address
     );
     createTxUrl.searchParams.set(
       "dstChainTokenOutAmount",
@@ -404,28 +419,17 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
       targetAddress
     );
     createTxUrl.searchParams.set("affiliateFeeRecipient", this.deBridgeEvmFee);
+    createTxUrl.searchParams.set("affiliateFeePercent", "0.1");
+    createTxUrl.searchParams.set("prependOperatingExpenses", "true");
 
     const createTxResp = await fetch(createTxUrl);
     if (!createTxResp.ok) {
       throw new Error("Failed to create transaction");
     }
-    const createTxRaw = createTxResp.json();
+    const createTxRaw = await createTxResp.json();
     console.log("createTxRaw", createTxRaw);
     const createTx = parse(this.CreateTxSchema, createTxRaw);
     return createTx;
-  }
-
-  private async getDebridgeTransactionId(txnHash: string) {
-    const getTxIdUrl = new URL(
-      `https://api.dln.trade/v1.0/dln/tx/${txnHash}/order-ids`
-    );
-    const getTxIdResp = await fetch(getTxIdUrl);
-    if (!getTxIdResp.ok) {
-      throw new Error("Failed to get transaction id");
-    }
-    const getTxIdRaw = getTxIdResp.json();
-    const txnId = parse(object({ orderIds: array(string()) }), getTxIdRaw);
-    return txnId.orderIds[0];
   }
 
   async bridge({
@@ -503,6 +507,10 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         data: tx.data as Hash,
         value: BigInt(tx.value),
       });
+      const ethersSigner = walletClientToSigner(sourceAccount);
+      const provider = ethersSigner.provider;
+      await provider.getTransactionReceipt(transactionHash);
+
       onStatusUpdate({
         information: `Pending confirmation to lock  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
         name: "Lock",
@@ -545,7 +553,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
             case "Fulfilled": {
               onStatusUpdate({
                 information: "Successfully completed swap",
-                name: "Complete",
+                name: "Completed",
                 status: "COMPLETED",
               });
               clearInterval(interval);
@@ -573,17 +581,26 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     return true;
   }
 
-  private async getDeBridgeTransactionStatus(txnId: string) {
+  private async getDebridgeTransactionId(txnHash: string) {
     const orderIdUrl = new URL(
-      `https://api.dln.trade/v1.0/dln/tx/${txnId}/order-ids`
+      `https://api.dln.trade/v1.0/dln/tx/${txnHash}/order-ids`
     );
     const orderIdResp = await fetch(orderIdUrl);
     if (!orderIdResp.ok) {
       throw new Error("Failed to get order id");
     }
-    const orderIdRaw = orderIdResp.json();
-    const orderIds = parse(object({ orderIds: array(string()) }), orderIdRaw);
-    const orderId = orderIds.orderIds[0];
+    const orderIdRaw = await orderIdResp.json();
+    console.log("orderIdRaw", orderIdRaw);
+    const { orderIds } = parse(
+      object({ orderIds: array(string()) }),
+      orderIdRaw
+    );
+    const orderId = orderIds[0];
+    return orderId;
+  }
+
+  private async getDeBridgeTransactionStatus(txnHash: string) {
+    const orderId = await this.getDebridgeTransactionId(txnHash);
 
     const txnStatusUrl = new URL(
       `https://api.dln.trade/v1.0/dln/order/${orderId}/status`
@@ -592,7 +609,8 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     if (!txnStatusResp.ok) {
       throw new Error("Failed to get transaction id");
     }
-    const txnStatusRaw = txnStatusResp.json();
+    const txnStatusRaw = await txnStatusResp.json();
+    console.log("txnStatusRaw", txnStatusRaw);
     const txnStatus = parse(
       object({ orderId: string(), status: string() }),
       txnStatusRaw

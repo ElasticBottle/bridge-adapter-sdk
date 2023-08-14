@@ -1,4 +1,3 @@
-import type { ChainDestType } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useEffect, useState } from "react";
 import {
   TOKEN_AMOUNT_ERROR_INDICATOR,
@@ -10,15 +9,12 @@ import { ChainAndTokenSelectButton } from "../ChainAndTokenSelect/ChainAndTokenS
 import { useIsWalletConnected } from "../WalletSelection/useIsWalletConnected";
 import { useTokenBalance } from "./useTokenBalance";
 
-export function TokenAndChainWidget({
-  chainDest,
-}: {
-  chainDest: ChainDestType;
-}) {
-  const { sourceToken, targetToken } = useBridgeModalStore.use.token();
+export function InputTokenAndChainWidget() {
+  const { sourceToken } = useBridgeModalStore.use.token();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
-  const tokenOfInterest = chainDest === "source" ? sourceToken : targetToken;
+  const tokenOfInterest = sourceToken;
+  const chainDest = "source";
 
   const { error: errorGettingTokenBalance, tokenBalance } =
     useTokenBalance(tokenOfInterest);

@@ -14,6 +14,7 @@ export type BridgeStep =
   | "SWAP_DETAILS"
   | "SWAP_REVIEW"
   | "PENDING_TRANSACTION"
+  | "TRANSACTION_COMPLETED"
   | "PROFILE_DETAILS";
 
 export const BridgeStepToTitle: Record<BridgeStep, string> = {
@@ -25,6 +26,7 @@ export const BridgeStepToTitle: Record<BridgeStep, string> = {
   SWAP_DETAILS: "Swap details",
   SWAP_REVIEW: "Review swap",
   PENDING_TRANSACTION: "Pending transaction",
+  TRANSACTION_COMPLETED: "Transaction completed",
   PROFILE_DETAILS: "Account",
 };
 

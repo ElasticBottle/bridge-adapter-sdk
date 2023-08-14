@@ -1,21 +1,28 @@
 import type { BridgeStatus } from "@elasticbottle/core-bridge-adapter-sdk";
 import { useCallback, useState } from "react";
-import { setCurrentBridgeStep } from "../../../providers/BridgeModalContext";
+import {
+  goBackOneStep,
+  setCurrentBridgeStep,
+} from "../../../providers/BridgeModalContext";
 import { Spinner } from "../../ui/spinner";
 import { useSubmitAndTrackTransaction } from "./useSubmitAndTrackTransaction";
 
 export function PendingTransaction() {
   const onError = useCallback((e: Error) => {
     console.error("Something went wrong during swap", e);
-    setCurrentBridgeStep({
-      step: "SWAP_REVIEW",
-    });
+    goBackOneStep();
   }, []);
   const [currentStatus, setCurrentStatus] = useState<BridgeStatus | undefined>(
     undefined
   );
   const onStatusUpdate = useCallback((args: BridgeStatus) => {
     setCurrentStatus(args);
+    console.log("args", args);
+    if (args.name === "Completed") {
+      setCurrentBridgeStep({
+        step: "TRANSACTION_COMPLETED",
+      });
+    }
   }, []);
 
   useSubmitAndTrackTransaction({
