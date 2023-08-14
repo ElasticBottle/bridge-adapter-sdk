@@ -231,7 +231,9 @@ export const setSwapInformation: BridgeModalActions["setSwapInformation"] = (
 
 export const resetBridgeModalStore: BridgeModalActions["resetBridgeModalStore"] =
   () => {
-    useBridgeModalStore.setState({ ...DEFAULT_BRIDGE_ADAPTER_STATE });
+    useBridgeModalStore.setState((state) => {
+      return { ...DEFAULT_BRIDGE_ADAPTER_STATE, sdk: state.sdk };
+    });
   };
 
 export const SLIPPING_TOLERANCE_AUTO: SlippageToleranceType = "auto";

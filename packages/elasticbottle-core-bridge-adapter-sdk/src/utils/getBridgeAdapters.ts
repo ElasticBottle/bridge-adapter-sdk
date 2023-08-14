@@ -14,7 +14,6 @@ export function getBridgeAdapters({
   bridgeAdapterSetting?: BridgeAdapterSetting;
 } & BridgeAdapterArgs) {
   const allowedBridgeAdapters: { [bridge: string]: AbstractBridgeAdapter } = {
-    wormhole: new WormholeBridgeAdapter({ sourceChain, targetChain, settings }),
     deBridge: new DeBridgeBridgeAdapter({
       sourceChain,
       targetChain,
@@ -25,6 +24,7 @@ export function getBridgeAdapters({
       targetChain,
       settings,
     }),
+    wormhole: new WormholeBridgeAdapter({ sourceChain, targetChain, settings }),
   };
   if (!bridgeAdapterSetting) {
     return Object.values(allowedBridgeAdapters);

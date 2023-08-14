@@ -1,13 +1,13 @@
 import { useState } from "react";
+import { cn } from "../../../lib/utils";
 import {
-  useBridgeModalStore,
-  setSlippageTolerance,
   SLIPPING_TOLERANCE_AUTO,
+  setSlippageTolerance,
+  useBridgeModalStore,
 } from "../../../providers/BridgeModalContext";
 import type { SlippageToleranceType } from "../../../types/BridgeModal";
-import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { cn } from "../../../lib/utils";
+import { Input } from "../../ui/input";
 
 export function SlippageToleranceWidget() {
   const slippageTolerance: SlippageToleranceType =
@@ -36,7 +36,7 @@ export function SlippageToleranceWidget() {
         <Button
           variant={
             slippageTolerance === SLIPPING_TOLERANCE_AUTO
-              ? "default"
+              ? "secondary"
               : "outline"
           }
           size={"lg"}
@@ -49,7 +49,6 @@ export function SlippageToleranceWidget() {
         <div className="bsa-ml-4">
           <Input
             placeholder="0.00"
-            type="number"
             min={0}
             step={0.01}
             className={cn(

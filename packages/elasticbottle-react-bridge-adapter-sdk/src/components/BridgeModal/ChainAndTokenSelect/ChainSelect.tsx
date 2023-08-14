@@ -32,8 +32,8 @@ export function ChainSelect() {
 
   if (isLoadingChains) {
     return (
-      <div className="bsa-grid bsa-w-full bsa-grid-cols-6 bsa-gap-2">
-        {Array(8)
+      <div className="bsa-flex bsa-w-full">
+        {Array(6)
           .fill(0)
           .map((_, i) => (
             <Skeleton key={i} className="bsa-h-12 bsa-w-12" />
@@ -54,7 +54,7 @@ export function ChainSelect() {
   }
 
   return (
-    <div className="bsa-grid bsa-w-full bsa-grid-cols-6 bsa-gap-2">
+    <div className="bsa-flex bsa-w-full bsa-gap-2">
       {chains.map((chainName) => {
         const isChainSelected = chainName === chainOfInterest;
         return (

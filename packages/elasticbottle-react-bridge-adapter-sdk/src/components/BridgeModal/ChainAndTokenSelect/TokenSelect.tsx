@@ -143,7 +143,7 @@ export function TokenSelect() {
   }
 
   return (
-    <div className="bsa-flex bsa-flex-col bsa-space-y-7">
+    <div className="bsa-flex bsa-flex-col bsa-space-y-5">
       <Input
         placeholder="Search Token"
         type="text"
@@ -152,7 +152,7 @@ export function TokenSelect() {
           setTokenSearch(e.target.value);
         }}
       />
-      <div className=" bsa-max-h-80 bsa-w-full bsa-px-1 bsa-py-1">
+      <div className=" bsa-max-h-72 bsa-w-full bsa-overflow-hidden bsa-px-1 bsa-py-1">
         {TokenList}
       </div>
     </div>

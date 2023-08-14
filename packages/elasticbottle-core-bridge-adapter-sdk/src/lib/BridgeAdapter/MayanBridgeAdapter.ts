@@ -124,7 +124,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
       fromChain: sourceToken.chain.toLowerCase() as MayanChainName,
       toChain: targetToken.chain.toLowerCase() as MayanChainName,
       slippage: 3,
-      gasDrop: 0.001, // optional
+      gasDrop: 0.01, // optional
       referrer: this.mayanSolanaFee,
     });
     console.log("quote", quote);
