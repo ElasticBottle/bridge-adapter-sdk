@@ -28,9 +28,10 @@ export function useSwapInfo() {
       setSwapInformation(data[0]);
     }
     if (data && data.length && currentSwapInformation) {
-      const newSwapInfo = data[0];
-      if (!isSwapInfoEqual(newSwapInfo, currentSwapInformation)) {
-        setSwapInformation(newSwapInfo);
+      for (const newSwapInfo of data) {
+        if (isSwapInfoEqual(newSwapInfo, currentSwapInformation)) {
+          setSwapInformation(newSwapInfo);
+        }
       }
     }
   }, [currentSwapInformation, data]);

@@ -93,16 +93,28 @@ export function isSwapInfoEqual(
   swapInfo1: SwapInformation,
   swapInfo2: SwapInformation
 ) {
-  return (
-    swapInfo1.sourceToken.address.toLowerCase() !==
-      swapInfo2.sourceToken.address.toLowerCase() &&
-    swapInfo1.targetToken.address.toLowerCase() !==
-      swapInfo2.targetToken.address.toLowerCase() &&
-    swapInfo1.sourceToken.selectedAmountInBaseUnits !==
-      swapInfo2.sourceToken.selectedAmountInBaseUnits &&
-    swapInfo1.targetToken.expectedOutputInBaseUnits !==
-      swapInfo2.targetToken.expectedOutputInBaseUnits &&
-    swapInfo1.targetToken.minOutputInBaseUnits !==
-      swapInfo2.targetToken.minOutputInBaseUnits
+  const swapInfo1BridgeName = swapInfo1.bridgeName;
+  const swapInfo2BridgeName = swapInfo2.bridgeName;
+  const swapInfo1Route = formatRouteInfo(
+    swapInfo1.tradeDetails.routeInformation
   );
+  const swapInfo2Route = formatRouteInfo(
+    swapInfo2.tradeDetails.routeInformation
+  );
+  return (
+    `${swapInfo1BridgeName} ${swapInfo1Route}` ===
+    `${swapInfo2BridgeName} ${swapInfo2Route}`
+  );
+}
+
+export function formatRouteInfo(
+  routeInfo: SwapInformation["tradeDetails"]["routeInformation"]
+) {
+  return routeInfo.reduce((prev, currRoute) => {
+    if (prev === "") {
+      return currRoute?.fromTokenSymbol + " → " + currRoute?.toTokenSymbol;
+    } else {
+      return prev + " → " + currRoute?.toTokenSymbol;
+    }
+  }, "");
 }

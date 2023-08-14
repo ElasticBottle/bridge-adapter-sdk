@@ -2,6 +2,7 @@ import type { SwapInformation } from "@elasticbottle/core-bridge-adapter-sdk";
 import { Clock2, Compass, DollarSign } from "lucide-react";
 import {
   cn,
+  formatRouteInfo,
   formatSwapFee,
   formatTime,
   isSwapInfoEqual,
@@ -39,18 +40,7 @@ export function SwapDetails() {
       const isCurrentlySelectedSwapInfo =
         !!currentSwapInfo && isSwapInfoEqual(swapInfo, currentSwapInfo);
 
-      const route = swapInfo.tradeDetails.routeInformation.reduce(
-        (prev, currRoute) => {
-          if (prev === "") {
-            return (
-              currRoute?.fromTokenSymbol + " → " + currRoute?.toTokenSymbol
-            );
-          } else {
-            return prev + " → " + currRoute?.toTokenSymbol;
-          }
-        },
-        ""
-      );
+      const route = formatRouteInfo(swapInfo.tradeDetails.routeInformation);
 
       return (
         <Button
@@ -60,7 +50,7 @@ export function SwapDetails() {
           className={cn({
             "bsa-h-full bsa-w-full bsa-flex-col bsa-items-start bsa-justify-center bsa-space-y-2":
               true,
-            "bsa-bg-foreground hover:bsa-cursor-default":
+            "bsa-bg-accent hover:bsa-cursor-default":
               isCurrentlySelectedSwapInfo,
           })}
           onClick={chooseSwapInfo(swapInfo)}
