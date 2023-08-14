@@ -1,9 +1,5 @@
 import { approveEth, getAllowanceEth } from "@certusone/wormhole-sdk";
-import {
-  Connection,
-  VersionedTransaction,
-  clusterApiUrl,
-} from "@solana/web3.js";
+import { VersionedTransaction } from "@solana/web3.js";
 import {
   ValiError,
   array,
@@ -525,9 +521,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
         getWalletAddress(sourceAccount),
         getWalletAddress(targetAccount)
       );
-      const connection = new Connection(
-        this.settings?.solana?.solanaRpcUrl ?? clusterApiUrl("mainnet-beta")
-      );
+      const connection = this.getSolanaConnection();
       const solanaTransaction = await sourceAccount.signTransaction(
         VersionedTransaction.deserialize(Buffer.from(tx.data.slice(2), "hex"))
       );

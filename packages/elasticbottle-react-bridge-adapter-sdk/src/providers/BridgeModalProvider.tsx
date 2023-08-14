@@ -7,9 +7,11 @@ export function BridgeModalProvider({
   bridgeAdapterSetting,
   sourceChain,
   targetChain,
+  settings,
 }: {
   children: React.ReactNode;
 } & BridgeAdapterSdkArgs) {
+  // Hack here to prevent the useEffect from continuously firing on every render
   const bridgeAdapterSettingString = bridgeAdapterSetting
     ? JSON.stringify(bridgeAdapterSetting)
     : "";
@@ -23,8 +25,9 @@ export function BridgeModalProvider({
         : undefined,
       sourceChain,
       targetChain,
+      settings,
     });
-  }, [bridgeAdapterSettingString, sourceChain, targetChain]);
+  }, [bridgeAdapterSettingString, settings, sourceChain, targetChain]);
 
   return <>{children}</>;
 }

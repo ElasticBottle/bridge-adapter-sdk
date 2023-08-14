@@ -23,12 +23,7 @@ import {
   createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
-import {
-  Connection,
-  PublicKey,
-  Transaction as SolanaTransaction,
-  clusterApiUrl,
-} from "@solana/web3.js";
+import { PublicKey, Transaction as SolanaTransaction } from "@solana/web3.js";
 import { csv2json, parseValue } from "csv42";
 import { CHAIN_NAMES } from "../../constants/ChainNames";
 import type {
@@ -331,7 +326,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     targetAccount: SolanaAccount;
     onNeedToCreateTokenAccount?: (associatedAccountNeeded: boolean) => void;
   }) {
-    const connection = new Connection(clusterApiUrl("mainnet-beta"));
+    const connection = this.getSolanaConnection();
 
     const solanaMintKey = new PublicKey(
       (await getForeignAssetSolana(
@@ -448,7 +443,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     token: TokenWithExpectedOutput;
     targetAccount: SolanaAccount;
   }) {
-    const connection = new Connection(clusterApiUrl("mainnet-beta"));
+    const connection = this.getSolanaConnection();
     const payerAddress = targetAccount.publicKey?.toString() ?? "";
     const wormholeChainName = this.chainNameToWormholeChainName(token.chain);
 

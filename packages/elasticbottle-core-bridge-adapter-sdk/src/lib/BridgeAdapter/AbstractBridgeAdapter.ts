@@ -1,3 +1,4 @@
+import { Connection, clusterApiUrl } from "@solana/web3.js";
 import type {
   BridgeAdapterArgs,
   BridgeStatus,
@@ -18,6 +19,14 @@ export abstract class AbstractBridgeAdapter {
     this.targetChain = targetChain;
     this.settings = settings;
   }
+
+  protected getSolanaConnection() {
+    return new Connection(
+      this.settings?.solana?.solanaRpcUrl ?? clusterApiUrl("mainnet-beta"),
+      "confirmed"
+    );
+  }
+
   abstract name(): Bridges;
 
   abstract getSupportedChains(): Promise<ChainName[]>;
