@@ -15,7 +15,7 @@ import {
   useDefault,
   type Output,
 } from "valibot";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits } from "viem";
 import type {
   BridgeStatus,
   Bridges,
@@ -31,6 +31,8 @@ import {
   chainNameToChainId,
   chainNameToNativeCurrency,
 } from "../../utils/chainIdMapping";
+import { dedupFeesTokens } from "../../utils/dedupFeeTokens";
+import { formatTokenBalance } from "../../utils/formatTokenBalance";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
 import { walletClientToSigner } from "../../utils/viem/ethers";
 import { AbstractBridgeAdapter } from "./AbstractBridgeAdapter";
@@ -219,6 +221,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     return this.tokenList[chain];
   }
 
+  private;
   async getQuoteDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
@@ -267,7 +270,6 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     }
     const quoteRaw = await quoteResp.json();
     const quote = parse(this.QuoteSchema, quoteRaw);
-    console.log("quote", quote);
     this.debridgeQuote = quote;
     const sourceNativeCurrency = chainNameToNativeCurrency(sourceToken.chain);
 
@@ -276,32 +278,39 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
       sourceToken: sourceToken,
       targetToken: {
         ...targetToken,
-        expectedOutputFormatted:
+        expectedOutputFormatted: formatTokenBalance(
+          formatUnits(
+            BigInt(quote.estimation.dstChainTokenOut.recommendedAmount),
+            targetToken.decimals
+          )
+        ),
+        expectedOutputInBaseUnits:
           quote.estimation.dstChainTokenOut.recommendedAmount,
-        expectedOutputInBaseUnits: parseUnits(
+        minOutputFormatted: formatTokenBalance(
+          formatUnits(
+            BigInt(quote.estimation.dstChainTokenOut.recommendedAmount),
+            targetToken.decimals
+          )
+        ),
+        minOutputInBaseUnits:
           quote.estimation.dstChainTokenOut.recommendedAmount,
-          targetToken.decimals
-        ).toString(),
-        minOutputFormatted: quote.estimation.dstChainTokenOut.recommendedAmount,
-        minOutputInBaseUnits: parseUnits(
-          quote.estimation.dstChainTokenOut.recommendedAmount,
-          targetToken.decimals
-        ).toString(),
       },
       tradeDetails: {
         estimatedTimeMinutes: Math.round(
           quote.order.approximateFulfillmentDelay / 60
         ),
-        fee: [
+        fee: dedupFeesTokens([
           {
             ...sourceToken,
             selectedAmountInBaseUnits:
               quote.estimation.srcChainTokenIn.approximateOperatingExpense,
-            selectedAmountFormatted: formatUnits(
-              BigInt(
-                quote.estimation.srcChainTokenIn.approximateOperatingExpense
-              ),
-              sourceToken.decimals
+            selectedAmountFormatted: formatTokenBalance(
+              formatUnits(
+                BigInt(
+                  quote.estimation.srcChainTokenIn.approximateOperatingExpense
+                ),
+                sourceToken.decimals
+              )
             ),
             details: `Taker's gas fee on ${targetToken.chain}`,
           },
@@ -309,12 +318,11 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
             ...sourceNativeCurrency,
             details: "Debridge Protocol Fee",
             selectedAmountInBaseUnits: quote.fixFee,
-            selectedAmountFormatted: formatUnits(
-              BigInt(quote.fixFee),
-              sourceNativeCurrency.decimals
+            selectedAmountFormatted: formatTokenBalance(
+              formatUnits(BigInt(quote.fixFee), sourceNativeCurrency.decimals)
             ),
           },
-        ],
+        ]),
         priceImpact: 0,
         routeInformation: [
           {

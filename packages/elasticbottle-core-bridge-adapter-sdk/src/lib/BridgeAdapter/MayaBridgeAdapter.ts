@@ -19,6 +19,7 @@ import type { ChainDestType } from "../../types/ChainDest";
 import type { SwapInformation } from "../../types/SwapInformation";
 import type { Token, TokenWithAmount } from "../../types/Token";
 import { isEvmAccount, isSolanaAccount } from "../../utils/bridge";
+import { formatTokenBalance } from "../../utils/formatTokenBalance";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
 import { getWalletAddress } from "../../utils/getWalletAddress";
 import {
@@ -126,12 +127,14 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
       sourceToken: sourceToken,
       targetToken: {
         ...targetToken,
-        expectedOutputFormatted: quote.expectedAmountOut.toString(),
+        expectedOutputFormatted: formatTokenBalance(
+          quote.expectedAmountOut.toString()
+        ),
         expectedOutputInBaseUnits: parseUnits(
           quote.expectedAmountOut.toString(),
           targetToken.decimals
         ).toString(),
-        minOutputFormatted: quote.minAmountOut.toString(),
+        minOutputFormatted: formatTokenBalance(quote.minAmountOut.toString()),
         minOutputInBaseUnits: parseUnits(
           quote.minAmountOut.toString(),
           targetToken.decimals
@@ -144,7 +147,9 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
         fee: [
           {
             ...sourceToken,
-            selectedAmountFormatted: quote.swapRelayerFee.toString(),
+            selectedAmountFormatted: formatTokenBalance(
+              quote.swapRelayerFee.toString()
+            ),
             selectedAmountInBaseUnits: parseUnits(
               quote.swapRelayerFee.toString(),
               sourceToken.decimals

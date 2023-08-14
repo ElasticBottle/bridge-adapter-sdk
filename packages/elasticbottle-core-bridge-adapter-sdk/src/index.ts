@@ -15,3 +15,4 @@ export {
   chainNameToChainId,
   chainNameToViemChain,
 } from "./utils/chainIdMapping";
+export { formatTokenBalance } from "./utils/formatTokenBalance";
