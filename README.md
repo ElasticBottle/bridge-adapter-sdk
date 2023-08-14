@@ -1,261 +1,239 @@
-# Bridge Adapter Design Document
+# Bridge Adapter SDK
 
-This document covers the existing bridges available and how this package attempts to unify the various bridges out there into a unified interface that is easily extensible while still providing a great developer experience.
+## Problem
 
-## Bridges
+Today's liquidity is highly fragmented. With more chains popping up than ever, it is increasingly hard for a developer to ensure that the incoming user will have the necessary funds needed to interact with the protocol or application.
 
-### Wormhole
+Additional work has to be taken to provide instructions on how to bridge assets over. Or in the case of the ambitious developer, integrate a bridge with obscure tokens that have little liquidity.
 
-#### Publish
+## Solution
 
-```solidity
-publishMessage(
-    int nonce,
-    byte[] payload,
-    int consistencyLevel
-) returns int sequenceNumber
-```
+To solve this, this bridge adapter SDK does two things. The first is to leverage the existing bridges of today and provide a unified framework for interacting with them. Instead of having to integrate bridges 1 by 1, one simply needs to integrate this sdk to get the benefit of multiple bridges. The second is to leverage existing DEXes to open up the total pool of tokens that can be swapped with.
 
-When `publishMessage` is called against the core contract, some logs are generally emitted.
+Developers simply integrate a single SDK and get the combined benefits of the existing bridges and swaps that exists today.
 
-Once the target [consistency level](#consistency-levels) has been reached, and the Guardian's optional checks pass, a [VAA](#verified-actions-approvals-vaa) is produced.
+## Features
 
-There might be a fee _in the future_ for publishing a message.
-
-#### Receive
-
-```solidity
-parseAndVerifyVAA( byte[] VAA )
-```
-
-When called, the payload and associated metadata for the valid VAA is returned. Otherwise, an exception is thrown.
-
-#### Consistency Levels
-
-By default, only finalized messages are observed and attested. [See the other available consistency levels](https://book.wormhole.com/wormhole/3_coreLayerContracts.html#consistency-levels) if the integration require messages before finality.
-
-#### Multi-cast
-
-VAAs simply attest that "this contract on this chain said this thing." Therefore, VAAs are multicast by default and will be verified as authentic on any chain they are brought to.
-
-Use cases where the message has an intended recipient or is only meant to be consumed a single time must be handled in logic outside the Core Contract.
-
-#### Verified Actions Approvals (VAA)
-
-### All Bridge
-
-#### Send Transaction
-
-Called by the sender wallet with the target address and amount of token to be sent.
-
-[Fees are paid here](https://docs.allbridge.io/allbridge-overview/bridge-fee).
-
-#### Receive Transaction
-
-Can be called by the receiving wallet address or by the all bridge sender on some chains.
-
-If using the all bridge sender, user will receive some gas token if the receiving wallet does not have any on [some chains](https://docs.allbridge.io/allbridge-overview/under-the-hood-of-allbridge#bonuses-value-for-chains)
-
-### Circle Cross-Chain Transfer Protocol (CCTP)
-
-#### depositForBurn
-
-```typescript
-const burnTx = await ethTokenMessengerContract.methods
-  .depositForBurn(
-    amount,
-    AVAX_DESTINATION_DOMAIN,
-    destinationAddressInBytes32,
-    USDC_ETH_CONTRACT_ADDRESS
-  )
-  .send();
-```
-
-#### Poll for attestation
-
-```typescript
-const transactionReceipt = await web3.eth.getTransactionReceipt(
-  burnTx.transactionHash
-);
-const eventTopic = web3.utils.keccak256("MessageSent(bytes)");
-const log = transactionReceipt.logs.find((l) => l.topics[0] === eventTopic);
-const messageBytes = web3.eth.abi.decodeParameters(["bytes"], log.data)[0];
-const messageHash = web3.utils.keccak256(messageBytes);
-
-let attestationResponse = { status: "pending" };
-while (attestationResponse.status != "complete") {
-  const response = await fetch(
-    `https://iris-api-sandbox.circle.com/attestations/${messageHash}`
-  );
-  attestationResponse = await response.json();
-  await new Promise((r) => setTimeout(r, 2000));
-}
-```
-
-#### receiveMessage
-
-```typescript
-const receiveTx = await avaxMessageTransmitterContract.receiveMessage(
-  receivingMessageBytes,
-  signature
-);
-```
-
-#### Limitations
-
-- Currently only on Avax and Eth.
-- Unclear what Solana integration would look like
+- ✅ Easily allow users within your app to bridge assets from one chain to another.
+- 🔗 7 chains supported.
+  - Ethereum
+  - Polygon
+  - Solana
+  - Arbitrum
+  - Optimism
+  - Binance Smart Chain
+  - Avalanche
+- 🌉 3 different bridges with 2 in the works
+  - Wormhole
+  - DeBridge
+  - Mayan Finance
+  - Allbridge Core (in pipeline)
+  - Allbridge Classic (planning)
+- 🦄 3 different DEXes supported for swapping to and from the token used during bridging.
+  - Paraswap (EVM)
+  - 1inch (EVM)
+  - Jupiter (Solana)
+  - Prism (Solana)
+- 🌙 Light and Dark Mode.
+- 📃 Composable with existing decentralized applications today.
+- 🙍‍♂️ Great DX for developers. Integration is a couple lines of code and easy to understand.
 
 ## API overview
 
-Developers interact directly with a high level BridgeSdk that abstracts away the underlying implementation for the various bridge implementation.
-
-Ideally, developers should not even care about what adapter they are using. They should just get the best bridge rate for the asset they are trying to bridge.
-
-### Goals
-
-- Developer can allow users to easily bridge assets from one chain to another within their app
-- Developers can easily get users to pay them from tokens on other chain while still receiving the expected assets on the target chain
-- Great DX for developers. Interruptions should be handled. Errors should be graceful and human readable.
+As a developer, you can choose to interact directly with the core SDK in vanilla JS or with the higher level abstracted react SDK. This guide covers both.
 
 ### End User vanilla JS SDK usage details
 
+#### Initializing the SDK
+
 ```typescript
-const sdk = new BridgeSdk({
-        // this should be optional
-        adapter: new WormholeBridge({
-            sourceChain: '',
-            targetChain: ''
-        })
-    });
-// strongly typed, dynamic based on Bridge adapter, sourceChain, and targetChain
-// some strongly typed object as return type
-const supportedTokens = sdk.getSupportedTokens()
+const sdk = new BridgeAdapterSdk();
+```
 
-/**
- * {
- *  amountInBaseUnits: BigInt,
- *  decimals: '',
- *  symbol: '',
- *  name: '',
- *  tokenContractAddress: '',
- * }
-*/
-const bridgeFeeDetails = await sdk.getBridgeFeeDetails({
-    token: supportedTokens.SOME_TOKEN,
-    amountInBaseUnits: 102n,
-})
+#### Getting supported chains
 
-// what should the return be?
-await sdk.bridge({
-    token: supportedTokens.SOME_TOKEN,
-    amountInBaseUnits: '',
+```typescript
+const chains = await sdk.getSupportedChains(); // ['Ethereum', 'Avalanche', 'Solana', ...]
+```
 
-    // Is this enough for Solana.
-    // You might need the owner and the token account.
+#### Getting supported tokens
 
-    // type should be dynamic based on sourceChain
-    sourceAccount: PublicKey() | ethers.Signer | viem Account | string
-    // This is called whenever the sourceAccount is a string and the bridge process is about to be initiated
-    // TODO: figure out return type
-    onInitiateBridge?: async (sourceAccount: string, sourceChain: Chains) => Promise<void>,
+```typescript
+// getting tokens to swap from
+const tokens = await sdk.getSupportedTokens(
+  "source",
+  {
+    sourceChain,
+    targetChain, //optional
+  },
+  {
+    sourceToken, // optional
+    targetToken, // optional
+  }
+);
+const tokens = await sdk.getSupportedTokens(
+  "target",
+  {
+    sourceChain, //optional
+    targetChain,
+  },
+  {
+    sourceToken, // optional
+    targetToken, // optional
+  }
+);
 
-    // type should be dynamic based on targetChain
-    targetAccount: PublicKey() | ethers.Signer | viem Account | string,
-    // This will trigger whenever target account is a string and the funds are ready for the developer to be received
-    // TODO: figure out return type
-    onReadyToReceiveBridgedTokens?: async (targetAccount: string, targetChain: Chains) => Promise<void>,
+// type Token = {
+//     logoUri: string;
+//     name: string;
+//     symbol: string;
+//     address: string;
+//     chain: ChainName;
+//     decimals: number;
+//     bridgeNames: Bridges[];
+// };
+console.log("tokens", tokens); // of type Token[]
+```
 
-    // number between 0 and 100, detail contains message on what just happened
-    // message should be a list of enum // object dynamic based on the Bridge adapter if possible
-    onProgressUpdate: (progress: number, detail: BridgeDetails) => void //optional
+#### Getting a swap quote
 
-    onError: () => void
-})
+```typescript
+const swapInformation = await sdk.getSwapInformation(sourceToken, targetToken);
+
+// type SwapInformation = {
+//     sourceToken: TokenWithAmount;
+//     targetToken: TokenWithExpectedOutput;
+//     bridgeName: string;
+//     tradeDetails: {
+//         fee: FeeToken[];
+//         priceImpact: number;
+//         estimatedTimeMinutes: number;
+//         routeInformation: {
+//             fromTokenSymbol: string;
+//             toTokenSymbol: string;
+//         }[];
+//     };
+// };
+console.log("swapInformation", swapInformation);
+```
+
+#### Bridging the Assets
+
+```typescript
+const isSuccess = sdk.bridge({
+  sourceAccount,
+  targetAccount,
+  swapInformation, // this is from sdk.getSwapInformation above
+  onStatusUpdate,
+});
 ```
 
 ### End User React SDK Usage
 
-This will render a button that will open a modal to provide all the bridging functionality that users would need to bridge funds natively within the developers dApp.
+The main goal of the React SDK is to provider a handler that will attach itself to a button to start the modal flow
+
+Here's how the user experience looks like
+
+![gif of cross chain bridge flow](https://github.com/thirdweb-dev/paper-web/assets/44563205/d74dec9a-2dad-41be-a7b9-cb202e2eb05e)
+
+#### Vanilla Integration of React swap modal
 
 ```typescript
 export function HomePage() {
+  const adapters = useMemo(
+    () => [
+      new SolflareWalletAdapter(),
+      new PhantomWalletAdapter(),
+      new CoinbaseWalletAdapter(),
+    ],
+    []
+  );
+
   return (
-    <BridgeModal
-      // all params are optional
-      sourceChain={}
-      targetChain={}
-      sourceAccount={}
-      onInitiateBridge={}
-      targetAccount={}
-      onReadyToReceiveBridgedTokens={}
-      token={}
-      amountInBaseUnits={}
-      onBridgeSuccess={}
-      onBridgeError={}
-      onBridgeModalClose={}
-    />
+    <SolanaWalletProvider wallets={adapters} autoConnect={false}>
+      <EvmWalletProvider
+        settings={{
+          coinbaseWalletSettings: {
+            appName: "Example Defi Dapp",
+          },
+          walletConnectProjectId:
+            process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? "",
+        }}
+      >
+        <BridgeModalProvider>
+          <BridgeModal
+            customization={{
+              theme: "dark",
+              modalTitle: "Defi Dapp",
+            }}
+          >
+            <Button
+              size="sm"
+              type="button"
+              className="mt-8 w-full hover:bg-zinc-400"
+            >
+              Subscribe
+            </Button>
+          </BridgeModal>
+        </BridgeModalProvider>
+      </EvmWalletProvider>
+    </SolanaWalletProvider>
   );
 }
 ```
 
-### Bridge Adapter
+#### Integrating with existing applications
+
+If your application already uses `wagmi` or `"@solana/wallet-adapter-react`, the `bridge-adapter-sdk` works out of the box with it
+
+In particular, you simply omit `EvmWalletProvider` or `SolanaWalletProvider` respectively. You will still need to wrap the BridgeModalProvider`which provides information on the bridge sdk settings to be used`
+
+### Bridge Developer
 
 The bridge adapter provides information on:
 
 - Supported tokens
-- Fees for the bridging operation
-- A way to lock assets on the source chain
-- A way to receive assets on the target chain
+- A way to get a swap route between two asset on similar or different chains
+- A way to instantiate the bridging process while having insights on what's happening
+
+Here's a minimal interface that's needed in order to add support for your bridge
 
 ```typescript
-class AbstractBridgeAdapter {
-  progressMessages: Record<string, string>;
-  sourceChain: Chains;
-  targetChain: Chains;
+export abstract class AbstractBridgeAdapter {
+  constructor({ sourceChain, targetChain, settings }: BridgeAdapterArgs) {
+    this.sourceChain = sourceChain;
+    this.targetChain = targetChain;
+    this.settings = settings;
+  }
 
-  // if we don't make this async, the bridge might support new tokens not hardcoded and we have to update the sdk
-  // if we make this async, we are very likely not going to be able to return the proper list of enums of the supported token
-  abstract getSupportedTokens(): Tokens;
+  abstract name(): Bridges;
 
-  abstract getFeeDetails(args: {
-    token: Token;
-    amountInBaseUnits: BigInt;
-  }): Promise<{
-    amountInBaseUnits: BigInt;
-    decimals: number;
-    symbol: string;
-    name: string;
-    tokenContractAddress: string;
-  }>;
+  abstract getSupportedChains(): Promise<ChainName[]>;
 
-  abstract lock(args: {
-    token: Token;
-    amountInBaseUnits: BigInt;
-    // type should be dynamic based on sourceChain
-    sourceAccount: PublicKey | ethers.Signer | viem.Account;
-    // type should be dynamic based on targetChain
-    targetAccount: PublicKey | ethers.Signer | viem.Account;
-    // number between 0 and 100, detail contains message on what just happened
-    // message should be a list of enum // object dynamic based on the Bridge adapter if possible
-    onProgressUpdate: (progress: number, detail: BridgeDetails) => void; //optional
-  }): Promise<void>;
-  // TODO: figure out return type
+  abstract getSupportedTokens(
+    interestedTokenList: ChainDestType,
+    chains?: Partial<ChainSourceAndTarget>,
+    tokens?: { sourceToken: Token; targetToken: Token }
+  ): Promise<Token[]>;
 
-  abstract receive(
-    targetAccount: PublicKey | ethers.Signer | viem.Account
-  ): Promise<void>;
-  // TODO: figure out return type
+  abstract getQuoteDetails(
+    sourceToken: Token,
+    targetToken: Token
+  ): Promise<SwapInformation>;
+
+  abstract bridge({
+    onStatusUpdate,
+    sourceAccount,
+    targetAccount,
+    swapInformation,
+  }: {
+    swapInformation: SwapInformation;
+    sourceAccount: SolanaOrEvmAccount;
+    targetAccount: SolanaOrEvmAccount;
+    onStatusUpdate: (args: BridgeStatus) => void;
+  }): Promise<boolean>;
 }
 ```
-
-TODO:
-
-- Wormhole
-- allbridge
-- cctp
-
-Don't worry about no solana on cctp
 
 ## Local development
 

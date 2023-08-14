@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  transpilePackages: ["@elasticbottle/react-bridge-adapter-sdk"],
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

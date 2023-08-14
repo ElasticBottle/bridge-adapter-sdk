@@ -1,8 +1,22 @@
 "use client";
 
+import {
+  BridgeModal,
+  BridgeModalProvider,
+  EvmWalletProvider,
+  SolanaWalletProvider,
+} from "@elasticbottle/react-bridge-adapter-sdk";
+
+import {
+  CoinbaseWalletAdapter,
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useMemo } from "react";
 
 export default function Pricing() {
   const products = [
@@ -25,6 +39,18 @@ export default function Pricing() {
       description: "All the basics for starting a new business",
     },
   ];
+
+  const adapters = useMemo(
+    () =>
+      typeof window === "undefined"
+        ? [] // No wallet adapters when server-side rendering.
+        : [
+            new SolflareWalletAdapter(),
+            new PhantomWalletAdapter(),
+            new CoinbaseWalletAdapter(),
+          ],
+    []
+  );
 
   return (
     <section className="bg-black">
@@ -66,14 +92,38 @@ export default function Pricing() {
                         /month
                       </span>
                     </p>
-
-                    <Button
-                      size="sm"
-                      type="button"
-                      className="mt-8 w-full hover:bg-zinc-400"
+                    <SolanaWalletProvider
+                      wallets={adapters}
+                      autoConnect={false}
                     >
-                      Subscribe
-                    </Button>
+                      <EvmWalletProvider
+                        settings={{
+                          coinbaseWalletSettings: {
+                            appName: "Example Defi Dapp",
+                          },
+                          walletConnectProjectId:
+                            process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ??
+                            "",
+                        }}
+                      >
+                        <BridgeModalProvider>
+                          <BridgeModal
+                            customization={{
+                              theme: "dark",
+                              modalTitle: "Defi Dapp",
+                            }}
+                          >
+                            <Button
+                              size="sm"
+                              type="button"
+                              className="mt-8 w-full hover:bg-zinc-400"
+                            >
+                              Subscribe
+                            </Button>
+                          </BridgeModal>
+                        </BridgeModalProvider>
+                      </EvmWalletProvider>
+                    </SolanaWalletProvider>
                   </div>
                 </div>
               </div>

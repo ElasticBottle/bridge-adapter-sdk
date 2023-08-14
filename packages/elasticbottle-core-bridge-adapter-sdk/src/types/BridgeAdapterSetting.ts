@@ -1,1 +1,3 @@
-export type BridgeAdapterSetting = { allow: string[] } | { deny: string[] };
+import type { Bridges } from "./Bridges";
+
+export type BridgeAdapterSetting = { allow: Bridges[] } | { deny: Bridges[] };
