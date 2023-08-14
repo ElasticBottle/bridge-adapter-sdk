@@ -8,7 +8,7 @@ import { TokenAndChainWidget } from "./TokenAndChainWidget";
 export function MultiChainSelection() {
   const { isWalletConnected } = useIsWalletConnected();
   return (
-    <>
+    <div className="bsa-flex bsa-h-full bsa-flex-col bsa-space-y-4">
       <div className="bsa-flex bsa-flex-col bsa-space-y-4">
         <div className="bsa-text-muted-foreground">Bridge From</div>
         <TokenAndChainWidget chainDest="source" />
@@ -27,6 +27,6 @@ export function MultiChainSelection() {
       </div>
       <SwapDetailButton />
       {isWalletConnected ? <SwapReviewButton /> : <WalletSelectionButton />}
-    </>
+    </div>
   );
 }

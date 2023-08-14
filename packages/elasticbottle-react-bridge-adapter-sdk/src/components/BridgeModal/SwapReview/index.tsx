@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "../../ui/card";
 import { PendingTransactionButton } from "../PendingTransaction/PendingTransactionButton";
 
 export function SwapReview() {
-  const swapInformation = useBridgeModalStore.use.swapInformation?.();
+  const swapInformation = useBridgeModalStore.use.swapInformation();
   if (!swapInformation) {
     throw new Error("Swap information is not set");
   }

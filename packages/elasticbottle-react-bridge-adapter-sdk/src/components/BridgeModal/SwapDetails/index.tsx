@@ -17,7 +17,7 @@ import { useSwapInfo } from "./useSwapInfo";
 
 export function SwapDetails() {
   const { isLoadingSwapInfo, swapInfo } = useSwapInfo();
-  const currentSwapInfo = useBridgeModalStore.use.swapInformation?.();
+  const currentSwapInfo = useBridgeModalStore.use.swapInformation();
 
   let SwapDetailsBody = Array(3)
     .fill(0)
@@ -60,7 +60,7 @@ export function SwapDetails() {
           className={cn({
             "bsa-h-full bsa-w-full bsa-flex-col bsa-items-start bsa-justify-center bsa-space-y-2":
               true,
-            "bsa-outline-foreground hover:bsa-cursor-default":
+            "bsa-bg-foreground hover:bsa-cursor-default":
               isCurrentlySelectedSwapInfo,
           })}
           onClick={chooseSwapInfo(swapInfo)}
@@ -81,22 +81,21 @@ export function SwapDetails() {
                 {swapInfo.targetToken.symbol}
               </div>
             </div>
-            <div className="bsa-flex-grow bsa-text-muted-foreground">
-              via {swapInfo.bridgeName}
-            </div>
           </div>
           <div className="bsa-flex bsa-items-center bsa-space-x-2 bsa-text-sm bsa-text-muted-foreground">
             <Compass />
-            <div>{route}</div>
+            <div>
+              {route} via {swapInfo.bridgeName}
+            </div>
           </div>
-          <div className="bsa-flex bsa-w-full bsa-items-center bsa-justify-between bsa-space-x-2">
-            <div className="bsa-flex bsa-items-center bsa-text-sm bsa-text-muted-foreground">
+          <div className="bsa-flex bsa-w-full bsa-items-center bsa-justify-between">
+            <div className="bsa-flex bsa-items-center bsa-space-x-1 bsa-text-sm bsa-text-muted-foreground">
               <Clock2 />
               <div>
                 {formatTime(swapInfo.tradeDetails.estimatedTimeMinutes)}
               </div>
             </div>
-            <div className="bsa-flex bsa-items-center bsa-space-x-2 bsa-text-sm bsa-text-muted-foreground">
+            <div className="bsa-flex bsa-items-center bsa-space-x-1 bsa-text-sm bsa-text-muted-foreground">
               <DollarSign />
               <div>{formatSwapFee(swapInfo.tradeDetails.fee)}</div>
             </div>

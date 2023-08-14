@@ -10,7 +10,7 @@ import { useCanGetSwapInfo } from "./useCanGetSwapInfo";
 export function useSwapInfo() {
   const sdk = useBridgeModalStore.use.sdk();
   const { sourceToken, targetToken } = useBridgeModalStore.use.token();
-  const currentSwapInformation = useBridgeModalStore.use.swapInformation?.();
+  const currentSwapInformation = useBridgeModalStore.use.swapInformation();
   const { canGetSwapInfo } = useCanGetSwapInfo();
 
   const { data, isLoading, error } = useQuery({
@@ -24,12 +24,12 @@ export function useSwapInfo() {
   });
 
   useEffect(() => {
-    if (data && !currentSwapInformation) {
+    if (data && data.length && !currentSwapInformation) {
       setSwapInformation(data[0]);
     }
-    if (data && currentSwapInformation) {
+    if (data && data.length && currentSwapInformation) {
       const newSwapInfo = data[0];
-      if (isSwapInfoEqual(newSwapInfo, currentSwapInformation)) {
+      if (!isSwapInfoEqual(newSwapInfo, currentSwapInformation)) {
         setSwapInformation(newSwapInfo);
       }
     }

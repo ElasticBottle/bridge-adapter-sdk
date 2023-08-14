@@ -5,7 +5,7 @@ import {
 import { Button } from "../../ui/button";
 
 export function SwapReviewButton() {
-  const swapInformation = useBridgeModalStore.use.swapInformation?.();
+  const swapInformation = useBridgeModalStore.use.swapInformation();
   const canReviewSwap = !!swapInformation;
 
   return (

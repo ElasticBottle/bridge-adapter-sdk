@@ -31,7 +31,7 @@ type BridgeModalState = {
     targetChain: ChainSelectionType;
   };
   token: { sourceToken: TokenWithAmount; targetToken: TokenWithAmount };
-  swapInformation?: SwapInformation;
+  swapInformation: SwapInformation | undefined;
   relayerFee: RelayerFeeType;
   slippageTolerance: SlippageToleranceType;
 };
@@ -90,6 +90,7 @@ const useBridgeModalStoreBase = create<BridgeModalState>()(
           sourceToken: DEFAULT_TOKEN_WITH_AMOUNT,
           targetToken: { ...DEFAULT_TOKEN_WITH_AMOUNT, chain: "Solana" },
         },
+        swapInformation: undefined,
         relayerFee: {
           active: false,
           sourceFee: 0,

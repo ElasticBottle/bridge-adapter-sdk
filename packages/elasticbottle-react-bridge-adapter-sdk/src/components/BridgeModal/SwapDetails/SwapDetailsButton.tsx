@@ -6,10 +6,8 @@ import { useSwapInfo } from "./useSwapInfo";
 
 export function SwapDetailButton() {
   const { isLoadingSwapInfo, swapInfo } = useSwapInfo();
-  console.log("isLoadingSwapInfo, swapInfo", isLoadingSwapInfo, swapInfo);
   const { canGetSwapInfo } = useCanGetSwapInfo();
-  console.log("canGetSwapInfo", canGetSwapInfo);
-  let ButtonBody: string | JSX.Element = "No Swap Route Chosen";
+  let ButtonBody: string | JSX.Element = "No Swap Route Found";
   if (canGetSwapInfo && isLoadingSwapInfo) {
     ButtonBody = "Fetching Swap Route Details";
   } else if (canGetSwapInfo && !isLoadingSwapInfo && swapInfo) {
@@ -24,7 +22,7 @@ export function SwapDetailButton() {
     <Button
       size={"lg"}
       disabled={!canGetSwapInfo}
-      isLoading={isLoadingSwapInfo}
+      isLoading={canGetSwapInfo && isLoadingSwapInfo}
       className="bsa-mt-10 bsa-w-full bsa-justify-between"
       variant={canGetSwapInfo ? "outline" : "ghost"}
       onClick={() => {

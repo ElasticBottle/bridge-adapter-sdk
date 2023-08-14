@@ -95,13 +95,13 @@ export function isSwapInfoEqual(
 ) {
   return (
     swapInfo1.sourceToken.address.toLowerCase() !==
-      swapInfo2.sourceToken.address.toLowerCase() ||
+      swapInfo2.sourceToken.address.toLowerCase() &&
     swapInfo1.targetToken.address.toLowerCase() !==
-      swapInfo2.targetToken.address.toLowerCase() ||
+      swapInfo2.targetToken.address.toLowerCase() &&
     swapInfo1.sourceToken.selectedAmountInBaseUnits !==
-      swapInfo2.sourceToken.selectedAmountInBaseUnits ||
+      swapInfo2.sourceToken.selectedAmountInBaseUnits &&
     swapInfo1.targetToken.expectedOutputInBaseUnits !==
-      swapInfo2.targetToken.expectedOutputInBaseUnits ||
+      swapInfo2.targetToken.expectedOutputInBaseUnits &&
     swapInfo1.targetToken.minOutputInBaseUnits !==
       swapInfo2.targetToken.minOutputInBaseUnits
   );
