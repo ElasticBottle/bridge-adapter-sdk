@@ -71,7 +71,8 @@ export class BridgeAdapterSdk {
     chains.map((chain) => {
       chainSet.add(chain);
     });
-    return Array.from(chainSet);
+    // sort from larger alphabets (y, s, t etc.) to low (a, b, c etc.)
+    return Array.from(chainSet).sort((a, b) => (a < b ? 1 : -1));
   }
 
   async getSupportedTokens(
