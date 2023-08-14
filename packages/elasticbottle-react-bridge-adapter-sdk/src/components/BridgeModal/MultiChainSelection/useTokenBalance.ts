@@ -7,6 +7,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 import { object, parse, string } from "valibot";
+import type { Hash } from "viem";
 import { createPublicClient, formatUnits, http, parseAbi } from "viem";
 import { useWalletClient } from "wagmi";
 
@@ -75,11 +76,11 @@ export function useTokenBalance(token: Token) {
         });
 
         const byteCode = await publicClient.getBytecode({
-          address: token.address as `0x{string}`,
+          address: token.address as Hash,
         });
         if (byteCode) {
           const userBalannce = await publicClient.readContract({
-            address: token.address as `0x{string}`,
+            address: token.address as Hash,
             abi: parseAbi([
               "function balanceOf(address owner) view returns (uint256)",
             ]),

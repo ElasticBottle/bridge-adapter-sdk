@@ -100,7 +100,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     tx: optional(
       object({
         allowanceTarget: string(),
-        allowanceAmount: optional(string()),
+        allowanceValue: optional(string()),
       })
     ),
     order: object({
@@ -454,8 +454,9 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
       }
 
       const destAddress = getWalletAddress(targetAccount);
+
       if (
-        !this.debridgeQuote.tx?.allowanceAmount &&
+        "allowanceValue" in (this.debridgeQuote.tx ?? {}) &&
         this.debridgeQuote.tx?.allowanceTarget
       ) {
         // handle approval
