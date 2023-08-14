@@ -32,7 +32,7 @@ export function ChainSelect() {
 
   if (isLoadingChains) {
     return (
-      <div className="bsa-flex bsa-w-full">
+      <div className="bsa-grid bsa-w-full bsa-grid-cols-7 bsa-gap-1">
         {Array(6)
           .fill(0)
           .map((_, i) => (
