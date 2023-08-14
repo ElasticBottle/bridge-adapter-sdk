@@ -67,14 +67,16 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
           approximateOperatingExpense: string(),
         }),
       ]),
-      srcChainTokenOut: merge([
-        omit(this.TokenSchema, ["logoURI"]),
-        object({
-          chainId: number(),
-          amount: string(),
-          maxRefundAmount: string(),
-        }),
-      ]),
+      srcChainTokenOut: optional(
+        merge([
+          omit(this.TokenSchema, ["logoURI"]),
+          object({
+            chainId: number(),
+            amount: string(),
+            maxRefundAmount: string(),
+          }),
+        ])
+      ),
       dstChainTokenOut: merge([
         omit(this.TokenSchema, ["logoURI"]),
         object({
@@ -266,9 +268,14 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     quoteUrl.searchParams.set("affiliateFeePercent", "0.05");
     const quoteResp = await fetch(quoteUrl);
     if (!quoteResp.ok) {
-      throw new Error("Failed to fetch quote");
+      console.warn(
+        "Failed to fetch quote for debridge",
+        await quoteResp.text()
+      );
+      throw new Error("Failed to fetch quote for debridge");
     }
     const quoteRaw = await quoteResp.json();
+    console.log("quoteRaw", quoteRaw);
     const quote = parse(this.QuoteSchema, quoteRaw);
     this.debridgeQuote = quote;
     const sourceNativeCurrency = chainNameToNativeCurrency(sourceToken.chain);
@@ -324,16 +331,23 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
           },
         ]),
         priceImpact: 0,
-        routeInformation: [
-          {
-            fromTokenSymbol: sourceToken.symbol,
-            toTokenSymbol: quote.estimation.srcChainTokenOut.symbol,
-          },
-          {
-            fromTokenSymbol: quote.estimation.srcChainTokenOut.symbol,
-            toTokenSymbol: targetToken.symbol,
-          },
-        ],
+        routeInformation: quote.estimation.srcChainTokenOut
+          ? [
+              {
+                fromTokenSymbol: sourceToken.symbol,
+                toTokenSymbol: quote.estimation.srcChainTokenOut.symbol,
+              },
+              {
+                fromTokenSymbol: quote.estimation.srcChainTokenOut.symbol,
+                toTokenSymbol: targetToken.symbol,
+              },
+            ]
+          : [
+              {
+                fromTokenSymbol: quote.estimation.srcChainTokenIn.symbol,
+                toTokenSymbol: targetToken.symbol,
+              },
+            ],
       },
     };
   }
