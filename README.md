@@ -29,7 +29,7 @@ Developers simply integrate a single SDK and get the combined benefits of the ex
   - Mayan Finance
   - Allbridge Core (in pipeline)
   - Allbridge Classic (planning)
-- 🦄 3 different DEXes supported for swapping to and from the token used during bridging.
+- 🦄 4 different DEXes supported for swapping to and from the token used during bridging.
   - Paraswap (EVM)
   - 1inch (EVM)
   - Jupiter (Solana)
