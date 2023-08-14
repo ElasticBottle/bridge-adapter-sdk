@@ -1,7 +1,5 @@
-import type {
-  PublicKey,
-  Transaction as SolanaTransaction,
-} from "@solana/web3.js";
+import type { SignerWalletAdapterProps } from "@solana/wallet-adapter-base";
+import type { PublicKey } from "@solana/web3.js";
 import type { WalletClient } from "viem";
 import type { ChainSourceAndTarget } from "./Chain";
 
@@ -20,9 +18,7 @@ export type BridgeAdapterArgs = Partial<ChainSourceAndTarget> & {
 export type Bridges = "wormhole" | "mayan" | "deBridge";
 
 export type SolanaAccount = {
-  signTransaction: (
-    transaction: SolanaTransaction
-  ) => Promise<SolanaTransaction>;
+  signTransaction: SignerWalletAdapterProps["signTransaction"];
   publicKey: PublicKey;
 };
 export type EvmAccount = WalletClient;

@@ -1,5 +1,10 @@
 import { approveEth, getAllowanceEth } from "@certusone/wormhole-sdk";
 import {
+  Connection,
+  VersionedTransaction,
+  clusterApiUrl,
+} from "@solana/web3.js";
+import {
   ValiError,
   array,
   boolean,
@@ -12,9 +17,11 @@ import {
   parse,
   record,
   string,
+  union,
   useDefault,
   type Output,
 } from "valibot";
+import type { Hash } from "viem";
 import { formatUnits } from "viem";
 import type {
   BridgeAdapterArgs,
@@ -26,15 +33,18 @@ import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
 import type { SwapInformation } from "../../types/SwapInformation";
 import type { Token, TokenWithAmount } from "../../types/Token";
-import { isEvmAccount } from "../../utils/bridge";
+import { isEvmAccount, isSolanaAccount } from "../../utils/bridge";
 import {
   chainIdToChainName,
   chainNameToChainId,
   chainNameToNativeCurrency,
+  chainNameToViemChain,
 } from "../../utils/chainIdMapping";
 import { dedupFeesTokens } from "../../utils/dedupFeeTokens";
 import { formatTokenBalance } from "../../utils/formatTokenBalance";
 import { getSourceAndTargetChain } from "../../utils/getSourceAndTargetChain";
+import { getWalletAddress } from "../../utils/getWalletAddress";
+import { submitSolanaTransaction } from "../../utils/solana";
 import { walletClientToSigner } from "../../utils/viem/ethers";
 import { AbstractBridgeAdapter } from "./AbstractBridgeAdapter";
 
@@ -99,6 +109,21 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     fixFee: string(),
   });
   private debridgeQuote: Output<typeof this.QuoteSchema> | undefined;
+
+  private CreateTxSchema = union([
+    object({
+      tx: object({
+        data: string(),
+        to: string(),
+        value: string(),
+      }),
+    }),
+    object({
+      tx: object({
+        data: string(),
+      }),
+    }),
+  ]);
 
   constructor(args: BridgeAdapterArgs) {
     super(args);
@@ -350,16 +375,44 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     };
   }
 
-  private async createDebridgeTransaction() {
+  private async createDebridgeTransaction(
+    sourceAddress: string,
+    targetAddress: string
+  ) {
+    if (!this.debridgeQuote) {
+      throw new Error("No quote found for deBridge");
+    }
     const createTxUrl = new URL(
       "https://api.dln.trade/v1.0/dln/order/create-tx?"
     );
     createTxUrl.searchParams.set("fee", this.deBridgeEvmFee);
+    createTxUrl.searchParams.set(
+      "srcChainTokenInAmount",
+      this.debridgeQuote.estimation.srcChainTokenIn.amount
+    );
+    createTxUrl.searchParams.set(
+      "dstChainTokenOutAmount",
+      this.debridgeQuote.estimation.dstChainTokenOut.recommendedAmount
+    );
+    createTxUrl.searchParams.set(
+      "srcChainOrderAuthorityAddress",
+      sourceAddress
+    );
+    createTxUrl.searchParams.set("dstChainTokenOutRecipient", targetAddress);
+    createTxUrl.searchParams.set(
+      "dstChainOrderAuthorityAddress",
+      targetAddress
+    );
+    createTxUrl.searchParams.set("affiliateFeeRecipient", this.deBridgeEvmFee);
+
     const createTxResp = await fetch(createTxUrl);
     if (!createTxResp.ok) {
       throw new Error("Failed to create transaction");
     }
     const createTxRaw = createTxResp.json();
+    console.log("createTxRaw", createTxRaw);
+    const createTx = parse(this.CreateTxSchema, createTxRaw);
+    return createTx;
   }
 
   private async getDebridgeTransactionId(txnHash: string) {
@@ -374,21 +427,6 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     const txnId = parse(object({ orderIds: array(string()) }), getTxIdRaw);
     return txnId.orderIds[0];
   }
-  private async getDebridgeTransactionStatus(txnId: string) {
-    const txnStatusUrl = new URL(
-      `https://api.dln.trade/v1.0/dln/order/${txnId}/status`
-    );
-    const txnStatusResp = await fetch(txnStatusUrl);
-    if (!txnStatusResp.ok) {
-      throw new Error("Failed to get transaction id");
-    }
-    const txnStatusRaw = txnStatusResp.json();
-    const txnStatus = parse(
-      object({ orderId: string(), status: string() }),
-      txnStatusRaw
-    );
-    return txnStatus.status;
-  }
 
   async bridge({
     onStatusUpdate,
@@ -400,17 +438,20 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
     onStatusUpdate: (args: BridgeStatus) => void;
-  }): Promise<void> {
+  }): Promise<boolean> {
     if (!this.debridgeQuote) {
       throw new Error("No quote found");
     }
     const { sourceToken } = swapInformation;
+    let transactionHash = "";
     if (sourceToken.chain !== "Solana") {
       if (!isEvmAccount(sourceAccount)) {
         throw new Error("Source account is not an EVM account");
       }
+
+      const destAddress = getWalletAddress(targetAccount);
       if (
-        this.debridgeQuote.tx?.allowanceAmount &&
+        !this.debridgeQuote.tx?.allowanceAmount &&
         this.debridgeQuote.tx?.allowanceTarget
       ) {
         // handle approval
@@ -420,19 +461,141 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
           sourceToken.address,
           ethersSigner
         );
-        if (allowance.lt(this.debridgeQuote.tx?.allowanceAmount)) {
+        if (
+          allowance.lt(this.debridgeQuote.estimation.srcChainTokenIn.amount)
+        ) {
+          onStatusUpdate({
+            information: `Approving ${sourceToken.selectedAmountFormatted} ${sourceToken.symbol}`,
+            name: "Approval",
+            status: "IN_PROGRESS",
+          });
           await approveEth(
             this.debridgeQuote.tx.allowanceTarget,
             sourceToken.address,
             ethersSigner,
-            this.debridgeQuote.tx.allowanceAmount
+            this.debridgeQuote.estimation.srcChainTokenIn.amount
           );
+          onStatusUpdate({
+            information: `Approving ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+            name: "Approval",
+            status: "COMPLETED",
+          });
         }
       }
 
-      const tx = await this.createDebridgeTransaction();
+      const { tx } = await this.createDebridgeTransaction(
+        sourceAccount.account?.address || "",
+        destAddress
+      );
+      if (!("value" in tx)) {
+        throw new Error("No value in tx");
+      }
+      const chain = chainNameToViemChain(sourceToken.chain);
+      onStatusUpdate({
+        information: `Pending confirmation to lock ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "IN_PROGRESS",
+      });
+      transactionHash = await sourceAccount.sendTransaction({
+        account: sourceAccount.account?.address || "0x",
+        chain,
+        to: tx.to as Hash,
+        data: tx.data as Hash,
+        value: BigInt(tx.value),
+      });
+      onStatusUpdate({
+        information: `Pending confirmation to lock  ${swapInformation.sourceToken.selectedAmountFormatted} ${swapInformation.sourceToken.symbol}`,
+        name: "Lock",
+        status: "COMPLETED",
+      });
     } else {
-      const tx = await this.createDebridgeTransaction();
+      if (!isSolanaAccount(sourceAccount)) {
+        throw new Error("Source account is not a Solana account");
+      }
+      const { tx } = await this.createDebridgeTransaction(
+        getWalletAddress(sourceAccount),
+        getWalletAddress(targetAccount)
+      );
+      const connection = new Connection(
+        this.settings?.solana?.solanaRpcUrl ?? clusterApiUrl("mainnet-beta")
+      );
+      const solanaTransaction = await sourceAccount.signTransaction(
+        VersionedTransaction.deserialize(Buffer.from(tx.data.slice(2), "hex"))
+      );
+      ({ signature: transactionHash } = await submitSolanaTransaction(
+        solanaTransaction,
+        connection
+      ));
     }
+
+    const interval = setInterval(() => {
+      this.getDeBridgeTransactionStatus(transactionHash)
+        .then((status) => {
+          switch (status) {
+            case "Created": {
+              onStatusUpdate({
+                information: "Successfully locked tokens on source chain",
+                name: "PendingConfirmation",
+                status: "IN_PROGRESS",
+              });
+              break;
+            }
+            case "SentUnlock":
+            case "ClaimedUnlock":
+            case "Fulfilled": {
+              onStatusUpdate({
+                information: "Successfully completed swap",
+                name: "Complete",
+                status: "COMPLETED",
+              });
+              clearInterval(interval);
+
+              break;
+            }
+            case "ClaimedOrderCancel":
+            case "SentOrderCancel":
+            case "OrderCancelled": {
+              onStatusUpdate({
+                information: "Cancelled swap",
+                name: "Cancelled",
+                status: "FAILED",
+              });
+              clearInterval(interval);
+              break;
+            }
+          }
+        })
+        .catch((e) => {
+          console.log("Error getting debridge transaction status", e);
+        });
+    }, 5_000);
+    return true;
+  }
+
+  private async getDeBridgeTransactionStatus(txnId: string) {
+    const orderIdUrl = new URL(
+      `https://api.dln.trade/v1.0/dln/tx/${txnId}/order-ids`
+    );
+    const orderIdResp = await fetch(orderIdUrl);
+    if (!orderIdResp.ok) {
+      throw new Error("Failed to get order id");
+    }
+    const orderIdRaw = orderIdResp.json();
+    const orderIds = parse(object({ orderIds: array(string()) }), orderIdRaw);
+    const orderId = orderIds.orderIds[0];
+
+    const txnStatusUrl = new URL(
+      `https://api.dln.trade/v1.0/dln/order/${orderId}/status`
+    );
+    const txnStatusResp = await fetch(txnStatusUrl);
+    if (!txnStatusResp.ok) {
+      throw new Error("Failed to get transaction id");
+    }
+    const txnStatusRaw = txnStatusResp.json();
+    const txnStatus = parse(
+      object({ orderId: string(), status: string() }),
+      txnStatusRaw
+    );
+    return txnStatus.status;
   }
 }

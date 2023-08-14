@@ -542,7 +542,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
     onStatusUpdate: (args: BridgeStatus) => void;
-  }): Promise<void> {
+  }): Promise<boolean> {
     const { sourceToken, targetToken } = swapInformation;
 
     if (sourceToken.chain === targetToken.chain) {
@@ -617,5 +617,6 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
         wormholeSourceChain,
       });
     }
+    return true;
   }
 }

@@ -14,7 +14,7 @@ export function useSubmitAndTrackTransaction({
   const { sourceAccount, swapInformation, targetAccount } = useBridgeParams();
   const sdk = useBridgeModalStore.use.sdk();
 
-  const { data, isLoading, error } = useQuery({
+  const { error } = useQuery({
     queryKey: [
       "submitAndTrackTransaction",
       swapInformation,
@@ -41,5 +41,4 @@ export function useSubmitAndTrackTransaction({
       onError(new Error(JSON.stringify(error)));
     }
   }, [error, onError]);
-  return { data, isLoading };
 }

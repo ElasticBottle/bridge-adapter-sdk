@@ -2,6 +2,7 @@ import { approveEth, getAllowanceEth } from "@certusone/wormhole-sdk";
 import type {
   ChainName as MayanChainName,
   Quote,
+  SolanaTransactionSigner,
 } from "@mayanfinance/swap-sdk";
 import {
   fetchQuote,
@@ -182,7 +183,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
     onStatusUpdate: (args: BridgeStatus) => void;
-  }): Promise<void> {
+  }): Promise<boolean> {
     if (!this.mayanQuote) {
       throw new Error("No quote found");
     }
@@ -265,7 +266,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
         getWalletAddress(targetAccount),
         timoutInSeconds,
         this.mayanSolanaFee,
-        sourceAccount.signTransaction,
+        sourceAccount.signTransaction as SolanaTransactionSigner,
         this.settings?.solana?.solanaRpcUrl
           ? new Connection(this.settings?.solana?.solanaRpcUrl)
           : undefined
@@ -277,20 +278,36 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
       });
     }
 
-    setInterval(() => {
-      this.getMayanTransactionStatus(transactionHash, onStatusUpdate).catch(
-        (e) => {
+    const interval = setInterval(() => {
+      this.getMayanTransactionStatus(transactionHash)
+        .then((status) => {
+          let information = status;
+          if (status.includes("INITIATED")) {
+            information =
+              "Waiting for locked token transaction to be finalized";
+          } else if (status.includes("CLAIMED")) {
+            information = "Unlocking tokens";
+          } else if (status.includes("SETTLED")) {
+            information = "Swap Successfully completed.";
+            clearInterval(interval);
+          }
+
+          onStatusUpdate({
+            information: information,
+            name: "PendingConfirmation",
+            status: "IN_PROGRESS",
+          });
+          return false;
+        })
+        .catch((e) => {
           console.error("Error fetching mayan transaction status", e);
-        }
-      );
+        });
     }, 5_000);
+    return true;
   }
 
-  private async getMayanTransactionStatus(
-    transactionhash: string,
-    onStatusUpdate: (args: BridgeStatus) => void
-  ) {
-    const statusUrl = `https://explorer-api.mayan.finance/v3/swap/trx/${transactionhash}`;
+  private async getMayanTransactionStatus(transactionHash: string) {
+    const statusUrl = `https://explorer-api.mayan.finance/v3/swap/trx/${transactionHash}`;
     const response = await fetch(statusUrl);
     if (!response.ok) {
       throw new Error("Error fetching mayan transaction status");
@@ -302,25 +319,6 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
       }),
       rawData
     );
-    if (parsedData.status.includes("SETTLED")) {
-      console.log("parsedData.status", parsedData.status);
-      onStatusUpdate({
-        information: "Swap Successfully completed.",
-        name: "Completed",
-        status: "IN_PROGRESS",
-      });
-    } else {
-      let information = parsedData.status;
-      switch (parsedData.status) {
-        case "INITIATED_ON_EVM":
-          information = "Finalizing locked tokens";
-          break;
-      }
-      onStatusUpdate({
-        information: information,
-        name: "PendingConfirmation",
-        status: "IN_PROGRESS",
-      });
-    }
+    return parsedData.status;
   }
 }

@@ -3,10 +3,11 @@ import type {
   Connection,
   SendOptions,
   Transaction,
+  VersionedTransaction,
 } from "@solana/web3.js";
 
 export async function submitSolanaTransaction(
-  signedTransaction: Transaction,
+  signedTransaction: Transaction | VersionedTransaction,
   connection: Connection,
   sendOptions?: SendOptions,
   commitment?: Commitment

@@ -43,5 +43,5 @@ export abstract class AbstractBridgeAdapter {
     sourceAccount: SolanaOrEvmAccount;
     targetAccount: SolanaOrEvmAccount;
     onStatusUpdate: (args: BridgeStatus) => void;
-  }): Promise<void>;
+  }): Promise<boolean>;
 }
