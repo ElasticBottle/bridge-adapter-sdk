@@ -41,5 +41,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
         ({ value }) => new providers.JsonRpcProvider(value?.url, network)
       )
     );
+  // TODO: Fix typing here
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return new providers.JsonRpcProvider(transport.url, network);
 }
