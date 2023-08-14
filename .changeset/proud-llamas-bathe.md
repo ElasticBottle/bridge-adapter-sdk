@@ -3,4 +3,4 @@
 "@elasticbottle/react-bridge-adapter-sdk": minor
 ---
 
-initial working version for core and react SDK
+working version for core and react SDK
