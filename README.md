@@ -98,7 +98,7 @@ console.log("tokens", tokens); // of type Token[]
 #### Getting a swap quote
 
 ```typescript
-const routeInfo = await sdk.getSwapInformation(sourceToken, targetToken);
+const swapInformation = await sdk.getSwapInformation(sourceToken, targetToken);
 
 // type SwapInformation = {
 //     sourceToken: TokenWithAmount;
@@ -114,7 +114,7 @@ const routeInfo = await sdk.getSwapInformation(sourceToken, targetToken);
 //         }[];
 //     };
 // };
-console.log("routeInfo", routeInfo);
+console.log("swapInformation", swapInformation);
 ```
 
 #### Bridging the Assets
