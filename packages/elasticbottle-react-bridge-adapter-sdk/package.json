@@ -68,6 +68,7 @@
     "react-error-boundary": "^4.0.10",
     "react-window": "^1.8.9",
     "tailwind-merge": "^1.13.2",
+    "valibot": "^0.3.0",
     "zustand": "^4.3.9"
   },
   "peerDependencies": {

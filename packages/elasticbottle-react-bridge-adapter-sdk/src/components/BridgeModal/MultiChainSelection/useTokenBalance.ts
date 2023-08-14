@@ -6,6 +6,7 @@ import {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
+import { object, parse, string } from "valibot";
 import { createPublicClient, formatUnits, http, parseAbi } from "viem";
 import { useWalletClient } from "wagmi";
 
@@ -37,18 +38,24 @@ export function useTokenBalance(token: Token) {
           publicKey,
           { mint: new PublicKey(token.address) }
         );
-        console.log("results", results);
 
         for (const item of results.value) {
-          // const tokenInfo = item.account.data.parsed;
-          // console.log("tokenInfo", tokenInfo);
-          // const address = tokenInfo.mint;
-          // const amount = tokenInfo.tokenAmount.uiAmount;
-          // if (tokenInfo.mint === token.address) {
-          //   return amount as string;
-          // }
+          const tokenInfoSchema = object({
+            data: object({
+              parsed: object({
+                mint: string(),
+                tokenAmount: object({ uiAmountString: string() }),
+              }),
+            }),
+          });
+          const tokenInfo = parse(tokenInfoSchema, item.account).data.parsed;
+          console.log("tokenInfo", tokenInfo);
+          const address = tokenInfo.mint;
+          const amount = tokenInfo.tokenAmount.uiAmountString;
+          if (address === token.address) {
+            return amount;
+          }
         }
-        // No associated token account found
         return "0";
       } else {
         if (!walletClient?.transport || !walletClient?.account.address) {

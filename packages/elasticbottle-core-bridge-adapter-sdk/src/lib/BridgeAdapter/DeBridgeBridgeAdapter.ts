@@ -569,6 +569,7 @@ export class DeBridgeBridgeAdapter extends AbstractBridgeAdapter {
           console.log("Error getting debridge transaction status", e);
         });
     }, 5_000);
+
     return true;
   }
 

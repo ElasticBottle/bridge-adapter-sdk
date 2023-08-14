@@ -289,6 +289,9 @@ importers:
       tailwind-merge:
         specifier: ^1.13.2
         version: 1.13.2
+      valibot:
+        specifier: ^0.3.0
+        version: 0.3.0
       zustand:
         specifier: ^4.3.9
         version: 4.3.9(immer@10.0.2)(react@18.2.0)
