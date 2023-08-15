@@ -8,7 +8,7 @@ import type {
 import type { ChainName, ChainSourceAndTarget } from "../../types/Chain";
 import type { ChainDestType } from "../../types/ChainDest";
 import type { SwapInformation } from "../../types/SwapInformation";
-import type { Token } from "../../types/Token";
+import type { Token, TokenWithAmount } from "../../types/Token";
 
 export abstract class AbstractBridgeAdapter {
   protected sourceChain: ChainName | undefined;
@@ -37,8 +37,8 @@ export abstract class AbstractBridgeAdapter {
     tokens?: { sourceToken: Token; targetToken: Token }
   ): Promise<Token[]>;
 
-  abstract getQuoteDetails(
-    sourceToken: Token,
+  abstract getSwapDetails(
+    sourceToken: TokenWithAmount,
     targetToken: Token
   ): Promise<SwapInformation>;
 

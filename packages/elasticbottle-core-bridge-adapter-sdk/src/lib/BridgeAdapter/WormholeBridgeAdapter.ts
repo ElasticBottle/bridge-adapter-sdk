@@ -257,7 +257,7 @@ export class WormholeBridgeAdapter extends AbstractBridgeAdapter {
     throw new Error("Invalid interestedTokenList value");
   }
 
-  getQuoteDetails(
+  getSwapDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
   ): Promise<SwapInformation> {

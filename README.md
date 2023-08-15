@@ -33,7 +33,7 @@ export abstract class AbstractBridgeAdapter {
     tokens?: { sourceToken: Token; targetToken: Token }
   ): Promise<Token[]>;
 
-  abstract getQuoteDetails(
+  abstract getSwapDetails(
     sourceToken: Token,
     targetToken: Token
   ): Promise<SwapInformation>;
