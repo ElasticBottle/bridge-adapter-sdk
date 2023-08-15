@@ -33,7 +33,7 @@ importers:
   apps/bridge-adapter-demo:
     dependencies:
       '@elasticbottle/react-bridge-adapter-sdk':
-        specifier: ^0.0.0
+        specifier: ^0.1.0
         version: link:../../packages/elasticbottle-react-bridge-adapter-sdk
       '@radix-ui/react-slot':
         specifier: ^1.0.2
@@ -278,7 +278,7 @@ importers:
   packages/elasticbottle-react-bridge-adapter-sdk:
     dependencies:
       '@elasticbottle/core-bridge-adapter-sdk':
-        specifier: ^0.0.0
+        specifier: ^0.1.0
         version: link:../elasticbottle-core-bridge-adapter-sdk
       '@radix-ui/react-dialog':
         specifier: ^1.0.4
