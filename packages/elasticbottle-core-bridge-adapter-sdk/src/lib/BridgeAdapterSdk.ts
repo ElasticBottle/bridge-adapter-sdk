@@ -7,7 +7,7 @@ import type {
 import type { ChainName, ChainSourceAndTarget } from "../types/Chain";
 import type { ChainDestType } from "../types/ChainDest";
 import type { SwapInformation } from "../types/SwapInformation";
-import type { Token } from "../types/Token";
+import type { Token, TokenWithAmount } from "../types/Token";
 import { getBridgeAdapters } from "../utils/getBridgeAdapters";
 import { getSourceAndTargetChain } from "../utils/getSourceAndTargetChain";
 import type { AbstractBridgeAdapter } from "./BridgeAdapter/AbstractBridgeAdapter";
@@ -138,10 +138,10 @@ export class BridgeAdapterSdk {
     return Array.from(deduplicatedTokens.values());
   }
 
-  async getSwapInformation(sourceToken: Token, targetToken: Token) {
+  async getSwapInformation(sourceToken: TokenWithAmount, targetToken: Token) {
     const routeInfos = await Promise.allSettled(
       this.bridgeAdapters.map(async (bridgeAdapter) => {
-        return bridgeAdapter.getQuoteDetails(sourceToken, targetToken);
+        return bridgeAdapter.getSwapDetails(sourceToken, targetToken);
       })
     );
     const routes = routeInfos

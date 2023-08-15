@@ -99,7 +99,7 @@ export class MayanBridgeAdapter extends AbstractBridgeAdapter {
     return this.tokenList[chain];
   }
 
-  async getQuoteDetails(
+  async getSwapDetails(
     sourceToken: TokenWithAmount,
     targetToken: Token
   ): Promise<SwapInformation> {
