@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 const meta = {
-  title: "Saas Demo App with AltTransfer",
-  description: "Brought to you by the Grape Squad.",
+  title: "Saas Demo App with Bridge Adapter SDK",
+  description: "Cross chain transfers made seamless.",
   cardImage: "/og.png",
   robots: "follow, index",
   favicon: "/favicon.ico",

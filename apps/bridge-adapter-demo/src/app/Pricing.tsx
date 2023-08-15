@@ -104,9 +104,31 @@ export default function Pricing() {
                           walletConnectProjectId:
                             process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ??
                             "",
+                          alchemyApiKey:
+                            process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "",
+                          infuraApiKey:
+                            process.env.NEXT_PUBLIC_INFURA_PROJECT_ID ?? "",
                         }}
                       >
-                        <BridgeModalProvider>
+                        <BridgeModalProvider
+                          bridgeAdapterSetting={{
+                            allow: ["deBridge"],
+                          }}
+                          settings={{
+                            evm: {
+                              alchemyApiKey:
+                                process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "",
+                              infuraApiKey:
+                                process.env.NEXT_PUBLIC_INFURA_PROJECT_ID ?? "",
+                            },
+                            solana: {
+                              solanaRpcUrl:
+                                process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "",
+                            },
+                          }}
+                          sourceChain="Ethereum"
+                          targetChain="Solana"
+                        >
                           <BridgeModal
                             customization={{
                               theme: "dark",
