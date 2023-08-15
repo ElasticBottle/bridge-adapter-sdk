@@ -1,6 +1,6 @@
 {
   "name": "@elasticbottle/core-bridge-adapter-sdk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "sideEffects": false,
   "license": "MIT",
   "type": "module",
