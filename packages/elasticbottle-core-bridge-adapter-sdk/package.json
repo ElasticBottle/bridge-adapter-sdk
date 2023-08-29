@@ -35,6 +35,7 @@
     "viem": "^1.4.1"
   },
   "dependencies": {
+    "@allbridge/bridge-core-sdk": "^3.0.0",
     "@certusone/wormhole-sdk": "^0.9.22",
     "@mayanfinance/swap-sdk": "^4.2.3",
     "@solana/spl-token": "^0.3.8",
